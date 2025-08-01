@@ -1,7 +1,8 @@
 package carevn.luv2code.cms.tevc_cms_api.configuration;
 
+import carevn.luv2code.cms.tevc_cms_api.entity.Role;
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
-import carevn.luv2code.cms.tevc_cms_api.enums.Role;
+import carevn.luv2code.cms.tevc_cms_api.repository.RoleRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -23,14 +25,27 @@ import java.util.Set;
 public class ApplicationInitConfig {
 
     PasswordEncoder passwordEncoder;
+    UserRepository userRepository;
+    RoleRepository roleRepository;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository){
+    ApplicationRunner applicationRunner(UserRepository userRepository) {
         String adminEmail = "admin@example.com";
+        Role adminRole = roleRepository.findByNameForUpdate("ADMIN")
+                .orElseGet(() -> {
+                    Role newRole = Role.builder()
+                            .id(UUID.randomUUID())
+                            .name("ADMIN")
+                            .description("Administrator role with full access")
+                            .build();
+                    return roleRepository.save(newRole);
+                });
+
         Set<Role> roles = new HashSet<>();
-        roles.add(Role.ADMIN);
+        roles.add(adminRole);
+
         return args -> {
-            if(userRepository.findByEmail(adminEmail).isEmpty()){
+            if (userRepository.findByEmail(adminEmail).isEmpty()) {
                 User user = User.builder()
                         .userName("admin1")
                         .email(adminEmail)
