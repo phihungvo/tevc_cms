@@ -1,8 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
@@ -11,9 +9,11 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
-
     UUID id;
 
     String userName;
@@ -22,9 +22,9 @@ public class UserDTO {
 
     String lastName;
 
-    String password;
-
     String email;
+
+    String password;
 
     String address;
 
@@ -34,12 +34,13 @@ public class UserDTO {
 
     String bio;
 
-    List<String> roles;
-
     Date createAt;
 
     Date updateAt;
 
     boolean enabled;
 
+    List<String> roles;
+
+    List<String> permissions;
 }
