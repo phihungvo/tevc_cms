@@ -1,0 +1,23 @@
+const BASE_URL = process.env.REACT_APP_API_URL || '/api';
+
+const API_ENDPOINTS = {
+    AUTH: {
+        LOGIN: `${BASE_URL}/auth/login`,
+        REGISTER: `${BASE_URL}/auth/register`,
+    },
+    FILE: {
+        UPLOAD: `${BASE_URL}/storage/upload`,
+        CHECK_EXISTED: (file) =>
+            `${BASE_URL}/storage/checkFileExists/${file.name}`,
+        GET_INFO: `${BASE_URL}/storage/files`,
+        GET_FILE: (filePath) => `${BASE_URL}/storage/files/${filePath}`,
+    },
+
+    USER: {
+        GET_ALL: `${BASE_URL}/user/getAll`,
+        CREATE: `${BASE_URL}/user/createUser`,
+        UPDATE: (userId) => `${BASE_URL}/user/${userId}/update`,
+    },
+};
+
+export default API_ENDPOINTS;
