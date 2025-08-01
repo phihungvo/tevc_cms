@@ -22,12 +22,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        var authorities = user.getRoles().stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .map(permission -> new SimpleGrantedAuthority(
+                        permission.getResource() + ":" + permission.getAction()))
+                .collect(Collectors.toSet());
+
+        authorities.addAll(user.getPermissions().stream()
+                .map(permission -> new SimpleGrantedAuthority(
+                        permission.getResource() + ":" + permission.getAction()))
+                .collect(Collectors.toSet()));
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .authorities(user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                        .collect(Collectors.toList()))
+                .authorities(authorities)
                 .accountExpired(!user.isAccountNonExpired())
                 .accountLocked(!user.isAccountNonLocked())
                 .credentialsExpired(!user.isCredentialsNonExpired())

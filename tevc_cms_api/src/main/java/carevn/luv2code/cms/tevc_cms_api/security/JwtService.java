@@ -1,5 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.security;
 
+import carevn.luv2code.cms.tevc_cms_api.entity.Role;
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -38,8 +39,11 @@ public class JwtService {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", user.getUserName());
-        claims.put("role", user.getRoles().stream()
-                .map(Enum::name)
+        claims.put("roles", user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList()));
+        claims.put("permissions", user.getPermissions().stream()
+                .map(p -> p.getResource() + ":" + p.getAction())
                 .collect(Collectors.toList()));
         claims.put("userId", user.getId());
         claims.put("email", user.getEmail());
@@ -77,4 +81,3 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
-
