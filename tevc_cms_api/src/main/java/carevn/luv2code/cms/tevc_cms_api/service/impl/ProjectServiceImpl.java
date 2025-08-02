@@ -10,6 +10,7 @@ import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.ProjectRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +31,22 @@ public class ProjectServiceImpl implements ProjectService {
         
         if (projectDTO.getProjectManagerId() != null) {
             Employee manager = employeeRepository.findById(projectDTO.getProjectManagerId())
-                    .orElseThrow(() -> new AppException("Project manager not found"));
+                    .orElseThrow(() -> new AppException(ErrorCode.PROJECT_MANAGER_NOT_FOUND));
             project.setProjectManager(manager);
         }
         
         project.setStatus("ACTIVE");
         return projectMapper.toDTO(projectRepository.save(project));
+    }
+
+    @Override
+    public ProjectDTO updateProject(UUID id, ProjectDTO projectDTO) {
+        return null;
+    }
+
+    @Override
+    public void deleteProject(UUID id) {
+
     }
 
     @Override
@@ -84,6 +95,11 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
         return projectMapper.toDTO(project);
+    }
+
+    @Override
+    public Page<ProjectDTO> getAllProjects(int page, int size) {
+        return null;
     }
 
     // ... other standard CRUD methods implementation ...

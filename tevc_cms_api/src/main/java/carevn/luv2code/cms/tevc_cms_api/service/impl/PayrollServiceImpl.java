@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,6 +45,11 @@ public class PayrollServiceImpl implements PayrollService {
                 .orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
         payrollMapper.updateFromDto(payrollDTO, payroll);
         return payrollMapper.toDTO(payrollRepository.save(payroll));
+    }
+
+    @Override
+    public void deletePayroll(UUID id) {
+
     }
 
     @Override

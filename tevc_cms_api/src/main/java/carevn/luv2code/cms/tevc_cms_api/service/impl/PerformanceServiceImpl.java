@@ -1,25 +1,20 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.DepartmentDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.PerformanceDTO;
-import carevn.luv2code.cms.tevc_cms_api.entity.Department;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.entity.Performance;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
-import carevn.luv2code.cms.tevc_cms_api.mapper.DepartmentMapper;
-import carevn.luv2code.cms.tevc_cms_api.repository.DepartmentRepository;
+import carevn.luv2code.cms.tevc_cms_api.mapper.PerformanceMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.PerformanceRepository;
-import carevn.luv2code.cms.tevc_cms_api.service.DepartmentService;
 import carevn.luv2code.cms.tevc_cms_api.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -48,9 +43,24 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
 
     @Override
+    public PerformanceDTO updatePerformance(UUID id, PerformanceDTO performanceDTO) {
+        return null;
+    }
+
+    @Override
+    public void deletePerformance(UUID id) {
+
+    }
+
+    @Override
     public PerformanceDTO getPerformance(UUID id) {
         return performanceMapper.toDTO(performanceRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PERFORMANCE_NOT_FOUND)));
+    }
+
+    @Override
+    public Page<PerformanceDTO> getAllPerformances(int page, int size) {
+        return null;
     }
 
     @Override

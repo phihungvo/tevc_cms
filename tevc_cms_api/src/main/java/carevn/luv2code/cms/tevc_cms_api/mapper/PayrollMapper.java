@@ -6,7 +6,7 @@ import carevn.luv2code.cms.tevc_cms_api.entity.Payroll;
 import carevn.luv2code.cms.tevc_cms_api.entity.Position;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {PayrollDetailMapper.class})
+@Mapper(componentModel = "spring")
 public interface PayrollMapper {
     
     @Mapping(target = "employeeId", source = "employee.id")

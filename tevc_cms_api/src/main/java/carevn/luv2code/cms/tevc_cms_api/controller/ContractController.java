@@ -19,7 +19,7 @@ public class ContractController {
     private final ContractService contractService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CONTRACT:CREATE')")
+//    @PreAuthorize("hasAuthority('CONTRACT:CREATE')")
     public ResponseEntity<ContractDTO> createContract(@RequestBody ContractDTO contractDTO) {
         return ResponseEntity.ok(contractService.createContract(contractDTO));
     }
