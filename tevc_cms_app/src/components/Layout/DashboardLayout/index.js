@@ -13,6 +13,7 @@ import {
     LockOutlined,
     TeamOutlined,
     KeyOutlined,
+    UsergroupAddOutlined,
 } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
@@ -53,6 +54,16 @@ const sideBar = [
         color: '#8c8c8c',
         icon: <KeyOutlined />,
         url: '/admin/permission',
+        role: 'ADMIN',
+        permissions: ['ADMIN:MANAGE'],
+        roleIcon: <SafetyOutlined />,
+        permissionIcon: <LockOutlined />
+    },
+    {
+        title: 'Employee',
+        color: '#8c2c5d',
+        icon: <UsergroupAddOutlined />,
+        url: '/admin/employee',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,

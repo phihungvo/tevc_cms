@@ -25,6 +25,18 @@ const API_ENDPOINTS = {
     PERMISSION: {
         GET_ALL: `${BASE_URL}/permissions`,
         CREATE: `${BASE_URL}/permissions`,
+    },
+    EMPLOYEE: {
+        GET_ALL: `${BASE_URL}/employees`,
+        CREATE: `${BASE_URL}/employees`,
+    },
+    DEPARTMENT: {
+        GET_ALL: `${BASE_URL}/departments`,
+        CREATE: `${BASE_URL}/departments`,
+    },
+    POSITION: {
+        GET_ALL: `${BASE_URL}/positions`,
+        CREATE: `${BASE_URL}/positions`,
     }
 };
 

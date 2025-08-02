@@ -17,13 +17,13 @@ public class PositionController {
     private final PositionService positionService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('POSITION:CREATE')")
+//    @PreAuthorize("hasAuthority('POSITION:CREATE')")
     public ResponseEntity<PositionDTO> createPosition(@RequestBody PositionDTO positionDTO) {
         return ResponseEntity.ok(positionService.createPosition(positionDTO));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('POSITION:UPDATE')")
+//    @PreAuthorize("hasAuthority('POSITION:UPDATE')")
     public ResponseEntity<PositionDTO> updatePosition(
             @PathVariable UUID id,
             @RequestBody PositionDTO positionDTO) {
@@ -31,13 +31,13 @@ public class PositionController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('POSITION:READ')")
+//    @PreAuthorize("hasAuthority('POSITION:READ')")
     public ResponseEntity<PositionDTO> getPosition(@PathVariable UUID id) {
         return ResponseEntity.ok(positionService.getPosition(id));
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('POSITION:READ')")
+//    @PreAuthorize("hasAuthority('POSITION:READ')")
     public ResponseEntity<Page<PositionDTO>> getAllPositions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
