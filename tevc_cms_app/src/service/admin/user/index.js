@@ -65,7 +65,10 @@ export const createUser = async (formData) => {
             ...formData,
             roles: formData.roles && typeof formData.roles === 'string'
                 ? formData.roles.split(',').map((role) => role.trim())
-                : [], // Gán mảng rỗng nếu roles không tồn tại hoặc không hợp lệ
+                : [],
+            permissions: formData.permissions && typeof formData.permissions === 'string'
+                ? formData.permissions.split(',').map((permission) => permission.trim())
+                : [],
         };
 
         const response = await axios.post(

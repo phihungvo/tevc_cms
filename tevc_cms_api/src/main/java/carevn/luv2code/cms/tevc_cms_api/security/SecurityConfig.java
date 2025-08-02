@@ -39,16 +39,19 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**"
+                                "/api/auth/**",
+                                "/api/roles/**",
+                                "/api/permissions/**"
                         ).permitAll()
 
-                        .requestMatchers("/api/user/createUser").hasAuthority("USER:CREATE")
-                        .requestMatchers("/api/user/getAll").hasAuthority("USER:READ")
+                        .requestMatchers("/api/user/createUser").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
+                        .requestMatchers("/api/user/getAll").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
                         .requestMatchers("/api/user/**/update").hasAuthority("USER:UPDATE")
-                        .requestMatchers("/api/user/**").hasAuthority("USER:DELETE")
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN:MANAGE")
+                        .requestMatchers("/api/user/**").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
+                        .requestMatchers("/api/admin/**").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
                         .requestMatchers("/api/moderator/**").hasAnyAuthority("COMMENT:MODERATE", "ADMIN:MANAGE")
                         .requestMatchers("/api/storage/**").hasAnyAuthority("STORAGE:READ", "STORAGE:WRITE")
+
 
                         .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(request -> {

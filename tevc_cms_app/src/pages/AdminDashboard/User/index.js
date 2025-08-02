@@ -169,6 +169,12 @@ function User() {
             options: ['USER', 'ADMIN', 'MODERATOR'],
         },
         {
+            label: 'Permission',
+            name: 'permissions',
+            type: 'select',
+            options: ['ADMIN:MANAGE', 'ADMIN:CREATE', 'ADMIN:UPDATE', 'ADMIN:READ', 'ADMIN:DELETE'],
+        },
+        {
             label: 'Enable',
             name: 'enabled',
             type: 'yesno',

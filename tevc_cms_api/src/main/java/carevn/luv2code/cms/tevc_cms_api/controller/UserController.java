@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize("hasAuthority('USER:READ')")
+    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<Page<UserDTO>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    @PreAuthorize("hasAuthority('USER:CREATE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<ApiResponse<String>> createUser(@RequestBody UserDTO userDTO) {
         userService.save(userDTO);
         return ResponseEntity.ok(ApiResponse.<String>builder()
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/update")
-    @PreAuthorize("hasAuthority('USER:UPDATE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<ApiResponse<String>> updateUser(@PathVariable UUID userId, @RequestBody UserUpdateRequest request) {
         userService.updateUser(userId, request);
         return ResponseEntity.ok(ApiResponse.<String>builder()

@@ -68,13 +68,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(employeeMapper::toDTO);
     }
 
-    @Override
-    public Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return employeeRepository.findAll(pageRequest)
-                .map(employeeMapper::toDTO)
-                .filter(dto -> departmentId.equals(dto.getDepartmentId()));
-    }
+//    @Override
+//    public Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size) {
+//        PageRequest pageRequest = PageRequest.of(page, size);
+//        return employeeRepository.findAll(pageRequest)
+//                .map(employeeMapper::toDTO)
+//                .filter(dto -> departmentId.equals(dto.getDepartmentId()));
+//    }
 
     @Override
     @Transactional
@@ -84,7 +84,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         
         // Check if employee is a department manager
         if (!employee.getManagedDepartments().isEmpty()) {
-            throw new AppException("Cannot delete employee who is managing departments");
+            throw new AppException(ErrorCode.DEPARTMENT_HAS_EMPLOYEES);
         }
         
         employeeRepository.delete(employee);

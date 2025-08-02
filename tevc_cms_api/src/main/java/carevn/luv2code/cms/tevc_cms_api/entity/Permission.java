@@ -27,6 +27,9 @@ public class Permission {
     @Column(unique = false)
     String action;
 
+    @Column(nullable = true)
+    String description;
+
     @ManyToMany(mappedBy = "permissions")
     Set<Role> roles;
 

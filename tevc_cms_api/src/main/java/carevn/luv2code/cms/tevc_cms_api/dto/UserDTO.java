@@ -14,7 +14,6 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
-    UUID id;
 
     String userName;
 
@@ -33,10 +32,6 @@ public class UserDTO {
     String profilePicture;
 
     String bio;
-
-    Date createAt;
-
-    Date updateAt;
 
     boolean enabled;
 

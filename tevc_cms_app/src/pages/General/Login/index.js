@@ -22,54 +22,42 @@ function Login() {
             const token = await login(values.email, values.password);
 
             if (!token) {
-                message.error('Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.');
+                message.error('Login failed. Please check your credentials.');
                 return;
             }
 
             localStorage.setItem('token', token);
-
             const decodedToken = jwtDecode(token);
+            
+            const permissions = decodedToken.permissions || [];
+            const roles = decodedToken.roles || [];
+            const isAdmin = roles.includes('ADMIN') || permissions.includes('ADMIN:MANAGE');
 
-            const roles = decodedToken.role || [];
-            const userId = decodedToken.userId;
-            const isAdmin = roles.includes('ADMIN');
-            const username = decodedToken.username || decodedToken.sub || 'Unknown';
-            const email = decodedToken.sub;
+            // Store necessary info
+            localStorage.setItem('role', isAdmin ? 'ADMIN' : 'USER');
+            localStorage.setItem('permissions', JSON.stringify(permissions));
 
-            localStorage.setItem('role', isAdmin ? 'admin' : 'user');
-            // localStorage.setItem('userId', userId);
-
-            // Cập nhật thông tin vào context
             authLogin({
                 token,
-                role: isAdmin ? 'admin' : 'user',
-                roles: roles,
-                userId: userId,
-                username: username, 
-                email: email
+                role: isAdmin ? 'ADMIN' : 'USER',
+                permissions,
+                roles,
+                userId: decodedToken.userId,
+                username: decodedToken.username,
+                email: decodedToken.email
             });
 
-            message.success('Đăng nhập thành công!');
+            message.success('Login successful!');
             
+            // Redirect based on role/permissions
             if (isAdmin) {
                 navigate('/admin/dashboard');
             } else {
                 navigate('/');
             }
         } catch (error) {
-            console.error('Lỗi:', error);
-
-            let errorMsg = 'Có lỗi xảy ra khi đăng nhập.';
-
-            if (error.response) {
-                if (error.response.status === 403) {
-                    errorMsg = 'Không có quyền truy cập. Vui lòng kiểm tra lại thông tin đăng nhập.';
-                } else if (error.response.data && error.response.data.message) {
-                    errorMsg = error.response.data.message;
-                }
-            }
-
-            message.error(errorMsg);
+            console.error('Error:', error);
+            message.error('Login failed. Please try again.');
         } finally {
             setLoading(false);
         }

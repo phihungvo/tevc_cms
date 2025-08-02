@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-function NavItem({ title, color, icon, children, url = '' }) {
+function NavItem({ title, color, icon, children, url = '', roleIcon, permissionIcon }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const navigate = useNavigate();
@@ -27,6 +27,10 @@ function NavItem({ title, color, icon, children, url = '' }) {
                 </div>
                 <div className={cx('title')}>
                     <p>{title}</p>
+                </div>
+                <div className={cx('permission-icons')}>
+                    {roleIcon && <span className={cx('icon', 'role')}>{roleIcon}</span>}
+                    {permissionIcon && <span className={cx('icon', 'permission')}>{permissionIcon}</span>}
                 </div>
                 {children && (
                     <div className={cx('arrow')}>

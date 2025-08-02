@@ -18,6 +18,14 @@ const API_ENDPOINTS = {
         CREATE: `${BASE_URL}/user/createUser`,
         UPDATE: (userId) => `${BASE_URL}/user/${userId}/update`,
     },
+    ROLE: {
+        GET_ALL: `${BASE_URL}/roles`,
+        CREATE: `${BASE_URL}/roles`,
+    },
+    PERMISSION: {
+        GET_ALL: `${BASE_URL}/permissions`,
+        CREATE: `${BASE_URL}/permissions`,
+    }
 };
 
 export default API_ENDPOINTS;
