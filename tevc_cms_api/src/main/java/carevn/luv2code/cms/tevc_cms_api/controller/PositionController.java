@@ -1,0 +1,53 @@
+package carevn.luv2code.cms.tevc_cms_api.controller;
+
+import carevn.luv2code.cms.tevc_cms_api.dto.PositionDTO;
+import carevn.luv2code.cms.tevc_cms_api.service.PositionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/positions")
+@RequiredArgsConstructor
+public class PositionController {
+    private final PositionService positionService;
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('POSITION:CREATE')")
+    public ResponseEntity<PositionDTO> createPosition(@RequestBody PositionDTO positionDTO) {
+        return ResponseEntity.ok(positionService.createPosition(positionDTO));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('POSITION:UPDATE')")
+    public ResponseEntity<PositionDTO> updatePosition(
+            @PathVariable UUID id,
+            @RequestBody PositionDTO positionDTO) {
+        return ResponseEntity.ok(positionService.updatePosition(id, positionDTO));
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('POSITION:READ')")
+    public ResponseEntity<PositionDTO> getPosition(@PathVariable UUID id) {
+        return ResponseEntity.ok(positionService.getPosition(id));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('POSITION:READ')")
+    public ResponseEntity<Page<PositionDTO>> getAllPositions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(positionService.getAllPositions(page, size));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('POSITION:DELETE')")
+    public ResponseEntity<Void> deletePosition(@PathVariable UUID id) {
+        positionService.deletePosition(id);
+        return ResponseEntity.ok().build();
+    }
+}
