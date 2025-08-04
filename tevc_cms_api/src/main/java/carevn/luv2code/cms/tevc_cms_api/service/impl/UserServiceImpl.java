@@ -130,7 +130,16 @@ public class UserServiceImpl implements UserService {
     public List<String> getUserPermissions(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        return user.getPermissions().stream()
+                
+        // Get direct permissions
+        Set<Permission> allPermissions = new HashSet<>(user.getPermissions());
+        
+        // Add permissions from roles
+        user.getRoles().forEach(role -> {
+            allPermissions.addAll(role.getPermissions());
+        });
+        
+        return allPermissions.stream()
                 .map(p -> p.getResource() + ":" + p.getAction())
                 .collect(Collectors.toList());
     }
@@ -164,7 +173,6 @@ public class UserServiceImpl implements UserService {
 
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
         dto.setUserName(user.getUserName());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
@@ -173,8 +181,6 @@ public class UserServiceImpl implements UserService {
         dto.setBio(user.getBio());
         dto.setAddress(user.getAddress());
         dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setCreateAt(user.getCreateAt());
-        dto.setUpdateAt(user.getUpdateAt());
         dto.setEnabled(user.isEnabled());
         dto.setProfilePicture(user.getProfilePicture());
 

@@ -11,8 +11,12 @@ import java.util.UUID;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, UUID> {
+
+    boolean existsByName(String name);
+
     Optional<Role> findByName(String name);
 
     @Query("SELECT r FROM Role r WHERE r.name = :name")
     Optional<Role> findByNameForUpdate(@Param("name") String name);
+
 }
