@@ -4,6 +4,10 @@ import Register from '../pages/General/Register';
 import User from '~/pages/AdminDashboard/User';
 import Role from '~/pages/AdminDashboard/Role';
 import Permission from '~/pages/AdminDashboard/Permission';
+import Employee from '~/pages/AdminDashboard/Employee';
+import Department from '~/pages/AdminDashboard/Department';
+import Position from '~/pages/AdminDashboard/Position';
+import Leave from '~/pages/AdminDashboard/Leave';
 import RootRedirect from '~/components/RootRedirect';
 
 const publicRoutes = [
@@ -34,6 +38,30 @@ const privateRoutes = [
         path: '/admin/permission',
         component: Permission,
         title: 'Permission Management',
+        role: 'admin',
+    },
+    {
+        path: '/admin/employee',
+        component: Employee,
+        title: 'Employee Management',
+        role: 'admin',
+    },
+    {
+        path: '/admin/department',
+        component: Department,
+        title: 'Department Management',
+        role: 'admin',
+    },
+    {
+        path: '/admin/position',
+        component: Position,
+        title: 'Position Management',
+        role: 'admin',
+    },
+    {
+        path: '/admin/leave',
+        component: Leave,
+        title: 'Leave Management',
         role: 'admin',
     },
     {

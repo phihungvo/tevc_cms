@@ -41,7 +41,12 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/roles/**",
-                                "/api/permissions/**"
+                                "/api/permissions/**",
+                                "/api/employees/**",
+                                "/api/employees/position-type",
+                                "/api/positions/**",
+                                "/api/departments/**",
+                                "/api/leaves/**"
                         ).permitAll()
 
                         .requestMatchers("/api/user/createUser").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")

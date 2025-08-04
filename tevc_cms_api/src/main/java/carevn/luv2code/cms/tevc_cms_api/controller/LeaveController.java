@@ -31,7 +31,7 @@ public class LeaveController {
     private final LeaveService leaveService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('LEAVE:CREATE')")
+//    @PreAuthorize("hasAuthority('LEAVE:CREATE')")
     public ResponseEntity<LeaveDTO> createLeave(@RequestBody LeaveDTO leaveDTO) {
         return ResponseEntity.ok(leaveService.createLeave(leaveDTO));
     }
@@ -51,7 +51,7 @@ public class LeaveController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('LEAVE:READ')")
+//    @PreAuthorize("hasAuthority('LEAVE:READ')")
     public ResponseEntity<Page<LeaveDTO>> getAllLeaves(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

@@ -42,7 +42,7 @@ function User() {
             fixed: 'left',
         },
         {
-            title: 'email',
+            title: 'Email',
             dataIndex: 'email',
             key: 'email',
             width: 150,
@@ -52,6 +52,20 @@ function User() {
             dataIndex: 'roles',
             key: 'roles',
             width: 100,
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            key: 'address',
+            width: 150,
+            render: (add) => (add ? add : 'Viet Nam'),
+        },
+        {
+            title: 'Phone Number',
+            dataIndex: 'phoneNumber',
+            key: 'phoneNumber',
+            width: 200,
+            render: (phone) => (phone ? phone : 'N/A'),
         },
         {
             title: 'Enable',
@@ -81,22 +95,9 @@ function User() {
                 date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            width: 150,
-            render: (add) => (add ? add : 'Viet Nam'),
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phoneNumber',
-            key: 'phoneNumber',
-            width: 200,
-            render: (phone) => (phone ? phone : 'N/A'),
-        },
-        {
             title: 'Actions',
             fixed: 'right',
+            width: 160,
             render: (_, record) => (
                 <>
                     <SmartButton

@@ -2,6 +2,7 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.PositionDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Position;
+import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.PositionMapper;
@@ -13,7 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +58,11 @@ public class PositionServiceImpl implements PositionService {
         PageRequest pageRequest = PageRequest.of(page, size);
         return positionRepository.findAll(pageRequest)
                 .map(positionMapper::toDTO);
+    }
+
+    @Override
+    public List<PositionDTO> getPositionsByType(PositionType type) {
+        return List.of();
     }
 
     @Override

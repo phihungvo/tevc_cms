@@ -25,6 +25,26 @@ const API_ENDPOINTS = {
     PERMISSION: {
         GET_ALL: `${BASE_URL}/permissions`,
         CREATE: `${BASE_URL}/permissions`,
+    },
+    EMPLOYEE: {
+        GET_ALL: `${BASE_URL}/employees`,
+        CREATE: `${BASE_URL}/employees`,
+    },
+    DEPARTMENT: {
+        GET_ALL: `${BASE_URL}/departments`,
+        CREATE: `${BASE_URL}/departments`,
+    },
+    POSITION: {
+        GET_ALL: `${BASE_URL}/positions`,
+        CREATE: `${BASE_URL}/positions`,
+        GET_BY_TITLE: `${BASE_URL}/positions/getPositionsByTitle`,
+    },
+    LEAVE: {
+        GET_ALL: `${BASE_URL}/leaves`,
+        CREATE: `${BASE_URL}/leaves`,
+        APPROVE: (leaveId) => `${BASE_URL}/leaves/${leaveId}/approve`,
+        REJECT: (leaveId) => `${BASE_URL}/leaves/${leaveId}/reject`,
+        UPDATE: (leaveId) => `${BASE_URL}/leaves/${leaveId}`,
     }
 };
 

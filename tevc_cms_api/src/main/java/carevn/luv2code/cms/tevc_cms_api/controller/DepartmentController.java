@@ -17,7 +17,7 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('DEPARTMENT:CREATE')")
+//    @PreAuthorize("hasAuthority('DEPARTMENT:CREATE')")
     public ResponseEntity<DepartmentDTO> createDepartment(@RequestBody DepartmentDTO departmentDTO) {
         return ResponseEntity.ok(departmentService.createDepartment(departmentDTO));
     }
@@ -34,6 +34,14 @@ public class DepartmentController {
     @PreAuthorize("hasAuthority('DEPARTMENT:READ')")
     public ResponseEntity<DepartmentDTO> getDepartment(@PathVariable UUID id) {
         return ResponseEntity.ok(departmentService.getDepartment(id));
+    }
+
+    @GetMapping
+//    @PreAuthorize("hasAuthority('DEPARTMENT:READ')")
+    public ResponseEntity<Page<DepartmentDTO>> getAllDepartments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(departmentService.getAllDepartments(page, size));
     }
 
     @DeleteMapping("/{id}")

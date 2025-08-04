@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.mapper;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.LeaveDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.entity.Leave;
 import org.mapstruct.*;
 
