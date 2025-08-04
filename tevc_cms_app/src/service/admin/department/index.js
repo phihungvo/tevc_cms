@@ -21,10 +21,10 @@ export const getAllDepartments = async ({ page = 0, pageSize = 5 }) => {
     }
 };
 
-export const createEmployee = async (formData) => {
+export const createDepartment = async (formData) => {
     try {
         const response = await axios.post(
-            API_ENDPOINTS.EMPLOYEE.CREATE,   
+            API_ENDPOINTS.DEPARTMENT.CREATE,   
             formData, 
         );
         message.success('Departments created successfully');

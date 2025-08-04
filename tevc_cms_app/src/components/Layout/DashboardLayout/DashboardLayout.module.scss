@@ -1,24 +1,117 @@
 .wrapper {
     display: flex;
     min-height: 100vh;
-    background-color: #ffffff;
+    background-color: #f0f2f5; /* Màu nền nhẹ, phù hợp với HRM */
+}
+
+.side-bar {
+    width: 15%; /* Chiếm 15% chiều rộng */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #001529; /* Màu nền tối, chuyên nghiệp */
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+
+    &.collapsed {
+        width: 5%; /* Thu gọn còn 5% */
+    }
+}
+
+.sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden; /* Tắt thanh cuộn */
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.05); /* Nền logo nhẹ hơn */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .logo {
+        width: 36px;
+        height: 36px;
+        img { width: 100%; }
+    }
+
+    .logo-text {
+        margin-left: 12px;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        opacity: 1;
+        transition: opacity 0.3s;
+        white-space: nowrap;
+    }
+
+    &.collapsed .logo-text {
+        opacity: 0;
+        width: 0;
+    }
+}
+
+.sidebar-menu {
+    flex: 1;
+    margin: 16px 8px; /* Giảm margin để gọn gàng hơn */
+    overflow: hidden; /* Tắt thanh cuộn */
+
+    a {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        color: rgba(255, 255, 255, 0.85); /* Màu chữ nhạt hơn cho sự tinh tế */
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        &.active {
+            background: #1890ff; /* Màu xanh khi active */
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .anticon {
+            font-size: 18px;
+            margin-right: 12px;
+        }
+    }
 }
 
 .right-container {
     flex: 1;
-    width: calc(100% - 260px);
+    margin-left: 15%; /* Đẩy sang phải để không bị đè */
+    width: 85%; /* Chiếm 85% */
     color: #000000;
     transition: all 0.3s ease;
+    background: #f0f2f5; /* Phù hợp với nền wrapper */
 
     &.collapsed {
-        width: calc(100% - 80px);
+        margin-left: 5%;
+        width: 95%;
     }
 }
 
 .content {
+    margin: 16px;
     min-height: 280px;
     background-color: #ffffff;
-    border-radius: 4px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-    padding: 0 16px;
+    border-radius: 8px; /* Bo góc lớn hơn */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); /* Bóng nhẹ hơn */
+    padding: 24px; /* Tăng padding cho nội dung */
 }

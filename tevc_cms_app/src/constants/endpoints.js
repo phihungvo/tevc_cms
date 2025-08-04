@@ -37,6 +37,14 @@ const API_ENDPOINTS = {
     POSITION: {
         GET_ALL: `${BASE_URL}/positions`,
         CREATE: `${BASE_URL}/positions`,
+        GET_BY_TITLE: `${BASE_URL}/positions/getPositionsByTitle`,
+    },
+    LEAVE: {
+        GET_ALL: `${BASE_URL}/leaves`,
+        CREATE: `${BASE_URL}/leaves`,
+        APPROVE: (leaveId) => `${BASE_URL}/leaves/${leaveId}/approve`,
+        REJECT: (leaveId) => `${BASE_URL}/leaves/${leaveId}/reject`,
+        UPDATE: (leaveId) => `${BASE_URL}/leaves/${leaveId}`,
     }
 };
 

@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
+import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 import carevn.luv2code.cms.tevc_cms_api.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -56,5 +58,12 @@ public class EmployeeController {
 //    @PreAuthorize("hasAuthority('EMPLOYEE:UPDATE')")
     public ResponseEntity<Boolean> toggleEmployeeStatus(@PathVariable UUID id) {
         return ResponseEntity.ok(employeeService.toggleEmployeeStatus(id));
+    }
+
+    @GetMapping("/position-type")
+    public ResponseEntity<List<EmployeeDTO>> getEmployeesByPositionType(@RequestParam String type) {
+        PositionType positionType = PositionType.valueOf(type.toUpperCase());
+        List<EmployeeDTO> employees = employeeService.getEmployeesByPositionType(positionType);
+        return ResponseEntity.ok(employees);
     }
 }

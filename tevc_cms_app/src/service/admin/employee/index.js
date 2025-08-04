@@ -14,6 +14,7 @@ export const getAllEmployees = async ({ page = 0, pageSize = 5 }) => {
             },
         });
         
+        console.log('dddd: ', response.data)
         return response.data;
     } catch (error) {
         message.error('Error get all employees: ');

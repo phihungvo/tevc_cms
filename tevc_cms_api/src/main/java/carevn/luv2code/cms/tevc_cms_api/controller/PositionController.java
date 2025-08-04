@@ -4,10 +4,12 @@ import carevn.luv2code.cms.tevc_cms_api.dto.PositionDTO;
 import carevn.luv2code.cms.tevc_cms_api.service.PositionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -50,4 +52,10 @@ public class PositionController {
         positionService.deletePosition(id);
         return ResponseEntity.ok().build();
     }
+
+//    @GetMapping("/getPositionsByTitle")
+////    @PreAuthorize("hasAuthority('POSITION:READ')")
+//    public ResponseEntity<List<PositionDTO>> getPositionByTitle(@RequestParam("title") String title) {
+//        return ResponseEntity.ok(positionService.getPositionByTitle(title));
+//    }
 }

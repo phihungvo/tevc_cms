@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
-import styles from '~/pages/AdminDashboard/Employee/Employee.module.scss';
+import styles from '~/pages/AdminDashboard/Department/Department.module.scss';
 import { useState, useEffect } from 'react';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
@@ -16,16 +16,14 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllEmployees, createEmployee } from '~/service/admin/employee';
-import { getAllDepartments } from '~/service/admin/department';
-import {  getAllPositions } from '~/service/admin/position';
+import { getAllDepartments, createDepartment } from '~/service/admin/department';
+import { getAllByTitle } from '~/service/admin/position';
 
 const cx = classNames.bind(styles);
 
 function User() {
-    const [employeeSource, setEmployeeSource] = useState([]);
-    const [departmentOptions, setDepartmentOptions] = useState([]);
-    const [positionOptions, setPositionOptions] = useState([]);
+    const [employeeSource, setDepartmentSource] = useState([]);
+    const [managerPositionSource, setManagerPositionSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
@@ -39,75 +37,21 @@ function User() {
 
     const columns = [
         {
-            title: 'Employee Code',
-            dataIndex: 'employeeCode',
-            key: 'employeeCode',
+            title: 'Department Name',
+            dataIndex: 'name',
+            key: 'name',
             width: 150,
             fixed: 'left',
         },
         {
-            title: 'First Name',
-            dataIndex: 'firstName',
-            key: 'firstName',
-            width: 150,
-        },
-        {
-            title: 'Last Name',
-            dataIndex: 'lastName',
-            key: 'lastName',
-            width: 150,
-        },
-        {
-            title: 'Date of Birth',
-            dataIndex: 'dateOfBirth',
-            key: 'dateOfBirth',
-            width: 150,
-            render: (date) =>
-                date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
-        },
-        {
-            title: 'Gender',
-            dataIndex: 'gender',
-            key: 'gender',
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-        },
-        {
-            title: 'Phone',
-            dataIndex: 'phone',
-            key: 'phone',
-        },
-        {
-            title: 'Hire Date',
-            dataIndex: 'hireDate',
-            key: 'hireDate',
-            render: (date) =>
-                date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
-        },
-        {
-            title: 'Is Active',
-            dataIndex: 'isActive',
-            key: 'isActive',
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
         },
         {
             title: 'Created At',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            render: (date) =>
-                date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
-        },
-        {
-            title: 'Updated At',
-            dataIndex: 'updatedAt',
-            key: 'updatedAt',
             render: (date) =>
                 date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
         },
@@ -139,115 +83,60 @@ function User() {
 
     const userModalFields = [
         {
-            label: 'Employee Code',
+            label: 'Department Name',
             name: 'employeeCode',
             type: 'text',
             rules: [{ required: true, message: 'Employee Code is required!' }],
         },
         {
-            label: 'First Name',
-            name: 'firstName',
+            label: 'Description',
+            name: 'description',
             type: 'text',
         },
+       
         {
-            label: 'Last Name',
-            name: 'lastName',
-            type: 'text',
-        },
-        {
-            label: 'Date of Birth',
-            name: 'dateOfBirth',
-            type: 'date',
-        },
-        {
-            label: 'Gender',
-            name: 'gender',
+            label: 'Manager',
+            name: 'managerId',
             type: 'select',
-            options: ['Male', 'Female', 'Other'],
+            options: managerPositionSource,
         },
         {
-            label: 'Email',
-            name: 'email',
-            type: 'text',
-            rules: [{ required: true, message: 'Email is required!' }],
-        },
-        {
-            label: 'Phone',
-            name: 'phone',
-            type: 'text',
-        },
-        {
-            label: 'Address',
-            name: 'address',
-            type: 'text',
-        },
-        {
-            label: 'Hire Date',
-            name: 'hireDate',
-            type: 'date',
-        },
-        {
-            label: 'Department',
-            name: 'departmentId',
-            type: 'select',
-            options: departmentOptions, // Sử dụng state trực tiếp
-            rules: [{ required: true, message: 'Department is required!' }],
-        },
-        {
-            label: 'Position',
-            name: 'positionId',
-            type: 'select',
-            options: positionOptions, // Sử dụng state trực tiếp
-            rules: [{ required: true, message: 'Position is required!' }],
-        },
-        {
-            label: 'Active',
-            name: 'isActive',
-            type: 'yesno',
+            label: 'Number of Employee',
+            name: 'employeeCount',
+            type: 'number',
         },
     ];
 
-    const fetchDepartmentAndPositionOptions = async () => {
-        try {
-            // Fetch departments
-            const deptResponse = await getAllDepartments({ page: 0, pageSize: 100 });
-            if (deptResponse && Array.isArray(deptResponse.content)) {
-                const departments = deptResponse.content.map(dept => ({
-                    label: dept.name, 
-                    value: dept.id,
-                }));
-                setDepartmentOptions(departments);
-            }
+    useEffect(() => {
+        handleGetManagerPosition('manager');
+        handleGetAllDepartments();
+    }, []);
 
-            // Fetch positions
-            const posResponse = await getAllPositions({ page: 0, pageSize: 100 });
-            if (posResponse && Array.isArray(posResponse.content)) {
-                const positions = posResponse.content.map(pos => ({
-                    label: pos.title, // Hoặc pos.positionTitle tùy API
-                    value: pos.id,
-                }));
-                setPositionOptions(positions);
-            }
+    const handleGetManagerPosition = async (title) => {
+        try {
+            const response = await getAllByTitle(title);
+            const mappedPosition = response.map(position => ({
+                value: position.id, // Giả sử id là UUID của vị trí
+                label: position.title, // Hiển thị title trong select
+            }));
+            setManagerPositionSource(mappedPosition);
+            console.log('Manager position:', mappedPosition);
         } catch (error) {
-            console.error('Error fetching options:', error);
+            console.error('Error fetching manager positions:', error);
+            setManagerPositionSource([]);
         }
     };
 
-    useEffect(() => {
-        fetchDepartmentAndPositionOptions();
-        handleGetAllEmployees();
-    }, []);
-
-    const handleGetAllEmployees = async (page = 1, pageSize = 5) => {
+    const handleGetAllDepartments = async (page = 1, pageSize = 5) => {
         setLoading(true);
         try {
-            const response = await getAllEmployees({ page: page - 1, pageSize });
+            const response = await getAllDepartments({ page: page - 1, pageSize });
             if (response && Array.isArray(response.content)) {
-                const mappedEmployees = response.content.map(employee => ({
+                const mappedDepartments = response.content.map(employee => ({
                     ...employee,
                     isActive: employee.active,
                 }));
-                setEmployeeSource(mappedEmployees);
+                setDepartmentSource(mappedDepartments);
                 setPagination({
                     current: page,
                     pageSize: pageSize,
@@ -255,11 +144,11 @@ function User() {
                 });
             } else {
                 console.error('Invalid data format:', response);
-                setEmployeeSource([]);
+                setDepartmentSource([]);
             }
         } catch (error) {
             console.error('Error fetching employees:', error);
-            setEmployeeSource([]);
+            setDepartmentSource([]);
         } finally {
             setLoading(false);
         }
@@ -274,9 +163,9 @@ function User() {
 
     const handleCallCreatePermission = async (formData) => {
         try {
-            await createEmployee(formData); // Giả định createEmployee nhận formData
+            await createDepartment(formData); 
             message.success('Employee created successfully!');
-            handleGetAllEmployees();
+            handleGetAllDepartments();
             setIsModalOpen(false);
         } catch (error) {
             message.error(`Error creating employee: ${error.response?.data?.message || error.message}`);
@@ -299,7 +188,7 @@ function User() {
     };
 
     const handleTableChange = (pagination) => {
-        handleGetAllEmployees(pagination.current, pagination.pageSize);
+        handleGetAllDepartments(pagination.current, pagination.pageSize);
     };
 
     const getModalTitle = () => {
