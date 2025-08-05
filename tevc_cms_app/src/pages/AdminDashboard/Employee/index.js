@@ -37,6 +37,11 @@ function User() {
     const [selectedRole, setSelectedRole] = useState(null);
     const [form] = Form.useForm();
 
+    const genderStyles = {
+        Male: { color: 'processing', label: 'Male' }, 
+        Female: { color: 'error', label: 'Female' },
+    };
+
     const columns = [
         {
             title: 'Employee Code',
@@ -69,6 +74,11 @@ function User() {
             title: 'Gender',
             dataIndex: 'gender',
             key: 'gender',
+            width: 100,
+            render: (gender) => {
+                const style = genderStyles[gender] || { color: 'default', label: gender || 'N/A' };
+                return <Tag color={style.color}>{style.label}</Tag>;
+            },
         },
         {
             title: 'Email',
@@ -220,7 +230,7 @@ function User() {
             }
 
             // Fetch positions
-            const posResponse = await getAllPositions({ page: 0, pageSize: 100 });
+            const posResponse = await getAllPositions();
             if (posResponse && Array.isArray(posResponse.content)) {
                 const positions = posResponse.content.map(pos => ({
                     label: pos.title, // Hoặc pos.positionTitle tùy API

@@ -110,6 +110,16 @@ const sideBar = [
         permissionIcon: <LockOutlined />
     },
     {
+        title: 'PayRoll',
+        color: '#d4a017', // Tím nhạt
+        icon: <DollarOutlined />, // Icon tiền lương
+        url: '/admin/payroll',
+        role: 'ADMIN',
+        permissions: ['ADMIN:MANAGE'],
+        roleIcon: <SafetyOutlined />,
+        permissionIcon: <LockOutlined />
+    },
+    {
         title: 'Attendance',
         color: '#26a69a', // Tím nhạt
         icon: <ClockCircleOutlined />, // Icon đồng hồ cho chấm công
@@ -154,16 +164,6 @@ const sideBar = [
         color: '#29b6f6', // Tím nhạt
         icon: <CalendarOutlined />, // Icon lịch cho bảng chấm công
         url: '/admin/timesheet',
-        role: 'ADMIN',
-        permissions: ['ADMIN:MANAGE'],
-        roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
-    },
-    {
-        title: 'PayRoll',
-        color: '#d4a017', // Tím nhạt
-        icon: <DollarOutlined />, // Icon tiền lương
-        url: '/admin/payroll',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,

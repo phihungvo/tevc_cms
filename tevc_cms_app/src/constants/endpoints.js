@@ -29,6 +29,7 @@ const API_ENDPOINTS = {
     EMPLOYEE: {
         GET_ALL: `${BASE_URL}/employees`,
         CREATE: `${BASE_URL}/employees`,
+        GET_EMPLOYEE_BY_POSITION_TYPE: `${BASE_URL}/employees/position-type`,
     },
     DEPARTMENT: {
         GET_ALL: `${BASE_URL}/departments`,
@@ -45,6 +46,12 @@ const API_ENDPOINTS = {
         APPROVE: (leaveId) => `${BASE_URL}/leaves/${leaveId}/approve`,
         REJECT: (leaveId) => `${BASE_URL}/leaves/${leaveId}/reject`,
         UPDATE: (leaveId) => `${BASE_URL}/leaves/${leaveId}`,
+    },
+    PAYROLL: {
+        GET_ALL: `${BASE_URL}/payrolls`,
+        CREATE: `${BASE_URL}/payrolls`,
+        CALCULATE: (employeeId) => `${BASE_URL}/payrolls/calculate/${employeeId}`,
+        PROCESS: `${BASE_URL}/payrolls/process`,
     }
 };
 
