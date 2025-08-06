@@ -21,3 +21,10 @@ npm start
 
 # Optional: stop backend when frontend ends
 kill $BACKEND_PID
+
+#!/bin/bash
+docker run --rm -v "$PWD":/app -w /app node:18 bash -c "npm install && npm run build"
+
+# RUN
+# chmod +x run.sh
+# ./run.sh
