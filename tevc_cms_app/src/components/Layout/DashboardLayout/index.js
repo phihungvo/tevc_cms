@@ -31,164 +31,164 @@ const cx = classNames.bind(styles);
 const sideBar = [
     {
         title: 'Dashboard',
-        color: '#40c4ff', // Xanh dương sáng
+        color: '#40c4ff', 
         icon: <HomeOutlined />,
         url: '/admin/dashboard',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'User',
-        color: '#90a4ae', // Xám xanh nhạt
+        color: '#1890ff', 
         icon: <TeamOutlined />,
         url: '/admin/user',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Role',
-        color: '#90a4ae', // Xám xanh nhạt
+        color: '#52c41a',
         icon: <KeyOutlined />,
         url: '/admin/role',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Permission',
-        color: '#90a4ae', // Xám xanh nhạt
+        color: '#faad14',
         icon: <LockOutlined />,
         url: '/admin/permission',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Employee',
-        color: '#ab47bc', // Tím nhạt
+        color: '#ab47bc', 
         icon: <UsergroupAddOutlined />,
         url: '/admin/employee',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Department',
-        color: '#ec407a', // Tím nhạt
+        color: '#ec407a',
         icon: <ApartmentOutlined />,
         url: '/admin/department',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Position',
-        color: '#7e57c2', // Tím nhạt
+        color: '#7e57c2', 
         icon: <SolutionOutlined />,
         url: '/admin/position',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Leave',
-        color: '#ff7043', // Tím nhạt
-        icon: <CoffeeOutlined />, // Icon nghỉ phép
+        color: '#ff7043', 
+        icon: <CoffeeOutlined />, 
         url: '/admin/leave',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'PayRoll',
-        color: '#d4a017', // Tím nhạt
-        icon: <DollarOutlined />, // Icon tiền lương
+        color: '#d4a017', 
+        icon: <DollarOutlined />, 
         url: '/admin/payroll',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Attendance',
-        color: '#26a69a', // Tím nhạt
-        icon: <ClockCircleOutlined />, // Icon đồng hồ cho chấm công
+        color: '#26a69a',
+        icon: <ClockCircleOutlined />, 
         url: '/admin/attendance',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Performance',
-        color: '#ffa726', // Tím nhạt
-        icon: <BarChartOutlined />, // Icon biểu đồ cho hiệu suất
+        color: '#ffa726', 
+        icon: <BarChartOutlined />, 
         url: '/admin/performance',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Training',
-        color: '#66bb6a', // Tím nhạt
-        icon: <BookOutlined />, // Icon sách cho đào tạo
+        color: '#66bb6a', 
+        icon: <BookOutlined />,
         url: '/admin/training',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Project',
-        color: '#ef5350', // Tím nhạt
-        icon: <ProjectOutlined />, // Icon dự án
+        color: '#ef5350',
+        icon: <ProjectOutlined />, 
         url: '/admin/project',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'TimeSheet',
-        color: '#29b6f6', // Tím nhạt
-        icon: <CalendarOutlined />, // Icon lịch cho bảng chấm công
+        color: '#29b6f6',
+        icon: <CalendarOutlined />, 
         url: '/admin/timesheet',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,
-        permissionIcon: <LockOutlined />
+        permissionIcon: <LockOutlined />,
     },
     {
         title: 'Notifications',
-        color: '#ff4d4f', // Đỏ nhạt
+        color: '#ff4d4f', 
         icon: <BellOutlined />,
         role: 'USER',
-        permissions: ['USER:READ']
+        permissions: ['USER:READ'],
     },
     {
         title: 'Setting',
-        color: '#3f51b5', // Xanh tím đậm
+        color: '#3f51b5', 
         icon: <SettingFilled />,
         role: 'ADMIN',
-        permissions: ['ADMIN:MANAGE']
+        permissions: ['ADMIN:MANAGE'],
     },
     {
         title: 'Store',
-        color: '#ffab00', // Vàng cam
+        color: '#ffab00',
         icon: <ShopOutlined />,
         role: 'USER',
-        permissions: ['USER:READ']
+        permissions: ['USER:READ'],
     },
 ];
 

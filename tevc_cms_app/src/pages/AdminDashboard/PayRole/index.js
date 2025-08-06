@@ -136,7 +136,7 @@ function User() {
         {
             title: 'Actions',
             fixed: 'right',
-            width: 200,
+            width: 180,
             render: (_, record) => (
                 <>
                     <SmartButton

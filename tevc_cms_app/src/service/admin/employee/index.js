@@ -4,7 +4,7 @@ import { getToken } from '~/constants/token';
 import { message } from 'antd';
 
 
-export const getAllEmployees = async ({ page = 0, pageSize = 5 }) => {
+export const getAllEmployees = async ({ page = 0, pageSize = 10 }) => {
     try {
         const response = await axios.get(API_ENDPOINTS.EMPLOYEE.GET_ALL, {
             params: { page, pageSize },

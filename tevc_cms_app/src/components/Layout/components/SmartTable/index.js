@@ -35,7 +35,7 @@ function SmartTable({
                 pagination={{
                     ...pagination,
                     showSizeChanger: true,
-                    pageSizeOptions: ['5', '10', '20'],
+                    pageSizeOptions: ['5', '10'],
                 }}
                 onChange={onTableChange}
                 scroll={{ x: 'max-content' }}

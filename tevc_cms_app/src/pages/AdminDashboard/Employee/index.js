@@ -124,7 +124,7 @@ function User() {
         {
             title: 'Actions',
             fixed: 'right',
-            width: 250,
+            width: 180,
             render: (_, record) => (
                 <>
                     <SmartButton
@@ -248,7 +248,7 @@ function User() {
         handleGetAllEmployees();
     }, []);
 
-    const handleGetAllEmployees = async (page = 1, pageSize = 5) => {
+    const handleGetAllEmployees = async (page = 1, pageSize = 100) => {
         setLoading(true);
         try {
             const response = await getAllEmployees({ page: page - 1, pageSize });
