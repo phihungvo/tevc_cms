@@ -142,7 +142,6 @@ function PopupModal({
                 : values;
 
             await onSubmit(finalValues);
-            console.log('Final form value: ', finalValues);
 
             setIsModalOpen(false);
         } catch (error) {

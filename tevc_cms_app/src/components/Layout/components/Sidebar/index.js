@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './Sidebar.module.scss';
 import logo from '../../../../assets/images/logo.png';
 import NavItem from '../NavItem';
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
 
@@ -20,7 +20,7 @@ function Sidebar({ hiddenLogo = false, dataSource, collapsed = false, onCollapse
                 )}
 
                 <div className={cx('collapse-btn')} onClick={onCollapse}>
-                    {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                    {collapsed ? <RightOutlined /> : <LeftOutlined />}
                 </div>
 
                 <div className={cx('sidebar-menu')}>

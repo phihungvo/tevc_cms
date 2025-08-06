@@ -1,5 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
+import carevn.luv2code.cms.tevc_cms_api.enums.PayrollStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,29 +26,30 @@ public class Payroll {
     @JoinColumn(name = "employee_id", nullable = false)
     Employee employee;
 
-    String period; // YYYY-MM
+    String period; // Kỳ lương (tháng/năm) YYYY-MM
 
-    Double basicSalary;
+    Double basicSalary; // Lương cơ bản
 
-    Double overtime;
+    Double overtime; // Tổng số giờ làm thêm
 
-    Double bonus;
+    Double bonus; // Tổng thưởng
 
-    Double allowances;
+    Double allowances; // Tổng phụ cấp
 
-    Double deductions;
+    Double deductions; // Tổng khấu trừ
 
-    Double tax;
+    Double tax; // Tổng thuế
 
-    Double insurance;
+    Double insurance; // Tổng bảo hiểm
 
-    Double netSalary;
+    Double netSalary; // Lương thực nhận (net salary)
 
-    String status; // PENDING, PROCESSED, PAID
+    @Enumerated(EnumType.STRING)
+    PayrollStatus status;
 
-    Date processedDate;
+    Date processedDate; // Ngày xử lý lương
 
-    Date paidDate;
+    Date paidDate; // Ngày trả lương
 
     @OneToMany(mappedBy = "payroll", cascade = CascadeType.ALL)
     @ToString.Exclude

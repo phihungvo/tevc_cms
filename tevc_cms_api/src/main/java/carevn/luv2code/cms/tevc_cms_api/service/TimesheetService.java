@@ -23,4 +23,6 @@ public interface TimesheetService {
     TimesheetDTO rejectTimesheet(UUID id, UUID approverId, String comments);
 
     List<TimesheetDTO> getEmployeeTimesheets(UUID employeeId);
+
+    double calculateOvertimeForEmployee(UUID employeeId, String period);
 }

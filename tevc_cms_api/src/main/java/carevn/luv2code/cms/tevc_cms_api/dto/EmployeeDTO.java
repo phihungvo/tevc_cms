@@ -40,7 +40,4 @@ public class EmployeeDTO {
 
     boolean isActive;
 
-    Date createdAt;
-
-    Date updatedAt;
 }

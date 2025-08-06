@@ -17,5 +17,7 @@ public class PositionDTO {
 
     Double baseSalary;
 
+    String positionType;
+
     int employeeCount;
 }

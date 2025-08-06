@@ -12,6 +12,8 @@ import carevn.luv2code.cms.tevc_cms_api.repository.LeaveRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.LeaveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +66,9 @@ public class LeaveServiceImpl implements LeaveService {
 
     @Override
     public Page<LeaveDTO> getAllLeaves(int page, int size) {
-        return null;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return leaveRepository.findAll(pageRequest)
+                .map(leaveMapper::toDTO);
     }
 
     @Override

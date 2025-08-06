@@ -45,9 +45,9 @@ public class Employee {
     @JoinColumn(name = "department_id")
     Department department;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position_id")
-    Position position;
+    private Position position;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     @ToString.Exclude

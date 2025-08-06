@@ -13,6 +13,7 @@ import carevn.luv2code.cms.tevc_cms_api.security.JwtService;
 import carevn.luv2code.cms.tevc_cms_api.security.TokenBlacklist;
 import carevn.luv2code.cms.tevc_cms_api.service.PayrollService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,17 +32,20 @@ public class PayrollController {
     private final PayrollService payrollService;
 
     @PostMapping("/calculate/{employeeId}")
-    @PreAuthorize("hasAuthority('PAYROLL:CREATE')")
+//    @PreAuthorize("hasAuthority('PAYROLL:CREATE')")
     public ResponseEntity<PayrollDTO> calculatePayroll(
             @PathVariable UUID employeeId,
             @RequestParam String period) {
         return ResponseEntity.ok(payrollService.calculatePayroll(employeeId, period));
     }
 
-    @PatchMapping("/{id}/process")
-    @PreAuthorize("hasAuthority('PAYROLL:PROCESS')")
-    public ResponseEntity<PayrollDTO> processPayroll(@PathVariable UUID id) {
-        return ResponseEntity.ok(payrollService.processPayroll(id));
+    @PatchMapping("/process")
+//    @PreAuthorize("hasAuthority('PAYROLL:PROCESS')")
+    public ResponseEntity<List<PayrollDTO>> processPayroll(@RequestBody List<UUID> payrollIds) {
+        List<PayrollDTO> processedPayrolls = payrollIds.stream()
+                .map(payrollService::processPayroll)
+                .toList();
+        return ResponseEntity.ok(processedPayrolls);
     }
 
     @PatchMapping("/{id}/finalize")
@@ -49,5 +54,13 @@ public class PayrollController {
         return ResponseEntity.ok(payrollService.finalizePayroll(id));
     }
 
-    // ... other endpoints
+    @GetMapping
+//    @PreAuthorize("hasAuthority('PAYROLL:READ')")
+    public ResponseEntity<Page<PayrollDTO>> getAllPayrolls(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(payrollService.getAllPayrolls(page, size));
+    }
+
+
 }

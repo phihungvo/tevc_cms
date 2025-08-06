@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static carevn.luv2code.cms.tevc_cms_api.constants.TimesheetConstants.*;
+import static carevn.luv2code.cms.tevc_cms_api.constants.AppConstants.PERIOD_PATTERN;
+
 @Service
 @RequiredArgsConstructor
 public class TimesheetServiceImpl implements TimesheetService {
@@ -119,6 +122,47 @@ public class TimesheetServiceImpl implements TimesheetService {
         return timesheetRepository.findByEmployeeId(employeeId).stream()
                 .map(timesheetMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public double calculateOvertimeForEmployee(UUID employeeId, String period) {
+        if (period == null || !PERIOD_PATTERN.matcher(period).matches()) {
+            throw new AppException(ErrorCode.INVALID_PAYROLL_PERIOD);
+        }
+
+        // Phân tích period thành year và month
+        String[] periodParts = period.split("-");
+        int year = Integer.parseInt(periodParts[0]);
+        int month = Integer.parseInt(periodParts[1]);
+        if (month < 1 || month > 12) {
+            throw new AppException(ErrorCode.INVALID_PAYROLL_PERIOD);
+        }
+
+        // Tìm nhân viên và kiểm tra position
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+        if (employee.getPosition() == null || employee.getPosition().getBaseSalary() == null) {
+            throw new AppException(ErrorCode.POSITION_NOT_FOUND);
+        }
+        double baseSalary = employee.getPosition().getBaseSalary();
+        double hourlyRate = baseSalary / STANDARD_HOURS_PER_MONTH;
+        double overtimeHourlyRate = hourlyRate * OVERTIME_RATE;
+
+        List<Timesheet> timesheets = timesheetRepository.findApprovedByEmployeeIdAndPeriod(employeeId, year, month);
+
+        // Tính tổng giờ làm thêm
+        double totalOvertimeHours = timesheets.stream()
+                .filter(t -> t.getHoursWorked() != null && t.getDate() != null)
+                .mapToDouble(t -> {
+                    double overtimeHours = Math.max(0, t.getHoursWorked() - STANDARD_HOURS_PER_DAY);
+                    return overtimeHours;
+                })
+                .sum();
+
+        // Tính tiền làm thêm
+        double overtimePay = totalOvertimeHours * overtimeHourlyRate;
+
+        return overtimePay;
     }
 
     @Override
