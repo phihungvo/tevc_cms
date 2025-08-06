@@ -108,21 +108,21 @@ function User() {
     ];
 
     useEffect(() => {
-        handleGetManagerPosition('manager');
+        handleGetManager('MANAGER');
         handleGetAllDepartments();
     }, []);
 
-    const handleGetManagerPosition = async (title) => {
+    const handleGetManager = async (type) => {
         try {
-            const response = await getAllByTitle(title);
-            const mappedPosition = response.map(position => ({
-                value: position.id, // Giả sử id là UUID của vị trí
-                label: position.title, // Hiển thị title trong select
+            const response = await getAllByTitle(type);
+            const mappedEmployee = response.map(employee => ({
+                value: employee.id,
+                label: employee.title, 
             }));
-            setManagerPositionSource(mappedPosition);
-            console.log('Manager position:', mappedPosition);
+            setManagerPositionSource(mappedEmployee);
+            console.log('Manager position:', mappedEmployee);
         } catch (error) {
-            console.error('Error fetching manager positions:', error);
+            console.error('Error fetching manager employee:', error);
             setManagerPositionSource([]);
         }
     };

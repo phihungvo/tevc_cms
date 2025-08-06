@@ -1,9 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.mapper;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.PayrollDTO;
-import carevn.luv2code.cms.tevc_cms_api.dto.PositionDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Payroll;
-import carevn.luv2code.cms.tevc_cms_api.entity.Position;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")

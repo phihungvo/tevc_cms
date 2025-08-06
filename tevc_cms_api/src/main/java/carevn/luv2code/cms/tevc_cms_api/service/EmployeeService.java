@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 import org.springframework.data.domain.Page;
 
@@ -23,6 +24,6 @@ public interface EmployeeService {
 
     boolean toggleEmployeeStatus(UUID id);
 
-    List<EmployeeDTO> getEmployeesByPositionType(PositionType positionType);
+    List<Employee> getEmployeesByPositionType(PositionType positionType);
 
 }

@@ -63,7 +63,8 @@ public enum ErrorCode {
     TRAINING_ALREADY_EXISTS(1050, "Training already exists for this date.", HttpStatus.CONFLICT),
     TRAINING_NOT_FOUND(1051, "Training not found", HttpStatus.NOT_FOUND),
     TRAINING_ALREADY_PROCESSED(1052, "Training already processed", HttpStatus.CONFLICT),
-    POSITION_HAS_EMPLOYEES(1053, "Position has employees", HttpStatus.BAD_REQUEST)
+    POSITION_HAS_EMPLOYEES(1053, "Position has employees", HttpStatus.BAD_REQUEST),
+    INVALID_PAYROLL_PERIOD(1054, "Invalid payroll period format. Expected format: YYYY-MM", HttpStatus.BAD_REQUEST)
     ;
 
     int code;

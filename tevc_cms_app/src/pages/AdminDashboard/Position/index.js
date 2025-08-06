@@ -105,7 +105,7 @@ function User() {
     const handleGetAllPositions = async (page = 1, pageSize = 5) => {
         setLoading(true);
         try {
-            const response = await getAllPositions({ page: page - 1, pageSize });
+            const response = await getAllPositions();
             if (response && Array.isArray(response.content)) {
                 const mappedPositions = response.content.map(employee => ({
                     ...employee,

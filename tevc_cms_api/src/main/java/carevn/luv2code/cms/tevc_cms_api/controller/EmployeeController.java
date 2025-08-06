@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 import carevn.luv2code.cms.tevc_cms_api.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -61,9 +62,9 @@ public class EmployeeController {
     }
 
     @GetMapping("/position-type")
-    public ResponseEntity<List<EmployeeDTO>> getEmployeesByPositionType(@RequestParam String type) {
+    public ResponseEntity<List<Employee>> getEmployeesByPositionType(@RequestParam String type) {
         PositionType positionType = PositionType.valueOf(type.toUpperCase());
-        List<EmployeeDTO> employees = employeeService.getEmployeesByPositionType(positionType);
+        List<Employee> employees = employeeService.getEmployeesByPositionType(positionType);
         return ResponseEntity.ok(employees);
     }
 }

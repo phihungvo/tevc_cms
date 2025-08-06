@@ -3,10 +3,9 @@ import API_ENDPOINTS from '../../../constants/endpoints';
 import { getToken } from '~/constants/token';
 import { message } from 'antd';
 
-export const getAllPositions = async ({ page = 0, pageSize = 5 }) => {
+export const getAllPositions = async () => {
     try {
         const response = await axios.get(API_ENDPOINTS.POSITION.GET_ALL, {
-            params: { page, pageSize },
             headers: {
                 Authorization: `Bearer ${getToken()}`,
                 'Content-Type': 'application/json',
@@ -33,17 +32,16 @@ export const createPosition = async (formData) => {
     }
 };
 
-export const getAllByTitle = async (title) => {
-    console.log('title:', title);
+export const getAllByTitle = async (type) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.POSITION.GET_BY_TITLE, {
-            params: { title },
+        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.GET_EMPLOYEE_BY_POSITION_TYPE, {
+            params: { type },
             headers: {
                 Authorization: `Bearer ${getToken()}`,
                 'Content-Type': 'application/json',
             },
         });
-        console.log('data:', response.data);
+        console.log('employee data:', response.data);
         return response.data; // Trả về danh sách PositionDTO
     } catch (error) {
         console.error('Failed to fetch positions:', error);

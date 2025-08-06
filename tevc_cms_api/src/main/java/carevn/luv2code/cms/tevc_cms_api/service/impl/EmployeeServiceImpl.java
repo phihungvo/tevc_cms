@@ -109,10 +109,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getEmployeesByPositionType(PositionType positionType) {
-        return employeeRepository.findByPositionType(positionType)
-                .stream()
-                .map(employeeMapper::toDTO)
-                .toList();
+    public List<Employee> getEmployeesByPositionType(PositionType positionType) {
+        return employeeRepository.findByPositionType(positionType);
     }
 }
