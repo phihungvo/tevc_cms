@@ -27,13 +27,29 @@ function User() {
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
-        pageSize: 5,
+        pageSize: 10,
         total: 0,
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRole, setSelectedRole] = useState(null);
     const [form] = Form.useForm();
+
+    const leaveTypeStyles = {
+        ANNUAL: { color: 'green', label: 'Annual' },
+        SICK: { color: 'volcano', label: 'Sick' },
+        UNPAID: { color: 'gold', label: 'Unpaid' },
+        MATERNITY: { color: 'pink', label: 'Maternity' },
+        PATERNTIY: { color: 'blue', label: 'Paternity' },
+        BEREAVEMENT: { color: 'purple', label: 'Bereavement' },
+        COMPASSIONATE: { color: 'cyan', label: 'Compassionate' },
+      };
+
+      const statusStyles = {
+        PENDING: { color: 'orange', label: 'Pending' },
+        APPROVED: { color: 'green', label: 'Approved' },
+        REJECTED: { color: 'red', label: 'Rejected' },
+      };
 
     const columns = [
         {
@@ -62,7 +78,12 @@ function User() {
             title: 'Type',
             dataIndex: 'leaveType',
             key: 'leaveType',
-        },
+            width: 100,
+            render: (leaveType) => {
+              const style = leaveTypeStyles[leaveType] || { color: 'default', label: leaveType || 'N/A' };
+              return <Tag color={style.color}>{style.label}</Tag>;
+            },
+          },
         {
             title: 'Reason',
             dataIndex: 'reason',
@@ -72,7 +93,11 @@ function User() {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-        },
+            render: (status) => {
+              const style = statusStyles[status] || { color: 'default', label: status || 'N/A' };
+              return <Tag color={style.color}>{style.label}</Tag>;
+            },
+          },
         {
             title: 'Approver Comments',
             dataIndex: 'approverComments',
@@ -81,7 +106,7 @@ function User() {
         {
             title: 'Actions',
             fixed: 'right',
-            width: 250,
+            width: 180,
             render: (_, record) => (
                 <>
                     <SmartButton
@@ -159,7 +184,7 @@ function User() {
         handleGetAllLeaves();
     }, []);
 
-    const handleGetAllEmployees = async (page = 1, pageSize = 5) => {
+    const handleGetAllEmployees = async (page = 1, pageSize = 10) => {
         try {
             const response = await getAllEmployees({ page: page - 1, pageSize });
     
@@ -179,7 +204,7 @@ function User() {
         }
     };
                 
-    const handleGetAllLeaves = async (page = 1, pageSize = 5) => {
+    const handleGetAllLeaves = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
             const response = await getAllLeaves({ page: page - 1, pageSize });
@@ -213,7 +238,6 @@ function User() {
     const handleCallCreatePermission = async (formData) => {
         try {
             await createLeave(formData);
-            message.success('Leave created successfully!');
             handleGetAllLeaves();
             setIsModalOpen(false);
         } catch (error) {

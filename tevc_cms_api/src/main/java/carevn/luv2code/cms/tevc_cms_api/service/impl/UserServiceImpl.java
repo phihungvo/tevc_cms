@@ -173,6 +173,7 @@ public class UserServiceImpl implements UserService {
 
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
         dto.setUserName(user.getUserName());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());

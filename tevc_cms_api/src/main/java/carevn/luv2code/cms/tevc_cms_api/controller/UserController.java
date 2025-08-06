@@ -36,7 +36,7 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<Page<UserDTO>> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "10") int size
     ) {
         Page<UserDTO> users = userService.findAll(page, size);
         return ResponseEntity.ok(users);
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/update")
-    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<ApiResponse<String>> updateUser(@PathVariable UUID userId, @RequestBody UserUpdateRequest request) {
         userService.updateUser(userId, request);
         return ResponseEntity.ok(ApiResponse.<String>builder()
@@ -62,10 +62,11 @@ public class UserController {
                 .build());
     }
 
-    @DeleteMapping("/{userId}")
-    @PreAuthorize("hasAuthority('USER:DELETE')")
-    public ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable UUID userId) {
-        userService.deleteUser(userId);
+    @DeleteMapping()
+    //    @PreAuthorize("hasAuthority('USER:DELETE')")
+    public ResponseEntity<ApiResponse<String>> deleteUser(@RequestBody List<UUID> userIds) {
+        userIds.forEach(userService::deleteUser);
+
         return ResponseEntity.ok(ApiResponse.<String>builder()
                 .code(200)
                 .result("Xóa người dùng thành công")
@@ -73,7 +74,8 @@ public class UserController {
     }
 
 
-//    @PreAuthorize("hasAuthority('USER:MANAGE')")
+
+    //    @PreAuthorize("hasAuthority('USER:MANAGE')")
     @PostMapping("/assignPermissions")
     public ResponseEntity<ApiResponse<String>> assignPermissions(
             @RequestParam UUID userId,

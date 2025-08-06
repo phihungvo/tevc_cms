@@ -53,7 +53,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/user/createUser").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
                         .requestMatchers("/api/user/getAll").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers("/api/user/**/update").hasAuthority("USER:UPDATE")
+                        .requestMatchers(HttpMethod.PUT, "/api/user/{id}/update").permitAll()
                         .requestMatchers("/api/user/**").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
                         .requestMatchers("/api/admin/**").hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
                         .requestMatchers("/api/moderator/**").hasAnyAuthority("COMMENT:MODERATE", "ADMIN:MANAGE")
