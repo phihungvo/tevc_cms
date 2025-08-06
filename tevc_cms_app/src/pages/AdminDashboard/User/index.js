@@ -16,16 +16,17 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllUser, createUser, updateUser } from '~/service/admin/user';
+import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
 
 const cx = classNames.bind(styles);
 
 function User() {
     const [userSource, setUserSource] = useState([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
-        pageSize: 5,
+        pageSize: 10,
         total: 0,
     });
     const [modalMode, setModalMode] = useState('create');
@@ -97,7 +98,7 @@ function User() {
         {
             title: 'Actions',
             fixed: 'right',
-            width: 160,
+            width: 180,
             render: (_, record) => (
                 <>
                     <SmartButton
@@ -112,7 +113,7 @@ function User() {
                         type="danger"
                         icon={<DeleteOutlined />}
                         buttonWidth={80}
-                        // onClick={() => handleDeleteTrailer(record)}
+                        onClick={() => handleDeleteUser(record)}
                         style={{ marginLeft: '8px' }}
                     />
                 </>
@@ -128,17 +129,6 @@ function User() {
             rules: [{ required: true, message: 'User Name is required!' }],
         },
         {
-            label: 'Email',
-            name: 'email',
-            type: 'text',
-            rules: [{ required: true, message: 'Email is required!' }],
-        },
-        {
-            label: 'Password',
-            name: 'password',
-            type: 'text',
-        },
-        {
             label: 'First Name',
             name: 'firstName',
             type: 'text',
@@ -149,13 +139,24 @@ function User() {
             type: 'text',
         },
         {
-            label: 'Phone Number',
-            name: 'phoneNumber',
+            label: 'Email',
+            name: 'email',
             type: 'text',
+            rules: [{ required: true, message: 'Email is required!' }],
         },
         {
             label: 'Address',
             name: 'address',
+            type: 'text',
+        },
+        {
+            label: 'Password',
+            name: 'password',
+            type: 'text',
+        },
+        {
+            label: 'Phone Number',
+            name: 'phoneNumber',
             type: 'text',
         },
         {
@@ -187,7 +188,7 @@ function User() {
         },
     ];
 
-    const handleGetAllUsers = async (page = 1, pageSize = 5) => {
+    const handleGetAllUsers = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
             const response = await getAllUser({ page: page - 1, pageSize });
@@ -241,9 +242,27 @@ function User() {
     };
 
     const handleCallUpdateUser = async (formData) => {
+        console.log('selected user: ', selectedUser)
         await updateUser(selectedUser.id, formData);
         handleGetAllUsers();
         setIsModalOpen(false);
+    };
+
+    const handleDeleteUser = (record) => {
+        setModalMode('delete');
+        setSelectedRowKeys([record.id]);
+        setIsModalOpen(true);
+    };
+
+    const handleCallDeleteUser = async () => {
+        console.log('selected row key: ', selectedRowKeys);
+        await deleteUser(selectedRowKeys);
+        handleGetAllUsers();
+        setIsModalOpen(false);
+    };
+
+    const handleSelectChange = (newSelectedRowKeys, selectedRows) => {
+        setSelectedRowKeys(newSelectedRowKeys);
     };
 
     useEffect(() => {
@@ -255,6 +274,8 @@ function User() {
             handleCallCreateUser(formData);
         } else if (modalMode === 'edit') {
             handleCallUpdateUser(formData);
+        }else if (modalMode === 'delete') {
+            handleCallDeleteUser();
         }
     };
 
@@ -300,6 +321,8 @@ function User() {
                     loading={loading}
                     pagination={pagination}
                     onTableChange={handleTableChange}
+                    selectedRowKeys={selectedRowKeys}
+                    onSelectChange={handleSelectChange}
                 />
             </div>
 

@@ -19,5 +19,7 @@ FROM nginx:alpine
 # Copy các file build từ node vào nginx
 COPY --from=build /app/build /usr/share/nginx/html
 
+EXPOSE 80
+
 # Copy cấu hình nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# COPY nginx.conf /etc/nginx/conf.d/default.conf

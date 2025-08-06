@@ -50,7 +50,6 @@ export const getAllUser = async ({ page = 0, pageSize = 5 }) => {
             },
         });
 
-        console.log('user response: ', response.data);
         return response.data;
     } catch (error) {
         console.log('Error when fetching all user ! Error: ', error);
@@ -95,7 +94,6 @@ export const createUser = async (formData) => {
 };
 
 export const updateUser = async (userId, formData) => {
-
     try {
         const updateData = { ...formData };
         
@@ -103,7 +101,6 @@ export const updateUser = async (userId, formData) => {
             updateData.roles = Array.isArray(formData.roles) ? formData.roles : [formData.roles];
             updateData.enabled = formData.enabled === "Yes";
         }
-        console.log('updateData: ', updateData);
         const response = await axios.put(
             API_ENDPOINTS.USER.UPDATE(userId),
             updateData,
@@ -115,14 +112,35 @@ export const updateUser = async (userId, formData) => {
             }
         );
 
-        if (response.status === 200) {
-            message.success(response.data);
-            return response.data;
+        if (response.data) {
+            message.success("User updated successfully!");
         }
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'Error updating user';
-        console.log('Error when updating user! Error: ', errorMessage);
         message.error(errorMessage);
         throw error;
     }
 };
+
+export const deleteUser = async (userIds) => {
+    try {
+        const response = await axios.delete(API_ENDPOINTS.USER.DELETE, {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+              'Content-Type': 'application/json',
+            },
+            data: userIds
+          });
+         
+        if (response.data) {
+            message.success("User deleted successfully!");
+            return response.data.result;
+        }
+
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error deleting user';
+        console.log('Error when deleting user! Error: ', errorMessage);
+        message.error(errorMessage);
+        throw error;
+    }            
+}
