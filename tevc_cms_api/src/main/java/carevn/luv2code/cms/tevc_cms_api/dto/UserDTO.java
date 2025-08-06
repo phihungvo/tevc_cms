@@ -5,7 +5,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -38,4 +37,8 @@ public class UserDTO {
     List<String> roles;
 
     List<String> permissions;
+
+    Date createAt;
+
+    Date updateAt;
 }
