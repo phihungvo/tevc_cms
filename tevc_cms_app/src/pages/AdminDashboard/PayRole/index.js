@@ -61,6 +61,15 @@ function User() {
             width: 100,
         },
         {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width: 100,
+            render: (status) => (
+                <Tag color={statusColors[status] || 'default'}>{status}</Tag>
+            ),
+        },
+        {
             title: 'Basic Salary',
             dataIndex: 'basicSalary',
             key: 'basicSalary',
@@ -107,15 +116,6 @@ function User() {
             dataIndex: 'netSalary',
             key: 'netSalary',
             width: 100,
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            width: 100,
-            render: (status) => (
-                <Tag color={statusColors[status] || 'default'}>{status}</Tag>
-            ),
         },
         {
             title: 'Processed Date',

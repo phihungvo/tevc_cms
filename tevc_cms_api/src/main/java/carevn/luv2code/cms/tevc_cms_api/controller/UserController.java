@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<ApiResponse<String>> createUser(@RequestBody UserDTO userDTO) {
         userService.save(userDTO);
         return ResponseEntity.ok(ApiResponse.<String>builder()
