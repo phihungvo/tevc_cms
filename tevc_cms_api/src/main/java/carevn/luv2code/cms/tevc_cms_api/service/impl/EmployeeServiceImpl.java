@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    
+
     private final EmployeeRepository employeeRepository;
     private final PositionRepository positionRepository;
     private final EmployeeMapper employeeMapper;
@@ -37,10 +37,13 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AppException(ErrorCode.EMPLOYEE_CODE_EXISTS);
         }
 
+        String generatedCode = generateNextEmployeeCode();
+        employeeDTO.setEmployeeCode(generatedCode);
+
         Employee employee = employeeMapper.toEntity(employeeDTO);
         employee.setCreatedAt(new Date());
         employee.setActive(true);
-        
+
         Employee savedEmployee = employeeRepository.save(employee);
         return employeeMapper.toDTO(savedEmployee);
     }
@@ -50,10 +53,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO updateEmployee(UUID id, EmployeeDTO employeeDTO) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
-        
+
         employeeMapper.updateEmployeeFromDto(employeeDTO, employee);
         employee.setUpdatedAt(new Date());
-        
+
         Employee updatedEmployee = employeeRepository.save(employee);
         return employeeMapper.toDTO(updatedEmployee);
     }
@@ -73,8 +76,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-
-
 //    @Override
 //    public Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size) {
 //        PageRequest pageRequest = PageRequest.of(page, size);
@@ -88,12 +89,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void deleteEmployee(UUID id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
-        
+
         // Check if employee is a department manager
         if (!employee.getManagedDepartments().isEmpty()) {
             throw new AppException(ErrorCode.DEPARTMENT_HAS_EMPLOYEES);
         }
-        
+
         employeeRepository.delete(employee);
     }
 
@@ -112,4 +113,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> getEmployeesByPositionType(PositionType positionType) {
         return employeeRepository.findByPositionType(positionType);
     }
+
+    private String generateNextEmployeeCode() {
+        String lastCode = employeeRepository.findMaxEmployeeCode();
+        int nextNumber = 1;
+
+        if (lastCode != null && lastCode.startsWith("EMP")) {
+            int currentNumber = Integer.parseInt(lastCode.substring(3));
+            nextNumber = currentNumber + 1;
+        }
+
+        return String.format("EMP%04d", nextNumber);
+    }
+
 }
