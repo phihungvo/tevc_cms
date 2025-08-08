@@ -2,6 +2,7 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.DepartmentDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Department;
+import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.DepartmentMapper;
@@ -50,7 +51,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDTO updateDepartment(UUID id, DepartmentDTO departmentDTO) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
-        
+
+        Employee manager = employeeRepository.findById(departmentDTO.getManagerId())
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+
+        department.setManager(manager);
         departmentMapper.updateDepartmentFromDto(departmentDTO, department);
         Department updatedDepartment = departmentRepository.save(department);
         return departmentMapper.toDTO(updatedDepartment);

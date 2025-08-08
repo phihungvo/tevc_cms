@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -110,8 +111,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> getEmployeesByPositionType(PositionType positionType) {
-        return employeeRepository.findByPositionType(positionType);
+    public List<EmployeeDTO> getEmployeesByPositionType(PositionType positionType) {
+        return employeeRepository.findByPositionType(positionType)
+                .stream()
+                .map(employeeMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     private String generateNextEmployeeCode() {

@@ -21,25 +21,32 @@ const API_ENDPOINTS = {
     },
     ROLE: {
         GET_ALL: `${BASE_URL}/roles`,
+        GET_ALL_NO_PAGING: `${BASE_URL}/roles/noPaging`,
         CREATE: `${BASE_URL}/roles`,
+        UPDATE: (roleId) => `${BASE_URL}/roles/${roleId}`,
+        DELETE: (roleId) => `${BASE_URL}/roles/${roleId}`,
     },
     PERMISSION: {
         GET_ALL: `${BASE_URL}/permissions`,
+        GET_ALL_NO_PAGING: `${BASE_URL}/permissions/noPaging`,
         CREATE: `${BASE_URL}/permissions`,
     },
     EMPLOYEE: {
         GET_ALL: `${BASE_URL}/employees`,
         CREATE: `${BASE_URL}/employees`,
-        GET_EMPLOYEE_BY_POSITION_TYPE: `${BASE_URL}/employees/position-type`,
+        GET_EMPLOYEE_BY_POSITION_TYPE: `${BASE_URL}/employees/by-position-type`,
     },
     DEPARTMENT: {
         GET_ALL: `${BASE_URL}/departments`,
         CREATE: `${BASE_URL}/departments`,
+        UPDATE: (departmentId) => `${BASE_URL}/departments/${departmentId}`,
     },
     POSITION: {
         GET_ALL: `${BASE_URL}/positions`,
         CREATE: `${BASE_URL}/positions`,
         GET_BY_TITLE: `${BASE_URL}/positions/getPositionsByTitle`,
+        UPDATE: (positionId) => `${BASE_URL}/positions/${positionId}`,
+        DELETE: (positionId) => `${BASE_URL}/positions/${positionId}`,
     },
     LEAVE: {
         GET_ALL: `${BASE_URL}/leaves`,
@@ -47,6 +54,7 @@ const API_ENDPOINTS = {
         APPROVE: (leaveId) => `${BASE_URL}/leaves/${leaveId}/approve`,
         REJECT: (leaveId) => `${BASE_URL}/leaves/${leaveId}/reject`,
         UPDATE: (leaveId) => `${BASE_URL}/leaves/${leaveId}`,
+        DELETE: (leaveId) => `${BASE_URL}/leaves/${leaveId}`,
     },
     PAYROLL: {
         GET_ALL: `${BASE_URL}/payrolls`,

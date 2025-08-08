@@ -61,10 +61,9 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.toggleEmployeeStatus(id));
     }
 
-    @GetMapping("/position-type")
-    public ResponseEntity<List<Employee>> getEmployeesByPositionType(@RequestParam String type) {
-        PositionType positionType = PositionType.valueOf(type.toUpperCase());
-        List<Employee> employees = employeeService.getEmployeesByPositionType(positionType);
-        return ResponseEntity.ok(employees);
+    @GetMapping("/by-position-type")
+    public ResponseEntity<List<EmployeeDTO>> getEmployeesByPositionType(@RequestParam String positionType) {
+        PositionType type = PositionType.valueOf(positionType.toUpperCase());
+        return ResponseEntity.ok(employeeService.getEmployeesByPositionType(type));
     }
 }

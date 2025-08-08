@@ -34,3 +34,19 @@ export const createEmployee = async (formData) => {
         console.error('Error when creating employee: ', error); 
     }
 };
+
+export const getEmployeeByPositionType = async (positionType) => {
+    try {
+        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.GET_EMPLOYEE_BY_POSITION_TYPE, {
+            params: { positionType },
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        message.success('Get employee by position type successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when getting employee by position type: ', error); 
+    }
+};

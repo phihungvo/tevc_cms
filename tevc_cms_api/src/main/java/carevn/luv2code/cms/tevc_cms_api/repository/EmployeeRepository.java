@@ -22,7 +22,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
     @Query("SELECT e FROM Employee e WHERE e.position.id = ?1")
     List<Employee> findByPositionId(UUID positionId);
 
-    @Query("SELECT e FROM Employee e WHERE e.position.positionType = :type")
+//    @Query("SELECT e FROM Employee e WHERE e.position.positionType = :type")
+//    List<Employee> findByPositionType(@Param("type") PositionType type);
+
+    @Query("SELECT e FROM Employee e JOIN e.position p WHERE p.positionType = :type")
     List<Employee> findByPositionType(@Param("type") PositionType type);
 
     @Query("SELECT MAX(e.employeeCode) FROM Employee e")

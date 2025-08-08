@@ -36,10 +36,20 @@ export const createLeave = async (formData) => {
 
 export const updateLeave = async (formData) => {
     try {
-        const response = await axios.put(API_ENDPOINTS.LEAVE.UPDATE, formData);
+        const response = await axios.patch(API_ENDPOINTS.LEAVE.UPDATE, formData);
         message.success('Leave updated successfully');
         return response.data;
     } catch (error) {
         console.error('Error when updating leave: ', error);
+    }
+};
+
+export const deleteLeave = async (leaveId) => {
+    try {
+        const response = await axios.delete(API_ENDPOINTS.LEAVE.DELETE(leaveId));
+        message.success('Leave deleted successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when deleting leave: ', error);
     }
 };

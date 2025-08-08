@@ -17,11 +17,15 @@ import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
 import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
+import { getAllRolesNoPaging } from '~/service/admin/role';
+import { getAllPermissionsNoPaging } from '~/service/admin/permission';
 
 const cx = classNames.bind(styles);
 
 function User() {
     const [userSource, setUserSource] = useState([]);
+    const [roleOptions, setRoleOptions] = useState([]);
+    const [permissionOptions, setPermissionOptions] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -50,8 +54,8 @@ function User() {
         },
         {
             title: 'Role',
-            dataIndex: 'roles',
-            key: 'roles',
+            dataIndex: 'roleNames', // roleNames is array, process agaign
+            key: 'roleNames',
             width: 100,
         },
         {
@@ -168,13 +172,13 @@ function User() {
             label: 'Role',
             name: 'roles',
             type: 'select',
-            options: ['USER', 'ADMIN', 'MODERATOR'],
+            options: roleOptions
         },
         {
             label: 'Permission',
             name: 'permissions',
             type: 'select',
-            options: ['ADMIN:MANAGE', 'ADMIN:CREATE', 'ADMIN:UPDATE', 'ADMIN:READ', 'ADMIN:DELETE'],
+            options: permissionOptions
         },
         {
             label: 'Enable',
@@ -221,6 +225,32 @@ function User() {
         }
     };
 
+    const fetchRolesAndPermissionOptions = async () => {
+        try {
+            const rolesResponse = await getAllRolesNoPaging();
+            console.log('roles response: ', rolesResponse);
+            if (rolesResponse && Array.isArray(rolesResponse)) {
+                const roles = rolesResponse.map(role => ({
+                    label: role.name,
+                    value: role.id,
+                }));
+                setRoleOptions(roles);
+            }
+    
+            const perResponse = await getAllPermissionsNoPaging();
+            console.log('per Response: ', perResponse);
+            if (perResponse && Array.isArray(perResponse)) {
+                const permissions = perResponse.map(per => ({
+                    label: per.resource + ' - ' + per.action,
+                    value: per.id,
+                }));
+                setPermissionOptions(permissions);
+            }
+        } catch (error) {
+            console.error('Error fetching options:', error);
+        }
+    };
+    
     const handleAddUser = () => {
         setModalMode('create');
         setSelectedUser(null);
@@ -242,7 +272,6 @@ function User() {
     };
 
     const handleCallUpdateUser = async (formData) => {
-        console.log('selected user: ', selectedUser)
         await updateUser(selectedUser.id, formData);
         handleGetAllUsers();
         setIsModalOpen(false);
@@ -266,6 +295,7 @@ function User() {
     };
 
     useEffect(() => {
+        fetchRolesAndPermissionOptions();
         handleGetAllUsers();
     }, []);
 

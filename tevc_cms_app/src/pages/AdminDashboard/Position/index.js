@@ -16,11 +16,11 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllPositions, createPosition } from '~/service/admin/position';
+import { getAllPositions, createPosition, updatePosition, deletePosition } from '~/service/admin/position';
 
 const cx = classNames.bind(styles);
 
-function User() {
+function Position() {
     const [positionSource, setPositionSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -30,7 +30,7 @@ function User() {
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRole, setSelectedRole] = useState(null);
+    const [selectedPosition, setSelectedPosition] = useState(null);
     const [form] = Form.useForm();
 
     const columns = [
@@ -40,6 +40,12 @@ function User() {
             key: 'title',
             width: 150,
             fixed: 'left',
+        },
+        {
+            title: 'Position Type',
+            dataIndex: 'positionType',
+            key: 'positionType',
+            width: 150,
         },
         {
             title: 'Description',
@@ -54,6 +60,12 @@ function User() {
             width: 150,
         },
         {
+            title: 'Employee Count',
+            dataIndex: 'employeeCount',
+            key: 'employeeCount',
+            width: 150,
+        },
+        {
             title: 'Actions',
             fixed: 'right',
             width: 180,
@@ -64,14 +76,14 @@ function User() {
                         type="primary"
                         icon={<EditOutlined />}
                         buttonWidth={80}
-                        onClick={() => handleEditRole(record)}
+                        onClick={() => handleEditPosition(record)}
                     />
                     <SmartButton
                         title="Delete"
                         type="danger"
                         icon={<DeleteOutlined />}
                         buttonWidth={80}
-                        // onClick={() => handleDeleteTrailer(record)}
+                        onClick={() => handleDeletePosition(record)}
                         style={{ marginLeft: '8px' }}
                     />
                 </>
@@ -88,14 +100,29 @@ function User() {
         },
         {
             label: 'Desctiontion',
-            name: 'desription',
+            name: 'description',
             type: 'text',
         },
         {
             label: 'Base Salary',
             name: 'baseSalary',
             type: 'text',
-        }
+        },
+        {
+            label: 'Position Type',
+            name: 'positionType',
+            type: 'select',
+            options: [
+                'INTERN',
+                'JUNIOR',
+                'MID',
+                'SENIOR',
+                'LEADER',
+                'MANAGER',
+                'DIRECTOR',
+                'EXECUTIVE'
+            ],
+        },
     ];
 
     useEffect(() => {
@@ -129,9 +156,9 @@ function User() {
         }
     };
 
-    const handleAddRole = () => {
+    const handleAddPosition = () => {
         setModalMode('create');
-        setSelectedRole(null);
+        setSelectedPosition(null);
         form.resetFields();
         setIsModalOpen(true);
     };
@@ -139,7 +166,6 @@ function User() {
     const handleCallCreatePosition = async (formData) => {
         try {
             await createPosition(formData); 
-            message.success('Position created successfully!');
             handleGetAllPositions();
             setIsModalOpen(false);
         } catch (error) {
@@ -147,18 +173,38 @@ function User() {
         }
     };
 
-    const handleEditRole = (record) => {
-        setSelectedRole(record);
+    const handleEditPosition = (record) => {
+        setSelectedPosition(record);
         setModalMode('edit');
         form.setFieldsValue(record);
         setIsModalOpen(true);
+    };
+
+    const handleCallUpdatePosition = async (formData) => {
+        await updatePosition(selectedPosition.id, formData);
+        handleGetAllPositions();
+        setIsModalOpen(false);
+    };
+
+    const handleDeletePosition = (record) => {
+        setModalMode('delete');
+        setSelectedPosition(record.id)
+        setIsModalOpen(true);
+    };
+
+    const handleCallDeleteUser = async () => {
+        await deletePosition(selectedPosition);
+        handleGetAllPositions();
+        setIsModalOpen(false);
     };
 
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreatePosition(formData);
         } else if (modalMode === 'edit') {
-            // Thêm logic update nếu cần
+            handleCallUpdatePosition(formData);
+        } else {
+            handleCallDeleteUser();
         }
     };
 
@@ -192,7 +238,7 @@ function User() {
                         title="Add new"
                         icon={<PlusOutlined />}
                         type="primary"
-                        onClick={handleAddRole}
+                        onClick={handleAddPosition}
                     />
                     <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
                     <SmartButton title="Excel" icon={<CloudUploadOutlined />} />
@@ -214,7 +260,7 @@ function User() {
                 title={getModalTitle()}
                 fields={modalMode === 'delete' ? [] : userModalFields}
                 onSubmit={handleFormSubmit}
-                initialValues={selectedRole}
+                initialValues={selectedPosition}
                 isDeleteMode={modalMode === 'delete'}
                 formInstance={form}
             />
@@ -222,4 +268,4 @@ function User() {
     );
 }
 
-export default User;
+export default Position;

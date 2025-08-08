@@ -59,6 +59,15 @@ public class PermissionController {
                 .build());
     }
 
+    @GetMapping("/noPaging")
+//    @PreAuthorize("hasAuthority('PERMISSION:READ')")
+    public ResponseEntity<ApiResponse<java.util.List<PermissionDTO>>> getAllPermissionsNoPaging() {
+        return ResponseEntity.ok(ApiResponse.<java.util.List<PermissionDTO>>builder()
+                .code(200)
+                .result(permissionService.getAllPermissionsNoPaging())
+                .build());
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('PERMISSION:DELETE')")
     public ResponseEntity<ApiResponse<Void>> deletePermission(@PathVariable UUID id) {

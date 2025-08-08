@@ -19,5 +19,5 @@ public class PositionDTO {
 
     String positionType;
 
-    int employeeCount;
+//    int employeeCount;
 }

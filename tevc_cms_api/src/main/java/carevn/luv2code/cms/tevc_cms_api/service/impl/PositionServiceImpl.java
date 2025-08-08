@@ -30,9 +30,10 @@ public class PositionServiceImpl implements PositionService {
         if (positionRepository.existsByTitle(positionDTO.getTitle())) {
             throw new AppException(ErrorCode.POSITION_TITLE_EXISTS);
         }
+
         Position position = positionMapper.toEntity(positionDTO);
-        Position savedPosition = positionRepository.save(position);
-        return positionMapper.toDTO(savedPosition);
+
+        return positionMapper.toDTO(positionRepository.save(position));
     }
 
     @Override

@@ -24,7 +24,7 @@ public class PositionController {
         return ResponseEntity.ok(positionService.createPosition(positionDTO));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
 //    @PreAuthorize("hasAuthority('POSITION:UPDATE')")
     public ResponseEntity<PositionDTO> updatePosition(
             @PathVariable UUID id,
@@ -47,7 +47,7 @@ public class PositionController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('POSITION:DELETE')")
+//    @PreAuthorize("hasAuthority('POSITION:DELETE')")
     public ResponseEntity<Void> deletePosition(@PathVariable UUID id) {
         positionService.deletePosition(id);
         return ResponseEntity.ok().build();
