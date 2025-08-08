@@ -52,7 +52,7 @@ public class UserController {
                 .build());
     }
 
-    @PutMapping("/{userId}/update")
+    @PatchMapping("/{userId}/update")
 //    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<ApiResponse<String>> updateUser(@PathVariable UUID userId, @RequestBody UserUpdateRequest request) {
         userService.updateUser(userId, request);
@@ -72,8 +72,6 @@ public class UserController {
                 .result("Xóa người dùng thành công")
                 .build());
     }
-
-
 
     //    @PreAuthorize("hasAuthority('USER:MANAGE')")
     @PostMapping("/assignPermissions")

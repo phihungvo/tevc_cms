@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -90,6 +91,14 @@ public class PermissionServiceImpl implements PermissionService {
     public Page<PermissionDTO> getAllPermissions(int page, int size) {
         return permissionRepository.findAll(PageRequest.of(page, size))
                 .map(this::convertToDTO);
+    }
+
+    @Override
+    public List<PermissionDTO> getAllPermissionsNoPaging() {
+        List<Permission> permissions = permissionRepository.findAll();
+        return permissions.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private PermissionDTO convertToDTO(Permission permission) {

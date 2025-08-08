@@ -16,12 +16,13 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllDepartments, createDepartment } from '~/service/admin/department';
-import { getAllByTitle } from '~/service/admin/position';
+import { getAllDepartments, createDepartment, updateDepartment } from '~/service/admin/department';
+import { getAllByTitle, getAllPositions } from '~/service/admin/position';
+import { getEmployeeByPositionType } from '~/service/admin/employee';
 
 const cx = classNames.bind(styles);
 
-function User() {
+function Department() {
     const [employeeSource, setDepartmentSource] = useState([]);
     const [managerPositionSource, setManagerPositionSource] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -32,7 +33,7 @@ function User() {
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRole, setSelectedRole] = useState(null);
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
     const [form] = Form.useForm();
 
     const columns = [
@@ -66,7 +67,7 @@ function User() {
                         type="primary"
                         icon={<EditOutlined />}
                         buttonWidth={80}
-                        onClick={() => handleEditRole(record)}
+                        onClick={() => handleEditDepartment(record)}
                     />
                     <SmartButton
                         title="Delete"
@@ -84,9 +85,9 @@ function User() {
     const userModalFields = [
         {
             label: 'Department Name',
-            name: 'employeeCode',
+            name: 'name',
             type: 'text',
-            rules: [{ required: true, message: 'Employee Code is required!' }],
+            rules: [{ required: true, message: 'Department name is required!' }],
         },
         {
             label: 'Description',
@@ -112,15 +113,15 @@ function User() {
         handleGetAllDepartments();
     }, []);
 
-    const handleGetManager = async (type) => {
+    const handleGetManager = async (positionType) => {
         try {
-            const response = await getAllByTitle(type);
+            // const response = await getAllByTitle(type);
+            const response = await getEmployeeByPositionType(positionType);
             const mappedEmployee = response.map(employee => ({
                 value: employee.id,
-                label: employee.title, 
+                label: employee.firstName + ' ' + employee.lastName, 
             }));
             setManagerPositionSource(mappedEmployee);
-            console.log('Manager position:', mappedEmployee);
         } catch (error) {
             console.error('Error fetching manager employee:', error);
             setManagerPositionSource([]);
@@ -156,7 +157,7 @@ function User() {
 
     const handleAddRole = () => {
         setModalMode('create');
-        setSelectedRole(null);
+        setSelectedDepartment(null);
         form.resetFields();
         setIsModalOpen(true);
     };
@@ -164,7 +165,6 @@ function User() {
     const handleCallCreatePermission = async (formData) => {
         try {
             await createDepartment(formData); 
-            message.success('Employee created successfully!');
             handleGetAllDepartments();
             setIsModalOpen(false);
         } catch (error) {
@@ -172,18 +172,26 @@ function User() {
         }
     };
 
-    const handleEditRole = (record) => {
-        setSelectedRole(record);
+    const handleEditDepartment = (record) => {
+        setSelectedDepartment(record);
         setModalMode('edit');
         form.setFieldsValue(record);
         setIsModalOpen(true);
     };
 
+    const handleCallUpdateDepartment = async (formData) => {
+        console.log('formdata: ', formData)
+        await updateDepartment(selectedDepartment.id, formData);
+        handleGetAllDepartments();
+        setIsModalOpen(false);
+    };
+
+    // updateDepartment
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreatePermission(formData);
         } else if (modalMode === 'edit') {
-            // Thêm logic update nếu cần
+            handleCallUpdateDepartment(formData);
         }
     };
 
@@ -194,13 +202,13 @@ function User() {
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Add New Employee';
+                return 'Add New Department';
             case 'edit':
-                return 'Edit Employee';
+                return 'Edit Department';
             case 'delete':
-                return 'Delete Employee';
+                return 'Delete Department';
             default:
-                return 'Employee Details';
+                return 'Department Details';
         }
     };
 
@@ -239,7 +247,7 @@ function User() {
                 title={getModalTitle()}
                 fields={modalMode === 'delete' ? [] : userModalFields}
                 onSubmit={handleFormSubmit}
-                initialValues={selectedRole}
+                initialValues={selectedDepartment}
                 isDeleteMode={modalMode === 'delete'}
                 formInstance={form}
             />
@@ -247,4 +255,4 @@ function User() {
     );
 }
 
-export default User;
+export default Department;

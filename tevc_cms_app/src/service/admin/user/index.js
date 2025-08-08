@@ -58,17 +58,19 @@ export const getAllUser = async ({ page = 0, pageSize = 5 }) => {
 };
 
 export const createUser = async (formData) => {
+    console.log('form data: ', formData)
     try {
         console.log('form data user: ', formData);
         const processedData = {
             ...formData,
-            roles: formData.roles && typeof formData.roles === 'string'
-                ? formData.roles.split(',').map((role) => role.trim())
-                : [],
-            permissions: formData.permissions && typeof formData.permissions === 'string'
-                ? formData.permissions.split(',').map((permission) => permission.trim())
-                : [],
+            roles:  [formData.roles],
+            permissions: [formData.permissions],
+            enabled:
+                typeof formData.enabled === 'string'
+                    ? ['true', 'yes'].includes(formData.enabled.toLowerCase())
+                    : Boolean(formData.enabled),
         };
+        
 
         const response = await axios.post(
             API_ENDPOINTS.USER.CREATE,
@@ -97,11 +99,11 @@ export const updateUser = async (userId, formData) => {
     try {
         const updateData = { ...formData };
         
-        if (formData.roles) {
-            updateData.roles = Array.isArray(formData.roles) ? formData.roles : [formData.roles];
-            updateData.enabled = formData.enabled === "Yes";
-        }
-        const response = await axios.put(
+        updateData.roles = Array.isArray(formData.roles) ? formData.roles : [formData.roles];
+        updateData.permissions = Array.isArray(formData.permissions) ? formData.permissions : [formData.permissions];
+        updateData.enabled = formData.enabled === "Yes";
+       
+        const response = await axios.patch(
             API_ENDPOINTS.USER.UPDATE(userId),
             updateData,
             {

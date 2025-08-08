@@ -8,15 +8,10 @@ import java.util.UUID;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DepartmentDTO {
+public class PositionEmployeeDTO {
     UUID id;
 
-    String name;
+    String firstName;
 
-    String description;
-
-    UUID managerId;
-
-    int employeeCount;
-
+    String lastName;
 }

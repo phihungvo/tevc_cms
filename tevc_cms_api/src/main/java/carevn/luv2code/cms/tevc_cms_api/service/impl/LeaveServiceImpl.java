@@ -56,7 +56,14 @@ public class LeaveServiceImpl implements LeaveService {
 
     @Override
     public void deleteLeave(UUID id) {
+        Leave leave = leaveRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
+        if (leave.getStatus() != LeaveStatus.PENDING) {
+            throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
+        }
+
+        leaveRepository.delete(leave);
     }
 
     @Override

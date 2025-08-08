@@ -33,3 +33,16 @@ export const createDepartment = async (formData) => {
         console.error('Error when creating employee: ', error); 
     }
 };
+
+export const updateDepartment = async (departmentId, formData) => {
+    try {
+        const response = await axios.patch(
+            API_ENDPOINTS.DEPARTMENT.UPDATE(departmentId),   
+            formData, 
+        );
+        message.success('Departments update successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when update employee: ', error); 
+    }
+};

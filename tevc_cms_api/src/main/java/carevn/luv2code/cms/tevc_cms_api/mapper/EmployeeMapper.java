@@ -8,9 +8,8 @@ import org.mapstruct.*;
 public interface EmployeeMapper {
     
     @Mapping(target = "departmentId", source = "department.id")
-    @Mapping(target = "departmentName", source = "department.name")
+//    @Mapping(target = "departmentName", source = "department.name")
     @Mapping(target = "positionId", source = "position.id")
-    @Mapping(target = "positionTitle", source = "position.title")
     EmployeeDTO toDTO(Employee employee);
 
     @Mapping(target = "department", ignore = true)

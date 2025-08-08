@@ -92,6 +92,14 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public List<RoleDTO> getAllRolesNoPaging() {
+        List<Role> roles = roleRepository.findAll();
+        return roles.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public void assignPermissionsToRole(UUID roleId, List<UUID> permissionIds) {
         Role role = roleRepository.findById(roleId)

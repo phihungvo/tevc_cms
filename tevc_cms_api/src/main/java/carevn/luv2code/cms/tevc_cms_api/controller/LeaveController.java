@@ -36,8 +36,8 @@ public class LeaveController {
         return ResponseEntity.ok(leaveService.createLeave(leaveDTO));
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('LEAVE:UPDATE')")
+    @PatchMapping("/{id}")
+//    @PreAuthorize("hasAuthority('LEAVE:UPDATE')")
     public ResponseEntity<LeaveDTO> updateLeave(
             @PathVariable UUID id,
             @RequestBody LeaveDTO leaveDTO) {
@@ -72,5 +72,12 @@ public class LeaveController {
             @PathVariable UUID id,
             @RequestParam String comments) {
         return ResponseEntity.ok(leaveService.rejectLeave(id, comments));
+    }
+
+    @DeleteMapping("/{id}")
+//    @PreAuthorize("hasAuthority('LEAVE:DELETE')")
+    public ResponseEntity<Void> deleteLeave(@PathVariable UUID id) {
+        leaveService.deleteLeave(id);
+        return ResponseEntity.ok().build();
     }
 }

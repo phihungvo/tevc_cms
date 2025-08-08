@@ -29,8 +29,8 @@ public class RoleController {
                 .build());
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE:UPDATE')")
+    @PatchMapping("/{id}")
+//    @PreAuthorize("hasAuthority('ROLE:UPDATE')")
     public ResponseEntity<ApiResponse<RoleDTO>> updateRole(
             @PathVariable UUID id,
             @RequestBody RoleDTO roleDTO) {
@@ -62,6 +62,14 @@ public class RoleController {
                 .build());
     }
 
+    @GetMapping("/noPaging")
+    public ResponseEntity<ApiResponse<List<RoleDTO>>> getAllRolesNoPaging() {
+        return ResponseEntity.ok(ApiResponse.<List<RoleDTO>>builder()
+                .code(200)
+                .result(roleService.getAllRolesNoPaging())
+                .build());
+    }
+
     @PostMapping("/{roleId}/permissions")
     @PreAuthorize("hasAuthority('ROLE:UPDATE')")
     public ResponseEntity<ApiResponse<Void>> assignPermissionsToRole(
@@ -87,7 +95,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE:DELETE')")
+//    @PreAuthorize("hasAuthority('ROLE:DELETE')")
     public ResponseEntity<ApiResponse<Void>> deleteRole(@PathVariable UUID id) {
         roleService.deleteRole(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()

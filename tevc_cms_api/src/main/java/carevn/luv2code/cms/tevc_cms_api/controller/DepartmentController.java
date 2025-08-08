@@ -22,8 +22,8 @@ public class DepartmentController {
         return ResponseEntity.ok(departmentService.createDepartment(departmentDTO));
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('DEPARTMENT:UPDATE')")
+    @PatchMapping("/{id}")
+//    @PreAuthorize("hasAuthority('DEPARTMENT:UPDATE')")
     public ResponseEntity<DepartmentDTO> updateDepartment(
             @PathVariable UUID id,
             @RequestBody DepartmentDTO departmentDTO) {

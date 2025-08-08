@@ -22,6 +22,22 @@ export const getAllPermissions = async ({ page = 0, pageSize = 5 }) => {
     }
 };
 
+export const getAllPermissionsNoPaging = async () => {
+    try {
+        const response = await axios.get(API_ENDPOINTS.PERMISSION.GET_ALL_NO_PAGING, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        return response.data.result; 
+    } catch (error) {
+        message.error('Error get all permission: ');
+        return null;
+    }
+};
+
 export const createPermission = async (formData) => {
     try {
         const response = await axios.post(

@@ -22,6 +22,22 @@ export const getAllRoles = async ({ page = 0, pageSize = 5 }) => {
     }
 };
 
+export const getAllRolesNoPaging = async () => {
+    try {
+        const response = await axios.get(API_ENDPOINTS.ROLE.GET_ALL_NO_PAGING, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        return response.data.result; 
+    } catch (error) {
+        message.error('Error get all role: ');
+        return null;
+    }
+};
+
 export const createRole = async (formData) => {
     try {
         const response = await axios.post(
@@ -34,3 +50,50 @@ export const createRole = async (formData) => {
         console.error('Error when creating role: ', error); 
     }
 };
+
+export const updateRole = async (roleId, formData) => {
+    console.log('roleId:', roleId, 'formData:', formData);
+  
+    try {
+      const response = await axios.patch(
+        API_ENDPOINTS.ROLE.UPDATE(roleId),
+        formData,                        
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+  
+      message.success('Role updated successfully');
+      return response.data;
+    } catch (error) {
+      console.error('Error when updating role:', error);
+      message.error('Failed to update role');
+      throw error;
+    }
+  };
+  
+  export const deleteRole = async (roleId) => {
+    try {
+        const response = await axios.delete(API_ENDPOINTS.ROLE.DELETE, {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+              'Content-Type': 'application/json',
+            },
+            data: roleId
+          });
+         
+        if (response.data) {
+            message.success("Role deleted successfully!");
+            return response.data.result;
+        }
+
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error deleting Role';
+        console.log('Error when deleting Role! Error: ', errorMessage);
+        message.error(errorMessage);
+        throw error;
+    }            
+}

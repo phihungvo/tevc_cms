@@ -22,7 +22,7 @@ import {  getAllPositions } from '~/service/admin/position';
 
 const cx = classNames.bind(styles);
 
-function User() {
+function Employee() {
     const [employeeSource, setEmployeeSource] = useState([]);
     const [departmentOptions, setDepartmentOptions] = useState([]);
     const [positionOptions, setPositionOptions] = useState([]);
@@ -149,12 +149,6 @@ function User() {
 
     const userModalFields = [
         {
-            label: 'Employee Code',
-            name: 'employeeCode',
-            type: 'text',
-            rules: [{ required: true, message: 'Employee Code is required!' }],
-        },
-        {
             label: 'First Name',
             name: 'firstName',
             type: 'text',
@@ -179,7 +173,6 @@ function User() {
             label: 'Email',
             name: 'email',
             type: 'text',
-            rules: [{ required: true, message: 'Email is required!' }],
         },
         {
             label: 'Phone',
@@ -201,14 +194,12 @@ function User() {
             name: 'departmentId',
             type: 'select',
             options: departmentOptions, // Sử dụng state trực tiếp
-            rules: [{ required: true, message: 'Department is required!' }],
         },
         {
             label: 'Position',
             name: 'positionId',
             type: 'select',
             options: positionOptions, // Sử dụng state trực tiếp
-            rules: [{ required: true, message: 'Position is required!' }],
         },
         {
             label: 'Active',
@@ -284,8 +275,7 @@ function User() {
 
     const handleCallCreatePermission = async (formData) => {
         try {
-            await createEmployee(formData); // Giả định createEmployee nhận formData
-            message.success('Employee created successfully!');
+            await createEmployee(formData);
             handleGetAllEmployees();
             setIsModalOpen(false);
         } catch (error) {
@@ -368,4 +358,4 @@ function User() {
     );
 }
 
-export default User;
+export default Employee;

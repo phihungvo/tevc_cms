@@ -37,9 +37,11 @@ public class UserDTO {
 
     boolean enabled;
 
-    List<String> roles;
+    List<UUID> roles;
 
-    List<String> permissions;
+    List<String> roleNames;
+
+    List<UUID> permissions;
 
     Date createAt;
 

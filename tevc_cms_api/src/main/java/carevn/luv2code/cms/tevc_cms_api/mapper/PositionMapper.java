@@ -14,7 +14,7 @@ public interface PositionMapper {
             dto.setDescription(position.getDescription());
             dto.setBaseSalary(position.getBaseSalary());
             dto.setPositionType(position.getPositionType() != null ? position.getPositionType().name() : null);
-            dto.setEmployeeCount(position.getEmployees() != null ? position.getEmployees().size() : 0);
+//            dto.setEmployeeCount(position.getEmployees() != null ? position.getEmployees().size() : 0);
             return dto;
         } catch (Exception e) {
             throw new RuntimeException("Mapping error", e);

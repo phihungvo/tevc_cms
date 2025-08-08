@@ -24,6 +24,6 @@ public interface EmployeeService {
 
     boolean toggleEmployeeStatus(UUID id);
 
-    List<Employee> getEmployeesByPositionType(PositionType positionType);
+    List<EmployeeDTO> getEmployeesByPositionType(PositionType positionType);
 
 }

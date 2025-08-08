@@ -16,12 +16,12 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllLeaves, createLeave } from '~/service/admin/leave';
+import { getAllLeaves, createLeave, updateLeave, deleteLeave } from '~/service/admin/leave';
 import { getAllEmployees } from '~/service/admin/employee';
 
 const cx = classNames.bind(styles);
 
-function User() {
+function Leave() {
     const [leaveSource, setLeaveSource] = useState([]);
     const [employeeSource, setEmployeeSource] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ function User() {
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRole, setSelectedRole] = useState(null);
+    const [selectedLeave, setSelectedLeave] = useState(null);
     const [form] = Form.useForm();
 
     const leaveTypeStyles = {
@@ -114,14 +114,14 @@ function User() {
                         type="primary"
                         icon={<EditOutlined />}
                         buttonWidth={80}
-                        onClick={() => handleEditRole(record)}
+                        onClick={() => handleEditLeave(record)}
                     />
                     <SmartButton
                         title="Delete"
                         type="danger"
                         icon={<DeleteOutlined />}
                         buttonWidth={80}
-                        // onClick={() => handleDeleteTrailer(record)}
+                        onClick={() => handleDeleteLeave(record)}
                         style={{ marginLeft: '8px' }}
                     />
                 </>
@@ -230,7 +230,7 @@ function User() {
 
     const handleAddRole = () => {
         setModalMode('create');
-        setSelectedRole(null);
+        setSelectedLeave(null);
         form.resetFields();
         setIsModalOpen(true);
     };
@@ -245,18 +245,39 @@ function User() {
         }
     };
 
-    const handleEditRole = (record) => {
-        setSelectedRole(record);
+    const handleEditLeave = (record) => {
+        setSelectedLeave(record);
         setModalMode('edit');
+
         form.setFieldsValue(record);
         setIsModalOpen(true);
     };
+
+    const handleCallUpdateLeave = async (formData) => {
+        await updateLeave(selectedLeave.id, formData);
+        handleGetAllLeaves();
+        setIsModalOpen(false);
+    }
+
+    const handleDeleteLeave = async (record) => {
+        setModalMode('delete');
+        setSelectedLeave(record.id);
+        setIsModalOpen(true);
+    }
+
+    const handleCallDeleteLeave = async () => {
+        await deleteLeave(selectedLeave);
+        handleGetAllLeaves();
+        setIsModalOpen(false);
+    }
 
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreatePermission(formData);
         } else if (modalMode === 'edit') {
-            // Thêm logic update nếu cần
+            handleCallUpdateLeave(formData);
+        } else if (modalMode === 'delete') {
+            handleCallDeleteLeave();
         }
     };
 
@@ -312,7 +333,7 @@ function User() {
                 title={getModalTitle()}
                 fields={modalMode === 'delete' ? [] : userModalFields}
                 onSubmit={handleFormSubmit}
-                initialValues={selectedRole}
+                initialValues={selectedLeave}
                 isDeleteMode={modalMode === 'delete'}
                 formInstance={form}
             />
@@ -320,4 +341,4 @@ function User() {
     );
 }
 
-export default User;
+export default Leave;

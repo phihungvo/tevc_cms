@@ -12,6 +12,7 @@ public interface RoleService {
     void deleteRole(UUID id);
     RoleDTO getRole(UUID id);
     Page<RoleDTO> getAllRoles(int page, int size);
+    List<RoleDTO> getAllRolesNoPaging();
     void assignPermissionsToRole(UUID roleId, List<UUID> permissionIds);
     void removePermissionFromRole(UUID roleId, UUID permissionId);
 }

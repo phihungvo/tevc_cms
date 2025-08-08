@@ -49,3 +49,28 @@ export const getAllByTitle = async (type) => {
         return []; // Trả về mảng rỗng nếu có lỗi
     }
 };
+
+export const updatePosition = async (positionId, formData) => {
+    try {
+        const response = await axios.patch(
+            API_ENDPOINTS.POSITION.UPDATE(positionId),   
+            formData, 
+        );
+        message.success('Position updated successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when updating positions: ', error); 
+    }
+};
+
+export const deletePosition = async (positionId) => {
+    try {
+        const response = await axios.delete(
+            API_ENDPOINTS.POSITION.DELETE(positionId),   
+        );
+        message.success('Position deleted successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when deleting positions: ', error); 
+    }
+};

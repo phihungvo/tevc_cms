@@ -16,11 +16,11 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllRoles, createRole } from '~/service/admin/role';
+import { getAllRoles, createRole, updateRole, deleteRole} from '~/service/admin/role';
 
 const cx = classNames.bind(styles);
 
-function User() {
+function Role() {
     const [userSource, setUserSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -30,7 +30,7 @@ function User() {
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRole, setselectedRole] = useState(null);
+    const [selectedRole, setSelectedRole] = useState(null);
     const [form] = Form.useForm();
 
     const columns = [
@@ -44,7 +44,7 @@ function User() {
         {
             title: 'Description',
             dataIndex: 'description',
-            key: 'email',
+            key: 'description',
             // width: 150,
         },
         {
@@ -65,7 +65,7 @@ function User() {
                         type="danger"
                         icon={<DeleteOutlined />}
                         buttonWidth={80}
-                        // onClick={() => handleDeleteTrailer(record)}
+                        onClick={() => handleDeleteRole(record)}
                         style={{ marginLeft: '8px' }}
                     />
                 </>
@@ -112,7 +112,7 @@ function User() {
 
     const handleAddRole = () => {
         setModalMode('create');
-        setselectedRole(null);
+        setSelectedRole(null);
         form.resetFields();
         setIsModalOpen(true);
     };
@@ -123,29 +123,46 @@ function User() {
     };
 
     const handleEditRole = (record) => {
-        setselectedRole(record);
+        setSelectedRole(record);
         setModalMode('edit');
 
         form.setFieldsValue(record);
         setIsModalOpen(true);
     };
 
-    // const handleCallUpdateRole = async (formData) => {
-    //     await updateRole(selectedRole.id, formData);
-    //     handleGetAllRoles();
-    //     setIsModalOpen(false);
-    // };
-
-    useEffect(() => {
+    const handleCallUpdateRole = async (formData) => {
+        await updateRole(selectedRole.id, formData);
         handleGetAllRoles();
-    }, []);
+        setIsModalOpen(false);
+    };
+
+    const handleDeleteRole = (record) => {
+        setModalMode('delete');
+        setSelectedRole(record);
+        setIsModalOpen(true);
+    };
+
+    const handleCallDeleteRole = async () => {
+        console.log('role id: ', selectedRole.id)
+        await deleteRole(selectedRole.id);
+        handleGetAllRoles();
+        setIsModalOpen(false);
+    }
+
 
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreateRole(formData);
         } else if (modalMode === 'edit') {
+            handleCallUpdateRole(formData);
+        }else if (modalMode === 'delete') {
+            handleCallDeleteRole();
         }
     };
+
+    useEffect(() => {
+        handleGetAllRoles();
+    }, []);
 
     const handleTableChange = (pagination) => {
         handleGetAllRoles(pagination.current, pagination.pageSize);
@@ -206,4 +223,4 @@ function User() {
     );
 }
 
-export default User;
+export default Role;
