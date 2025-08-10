@@ -77,12 +77,11 @@ export const updateRole = async (roleId, formData) => {
   
   export const deleteRole = async (roleId) => {
     try {
-        const response = await axios.delete(API_ENDPOINTS.ROLE.DELETE, {
+        const response = await axios.delete(API_ENDPOINTS.ROLE.DELETE(roleId), {
             headers: {
               Authorization: `Bearer ${getToken()}`,
               'Content-Type': 'application/json',
             },
-            data: roleId
           });
          
         if (response.data) {

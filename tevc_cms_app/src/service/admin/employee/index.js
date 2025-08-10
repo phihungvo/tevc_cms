@@ -14,7 +14,6 @@ export const getAllEmployees = async ({ page = 0, pageSize = 10 }) => {
             },
         });
         
-        console.log('dddd: ', response.data)
         return response.data;
     } catch (error) {
         message.error('Error get all employees: ');
@@ -44,9 +43,33 @@ export const getEmployeeByPositionType = async (positionType) => {
                 'Content-Type': 'application/json',
             },
         });
-        message.success('Get employee by position type successfully');
         return response.data;
     } catch (error) {
         console.error('Error when getting employee by position type: ', error); 
+    }
+};
+
+export const updateEmployee = async (employeeId, formData) => {
+    try {
+        const response = await axios.patch(
+            API_ENDPOINTS.EMPLOYEE.UPDATE(employeeId),   
+            formData, 
+        );
+        message.success('Employee updated successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when updatting employee: ', error); 
+    }
+};
+
+export const deleteEmployee = async (employeeId) => {
+    try {
+        const response = await axios.delete(
+            API_ENDPOINTS.EMPLOYEE.DELETE(employeeId),  
+        );
+        message.success('Employee created successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when creating employee: ', error); 
     }
 };

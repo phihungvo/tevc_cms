@@ -32,7 +32,7 @@ public class Position {
     @Column(name = "base_salary", nullable = false)
     Double baseSalary;
 
-    @OneToMany(mappedBy = "position", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    Set<Employee> employees;
+//    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    Set<Employee> employees;
 
 }

@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.DepartmentDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Department;
 import org.springframework.data.domain.Page;
 import java.util.UUID;
 

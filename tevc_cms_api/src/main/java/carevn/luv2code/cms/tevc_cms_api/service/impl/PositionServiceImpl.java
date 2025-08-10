@@ -11,6 +11,7 @@ import carevn.luv2code.cms.tevc_cms_api.service.PositionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,10 +56,20 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<PositionDTO> getAllPositions(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return positionRepository.findAll(pageRequest)
                 .map(positionMapper::toDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PositionDTO> getAllNoPaging() {
+        return positionRepository.findAll()
+                .stream()
+                .map(positionMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -71,9 +82,26 @@ public class PositionServiceImpl implements PositionService {
     public void deletePosition(UUID id) {
         Position position = positionRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
-        if (!position.getEmployees().isEmpty()) {
-            throw new AppException(ErrorCode.POSITION_HAS_EMPLOYEES);
-        }
+//        if (!position.getEmployees().isEmpty()) {
+//            throw new AppException(ErrorCode.POSITION_HAS_EMPLOYEES);
+//        }
         positionRepository.delete(position);
+    }
+
+    /**
+     * Converts a Position entity to a PositionDTO.
+     *
+     * @param position the Position entity to convert
+     * @return the converted PositionDTO
+     */
+    private PositionDTO toDTO(Position position) {
+        PositionDTO positionDTO = new PositionDTO();
+        positionDTO.setId(position.getId());
+        positionDTO.setTitle(position.getTitle());
+        positionDTO.setDescription(position.getDescription());
+        positionDTO.setBaseSalary(position.getBaseSalary());
+        positionDTO.setPositionType(position.getPositionType() != null ? position.getPositionType().name() : null);
+//        positionDTO.setEmployeeCount(position.getEmployees() != null ? position.getEmployees().size() : 0);
+        return positionDTO;
     }
 }

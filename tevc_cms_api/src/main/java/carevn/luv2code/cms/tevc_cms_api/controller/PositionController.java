@@ -1,12 +1,11 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.PositionDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Position;
 import carevn.luv2code.cms.tevc_cms_api.service.PositionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +44,12 @@ public class PositionController {
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(positionService.getAllPositions(page, size));
     }
+
+    @GetMapping("/no-paging")
+    public ResponseEntity<List<PositionDTO>> getAllNoPaging() {
+        return ResponseEntity.ok(positionService.getAllNoPaging());
+    }
+
 
     @DeleteMapping("/{id}")
 //    @PreAuthorize("hasAuthority('POSITION:DELETE')")

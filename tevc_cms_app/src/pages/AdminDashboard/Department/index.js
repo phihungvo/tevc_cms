@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Department/Department.module.scss';
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
@@ -15,10 +15,10 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag } from 'antd';
-import { getAllDepartments, createDepartment, updateDepartment } from '~/service/admin/department';
-import { getAllByTitle, getAllPositions } from '~/service/admin/position';
-import { getEmployeeByPositionType } from '~/service/admin/employee';
+import {Form, message, Tag} from 'antd';
+import {getAllDepartments, createDepartment, updateDepartment, deleteDepartment} from '~/service/admin/department';
+import {getAllByTitle, getAllNoPaging} from '~/service/admin/position';
+import {getEmployeeByPositionType} from '~/service/admin/employee';
 
 const cx = classNames.bind(styles);
 
@@ -41,13 +41,18 @@ function Department() {
             title: 'Department Name',
             dataIndex: 'name',
             key: 'name',
-            width: 150,
+            width: 200,
             fixed: 'left',
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
+        },
+        {
+            title: 'Number Empl',
+            dataIndex: 'employeeCount',
+            key: 'employeeCount',
         },
         {
             title: 'Created At',
@@ -65,17 +70,17 @@ function Department() {
                     <SmartButton
                         title="Edit"
                         type="primary"
-                        icon={<EditOutlined />}
+                        icon={<EditOutlined/>}
                         buttonWidth={80}
                         onClick={() => handleEditDepartment(record)}
                     />
                     <SmartButton
                         title="Delete"
                         type="danger"
-                        icon={<DeleteOutlined />}
+                        icon={<DeleteOutlined/>}
                         buttonWidth={80}
-                        // onClick={() => handleDeleteTrailer(record)}
-                        style={{ marginLeft: '8px' }}
+                        onClick={() => handleDeleteDepartment(record)}
+                        style={{marginLeft: '8px'}}
                     />
                 </>
             ),
@@ -87,14 +92,14 @@ function Department() {
             label: 'Department Name',
             name: 'name',
             type: 'text',
-            rules: [{ required: true, message: 'Department name is required!' }],
+            rules: [{required: true, message: 'Department name is required!'}],
         },
         {
             label: 'Description',
             name: 'description',
             type: 'text',
         },
-       
+
         {
             label: 'Manager',
             name: 'managerId',
@@ -119,7 +124,7 @@ function Department() {
             const response = await getEmployeeByPositionType(positionType);
             const mappedEmployee = response.map(employee => ({
                 value: employee.id,
-                label: employee.firstName + ' ' + employee.lastName, 
+                label: employee.firstName + ' ' + employee.lastName,
             }));
             setManagerPositionSource(mappedEmployee);
         } catch (error) {
@@ -128,10 +133,10 @@ function Department() {
         }
     };
 
-    const handleGetAllDepartments = async (page = 1, pageSize = 5) => {
+    const handleGetAllDepartments = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getAllDepartments({ page: page - 1, pageSize });
+            const response = await getAllDepartments({page: page - 1, pageSize});
             if (response && Array.isArray(response.content)) {
                 const mappedDepartments = response.content.map(employee => ({
                     ...employee,
@@ -164,7 +169,7 @@ function Department() {
 
     const handleCallCreatePermission = async (formData) => {
         try {
-            await createDepartment(formData); 
+            await createDepartment(formData);
             handleGetAllDepartments();
             setIsModalOpen(false);
         } catch (error) {
@@ -186,12 +191,27 @@ function Department() {
         setIsModalOpen(false);
     };
 
+    const handleDeleteDepartment = (record) => {
+        setSelectedDepartment(record);
+        setModalMode('delete');
+        form.setFieldsValue(record);
+        setIsModalOpen(true);
+    }
+
+    const handleCallDeleteDepartment = async () => {
+        await deleteDepartment(selectedDepartment.id);
+        handleGetAllDepartments();
+        setIsModalOpen(false);
+    }
+
     // updateDepartment
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreatePermission(formData);
         } else if (modalMode === 'edit') {
             handleCallUpdateDepartment(formData);
+        } else if (modalMode === 'delete') {
+            handleCallDeleteDepartment();
         }
     };
 
@@ -218,17 +238,17 @@ function Department() {
                 <SmartInput
                     size="large"
                     placeholder="Search"
-                    icon={<SearchOutlined />}
+                    icon={<SearchOutlined/>}
                 />
                 <div className={cx('features')}>
                     <SmartButton
                         title="Add new"
-                        icon={<PlusOutlined />}
+                        icon={<PlusOutlined/>}
                         type="primary"
                         onClick={handleAddRole}
                     />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined />} />
+                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
+                    <SmartButton title="Excel" icon={<CloudUploadOutlined/>}/>
                 </div>
             </div>
             <div className={cx('trailer-container')}>

@@ -19,6 +19,23 @@ export const getAllPositions = async () => {
     }
 };
 
+export const getAllPositionsNoPaging = async () => {
+    try {
+        const response = await axios.get(API_ENDPOINTS.POSITION.GET_ALL_NO_PAGING, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        return response.data; 
+    } catch (error) {
+        message.error('Error get all positions: ');
+        return null;
+    }
+};
+
+
 export const createPosition = async (formData) => {
     try {
         const response = await axios.post(

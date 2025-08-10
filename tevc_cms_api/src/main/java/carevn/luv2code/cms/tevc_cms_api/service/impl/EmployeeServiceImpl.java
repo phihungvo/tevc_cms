@@ -1,11 +1,14 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Department;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
+import carevn.luv2code.cms.tevc_cms_api.entity.Position;
 import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.EmployeeMapper;
+import carevn.luv2code.cms.tevc_cms_api.repository.DepartmentRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.PositionRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.EmployeeService;
@@ -27,6 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final PositionRepository positionRepository;
     private final EmployeeMapper employeeMapper;
+    private final DepartmentRepository departmentRepository;
 
     @Override
     @Transactional
@@ -42,6 +46,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeDTO.setEmployeeCode(generatedCode);
 
         Employee employee = employeeMapper.toEntity(employeeDTO);
+        employee.setDepartment(departmentRepository.findById(employeeDTO.getDepartmentId())
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)));
+        employee.setPosition(positionRepository.findById(employeeDTO.getPositionId())
+                .orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND)));
         employee.setCreatedAt(new Date());
         employee.setActive(true);
 
@@ -55,7 +63,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
+        Department department = departmentRepository.findById(employeeDTO.getDepartmentId())
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+
+        Position position = positionRepository.findById(employeeDTO.getPositionId())
+                .orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
+
         employeeMapper.updateEmployeeFromDto(employeeDTO, employee);
+        employee.setDepartment(department);
+        employee.setPosition(position);
         employee.setUpdatedAt(new Date());
 
         Employee updatedEmployee = employeeRepository.save(employee);
@@ -94,6 +110,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         // Check if employee is a department manager
         if (!employee.getManagedDepartments().isEmpty()) {
             throw new AppException(ErrorCode.DEPARTMENT_HAS_EMPLOYEES);
+        }
+
+//        if (!employee.getDepartment().getEmployees().isEmpty()) {
+//            throw new AppException(ErrorCode.DEPARTMENT_HAS_EMPLOYEES);
+//        }
+
+        if (employee.getDepartment() != null) {
+            employee.setDepartment(null);
+        }
+
+        // Check if employee has any associated entities
+        if (employee.getPosition() != null) {
+            employee.setPosition(null);
         }
 
         employeeRepository.delete(employee);
