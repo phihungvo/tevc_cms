@@ -1,5 +1,4 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
