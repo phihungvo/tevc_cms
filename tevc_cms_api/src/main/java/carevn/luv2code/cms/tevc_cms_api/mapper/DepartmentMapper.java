@@ -8,7 +8,7 @@ import org.mapstruct.*;
 public interface DepartmentMapper {
     
     @Mapping(target = "managerId", source = "manager.id")
-//    @Mapping(target = "managerName", expression = "java(department.getManager() != null ? department.getManager().getFirstName() + \" \" + department.getManager().getLastName() : null)")
+    //@Mapping(target = "managerName", expression = "java(department.getManager() != null ? department.getManager().getFirstName() + \" \" + department.getManager().getLastName() : null)")
     @Mapping(target = "employeeCount", expression = "java(department.getEmployees() != null ? department.getEmployees().size() : 0)")
     DepartmentDTO toDTO(Department department);
 

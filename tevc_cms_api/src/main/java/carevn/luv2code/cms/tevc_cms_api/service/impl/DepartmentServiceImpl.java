@@ -12,6 +12,7 @@ import carevn.luv2code.cms.tevc_cms_api.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +70,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<DepartmentDTO> getAllDepartments(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return departmentRepository.findAll(pageRequest)

@@ -35,14 +35,18 @@ const API_ENDPOINTS = {
         GET_ALL: `${BASE_URL}/employees`,
         CREATE: `${BASE_URL}/employees`,
         GET_EMPLOYEE_BY_POSITION_TYPE: `${BASE_URL}/employees/by-position-type`,
+        UPDATE: (employeeId) => `${BASE_URL}/employees/${employeeId}`,
+        DELETE: (employeeId) => `${BASE_URL}/employees/${employeeId}`,
     },
     DEPARTMENT: {
         GET_ALL: `${BASE_URL}/departments`,
         CREATE: `${BASE_URL}/departments`,
         UPDATE: (departmentId) => `${BASE_URL}/departments/${departmentId}`,
+        DELETE: (departmentId) => `${BASE_URL}/departments/${departmentId}`,
     },
     POSITION: {
         GET_ALL: `${BASE_URL}/positions`,
+        GET_ALL_NO_PAGING: `${BASE_URL}/positions/no-paging`,
         CREATE: `${BASE_URL}/positions`,
         GET_BY_TITLE: `${BASE_URL}/positions/getPositionsByTitle`,
         UPDATE: (positionId) => `${BASE_URL}/positions/${positionId}`,

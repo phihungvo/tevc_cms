@@ -41,7 +41,7 @@ public class Employee {
     @Column(name = "hire_date")
     Date hireDate;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "department_id")
     Department department;
 
@@ -69,7 +69,7 @@ public class Employee {
     @EqualsAndHashCode.Exclude
     Set<Performance> performances = new HashSet<>();
 
-    @OneToMany(mappedBy = "manager")
+    @OneToMany(mappedBy = "manager", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<Department> managedDepartments = new HashSet<>();

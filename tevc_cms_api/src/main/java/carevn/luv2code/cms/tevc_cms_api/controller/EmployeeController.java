@@ -26,7 +26,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.createEmployee(employeeDTO));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
 //    @PreAuthorize("hasAuthority('EMPLOYEE:UPDATE')")
     public ResponseEntity<EmployeeDTO> updateEmployee(
             @PathVariable UUID id,

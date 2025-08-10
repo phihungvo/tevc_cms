@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.DepartmentDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Department;
 import carevn.luv2code.cms.tevc_cms_api.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,7 +46,7 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DEPARTMENT:DELETE')")
+//    @PreAuthorize("hasAuthority('DEPARTMENT:DELETE')")
     public ResponseEntity<Void> deleteDepartment(@PathVariable UUID id) {
         departmentService.deleteDepartment(id);
         return ResponseEntity.ok().build();

@@ -3,10 +3,12 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 import carevn.luv2code.cms.tevc_cms_api.dto.RoleDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Permission;
 import carevn.luv2code.cms.tevc_cms_api.entity.Role;
+import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.repository.PermissionRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.RoleRepository;
+import carevn.luv2code.cms.tevc_cms_api.repository.UserRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
+    private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
 
@@ -67,16 +70,31 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     public void deleteRole(UUID id) {
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-                
-        // Remove role from all users first
-//        role.getUsers().forEach(user -> {
+//        Role role = roleRepository.findById(id)
+//                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+//
+//        // Gỡ role khỏi tất cả user
+//        for (User user : role.getUsers()) {
 //            user.getRoles().remove(role);
-//        });
-        
-        roleRepository.delete(role);
+//        }
+//
+//        // Gỡ permission khỏi role
+//        for (Permission permission : role.getPermissions()) {
+//            permission.getRoles().remove(role);
+//        }
+//
+//        // Xóa toàn bộ liên kết trong tập của role
+//        role.getUsers().clear();
+//        role.getPermissions().clear();
+//
+//        // Lưu thay đổi để xóa dữ liệu ở bảng trung gian trước khi xóa role
+//        roleRepository.save(role);
+//
+//        // Cuối cùng xóa role
+//        roleRepository.delete(role);
+        roleRepository.deleteById(id);
     }
+
 
     @Override
     public RoleDTO getRole(UUID id) {

@@ -46,3 +46,15 @@ export const updateDepartment = async (departmentId, formData) => {
         console.error('Error when update employee: ', error); 
     }
 };
+
+export const deleteDepartment = async (departmentId) => {
+    try {
+        const response = await axios.delete(
+            API_ENDPOINTS.DEPARTMENT.DELETE(departmentId),
+        );
+        message.success('Departments deleted successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when creating employee: ', error);
+    }
+};
