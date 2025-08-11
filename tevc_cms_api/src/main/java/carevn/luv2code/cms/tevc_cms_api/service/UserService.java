@@ -25,7 +25,7 @@ public interface UserService {
 
     void removePermission(UUID userId, String resource, String action);
 
-    List<String> getUserPermissions(UUID userId);
+//    List<String> getUserPermissions(UUID userId);
 
     List<Permission> getAllPermissions();
 }

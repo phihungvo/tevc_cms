@@ -66,4 +66,25 @@ public class EmployeeController {
         PositionType type = PositionType.valueOf(positionType.toUpperCase());
         return ResponseEntity.ok(employeeService.getEmployeesByPositionType(type));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<EmployeeDTO>> searchEmployees(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(employeeService.searchEmployees(keyword, page, size));
+    }
+
+    @GetMapping("/by-department")
+    public ResponseEntity<Page<EmployeeDTO>> getEmployeesByDepartment(
+            @RequestParam UUID departmentId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(employeeService.findByDepartment(departmentId, page, size));
+    }
+
+    @GetMapping("/stats/by-status")
+    public ResponseEntity<Long> countEmployeesByStatus(@RequestParam boolean isActive) {
+        return ResponseEntity.ok(employeeService.countEmployeesByStatus(isActive));
+    }
 }
