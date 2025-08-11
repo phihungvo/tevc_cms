@@ -43,6 +43,7 @@ const API_ENDPOINTS = {
         CREATE: `${BASE_URL}/departments`,
         UPDATE: (departmentId) => `${BASE_URL}/departments/${departmentId}`,
         DELETE: (departmentId) => `${BASE_URL}/departments/${departmentId}`,
+        NO_PAGING: `${BASE_URL}/departments/no-paging`,
     },
     POSITION: {
         GET_ALL: `${BASE_URL}/positions`,

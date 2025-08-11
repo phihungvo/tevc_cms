@@ -101,14 +101,14 @@ public class UserController {
     }
 
 //    @PreAuthorize("hasAuthority('USER:READ')")
-@GetMapping("/{userId}/permissions")
-public ResponseEntity<ApiResponse<List<String>>> getUserPermissions(@PathVariable UUID userId) {
-        List<String> permissions = userService.getUserPermissions(userId);
-        return ResponseEntity.ok(ApiResponse.<List<String>>builder()
-                .code(200)
-                .result(permissions)
-                .build());
-    }
+//@GetMapping("/{userId}/permissions")
+//public ResponseEntity<ApiResponse<List<String>>> getUserPermissions(@PathVariable UUID userId) {
+//        List<String> permissions = userService.getUserPermissions(userId);
+//        return ResponseEntity.ok(ApiResponse.<List<String>>builder()
+//                .code(200)
+//                .result(permissions)
+//                .build());
+//    }
 
 
 //    @PreAuthorize("hasAuthority('ADMIN:MANAGE')")

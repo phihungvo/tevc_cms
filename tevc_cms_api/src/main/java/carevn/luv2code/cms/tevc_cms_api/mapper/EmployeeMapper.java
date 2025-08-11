@@ -6,10 +6,9 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = {DepartmentMapper.class, PositionMapper.class})
 public interface EmployeeMapper {
-    
-    @Mapping(target = "departmentId", source = "department.id")
-//    @Mapping(target = "departmentName", source = "department.name")
-    @Mapping(target = "positionId", source = "position.id")
+
+    @Mapping(target = "departmentId", source = "department.id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    @Mapping(target = "positionId", source = "position.id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     EmployeeDTO toDTO(Employee employee);
 
     @Mapping(target = "department", ignore = true)

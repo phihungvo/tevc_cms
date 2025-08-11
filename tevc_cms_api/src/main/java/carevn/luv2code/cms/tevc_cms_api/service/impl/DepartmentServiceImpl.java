@@ -12,10 +12,10 @@ import carevn.luv2code.cms.tevc_cms_api.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,36 +33,55 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
 
         Department department = departmentMapper.toEntity(departmentDTO);
+        if (departmentDTO.getManagerId() != null) {
+            Employee manager = employeeRepository.findById(departmentDTO.getManagerId())
+                    .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+            department.setManager(manager);
+        }
         Department savedDepartment = departmentRepository.save(department);
         return departmentMapper.toDTO(savedDepartment);
     }
 
     @Override
+    @Transactional
     public DepartmentDTO assignManager(UUID departmentId, UUID managerId) {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
-                
-        department.setManager(employeeRepository.findById(managerId)
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND)));
-                
-        return departmentMapper.toDTO(departmentRepository.save(department));
+
+        Employee manager = employeeRepository.findById(managerId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+
+        department.setManager(manager);
+        Department savedDepartment = departmentRepository.save(department);
+        return departmentMapper.toDTO(savedDepartment);
     }
 
     @Override
+    @Transactional
     public DepartmentDTO updateDepartment(UUID id, DepartmentDTO departmentDTO) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
 
-        Employee manager = employeeRepository.findById(departmentDTO.getManagerId())
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+        if (departmentDTO.getName() != null && !departmentDTO.getName().equals(department.getName()) &&
+                departmentRepository.existsByName(departmentDTO.getName())) {
+            throw new AppException(ErrorCode.DEPARTMENT_NAME_EXISTS);
+        }
 
-        department.setManager(manager);
+        if (departmentDTO.getManagerId() != null) {
+            Employee manager = employeeRepository.findById(departmentDTO.getManagerId())
+                    .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+            department.setManager(manager);
+        } else {
+            department.setManager(null);
+        }
+
         departmentMapper.updateDepartmentFromDto(departmentDTO, department);
         Department updatedDepartment = departmentRepository.save(department);
         return departmentMapper.toDTO(updatedDepartment);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DepartmentDTO getDepartment(UUID id) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
@@ -78,6 +97,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public List<DepartmentDTO> getAllDepartmentsNoPaging() {
+        List<Department> departmentList = departmentRepository.findAll();
+        return departmentList.stream()
+                .map(departmentMapper::toDTO)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public void deleteDepartment(UUID id) {
         Department department = departmentRepository.findById(id)
@@ -85,6 +112,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (!department.getEmployees().isEmpty()) {
             throw new AppException(ErrorCode.DEPARTMENT_HAS_EMPLOYEES);
         }
+        department.setManager(null);
         departmentRepository.delete(department);
     }
 }

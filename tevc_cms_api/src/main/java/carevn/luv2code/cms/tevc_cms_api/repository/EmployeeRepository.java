@@ -2,6 +2,8 @@ package carevn.luv2code.cms.tevc_cms_api.repository;
 
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,19 +18,29 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 
     boolean existsByEmployeeCode(String employeeCode);
 
-    @Query("SELECT e FROM Employee e WHERE e.department.id = ?1")
-    List<Employee> findByDepartmentId(UUID departmentId);
+    @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
+    Page<Employee> findByDepartmentId(@Param("departmentId") UUID departmentId, Pageable pageable);
 
-    @Query("SELECT e FROM Employee e WHERE e.position.id = ?1")
-    List<Employee> findByPositionId(UUID positionId);
+    @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
+    List<Employee> findByDepartmentId(@Param("departmentId") UUID departmentId);
 
-//    @Query("SELECT e FROM Employee e WHERE e.position.positionType = :type")
-//    List<Employee> findByPositionType(@Param("type") PositionType type);
+    @Query("SELECT e FROM Employee e WHERE e.position.id = :positionId")
+    List<Employee> findByPositionId(@Param("positionId") UUID positionId);
 
     @Query("SELECT e FROM Employee e JOIN e.position p WHERE p.positionType = :type")
     List<Employee> findByPositionType(@Param("type") PositionType type);
 
+    @Query("SELECT e FROM Employee e WHERE " +
+            "LOWER(e.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(e.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Employee> searchEmployees(@Param("keyword") String keyword, Pageable pageable);
+
+    long countByIsActive(boolean isActive);
+
     @Query("SELECT MAX(e.employeeCode) FROM Employee e")
     String findMaxEmployeeCode();
 
+    @Query("SELECT e FROM Employee e LEFT JOIN FETCH e.department LEFT JOIN FETCH e.position")
+    Page<Employee> findAllWithDepartmentAndPosition(Pageable pageable);
 }

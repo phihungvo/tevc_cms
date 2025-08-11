@@ -20,10 +20,13 @@ public interface EmployeeService {
 
     Page<EmployeeDTO> getAllEmployees(int page, int size);
 
-//    Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size);
+    Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size);
 
     boolean toggleEmployeeStatus(UUID id);
 
     List<EmployeeDTO> getEmployeesByPositionType(PositionType positionType);
 
+    Page<EmployeeDTO> searchEmployees(String keyword, int page, int size);
+
+    long countEmployeesByStatus(boolean isActive);
 }

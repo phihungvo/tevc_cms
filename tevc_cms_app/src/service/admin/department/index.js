@@ -21,6 +21,22 @@ export const getAllDepartments = async ({ page = 0, pageSize = 5 }) => {
     }
 };
 
+export const getAllDepartmentsNoPaging = async () => {
+    try {
+        const response = await axios.get(API_ENDPOINTS.DEPARTMENT.NO_PAGING, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        return response.data; 
+    } catch (error) {
+        message.error('Error get all departments: ');
+        return null;
+    }
+};
+
 export const createDepartment = async (formData) => {
     try {
         const response = await axios.post(

@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreateAt(new Date());
         user.setRoles(convertToRoleSet(userDTO.getRoles()));
-        user.setPermissions(convertToPermissionSet(userDTO.getPermissions()));
+//        user.setPermissions(convertToPermissionSet(userDTO.getPermissions()));
 
         userRepository.save(user);
     }
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setRoles(convertToRoleSet(request.getRoles()));
-        user.setPermissions(convertToPermissionSet(request.getPermissions()));
+//        user.setPermissions(convertToPermissionSet(request.getPermissions()));
         user.setEnabled(request.isEnabled());
 
         userRepository.save(user);
@@ -131,30 +131,30 @@ public class UserServiceImpl implements UserService {
         // Khóa người dùng bằng Pessimistic Locking
         entityManager.lock(user, LockModeType.PESSIMISTIC_WRITE);
 
-        Permission permission = permissionRepository.findByResourceAndAction(resource, action)
-                .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
-        user.getPermissions().remove(permission);
+//        Permission permission = permissionRepository.findByResourceAndAction(resource, action)
+//                .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
+//        user.getPermissions().remove(permission);
         userRepository.save(user);
         log.info("Đã xóa quyền {}:{} khỏi người dùng ID: {}", resource, action, userId);
     }
 
-    @Override
-    public List<String> getUserPermissions(UUID userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-                
-        // Get direct permissions
-        Set<Permission> allPermissions = new HashSet<>(user.getPermissions());
-        
-        // Add permissions from roles
-        user.getRoles().forEach(role -> {
-            allPermissions.addAll(role.getPermissions());
-        });
-        
-        return allPermissions.stream()
-                .map(p -> p.getResource() + ":" + p.getAction())
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<String> getUserPermissions(UUID userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+//
+//        // Get direct permissions
+////        Set<Permission> allPermissions = new HashSet<>(user.getPermissions());
+//
+//        // Add permissions from roles
+////        user.getRoles().forEach(role -> {
+////            allPermissions.addAll(role.getPermissions());
+////        });
+////
+////        return allPermissions.stream()
+////                .map(p -> p.getResource() + ":" + p.getAction())
+////                .collect(Collectors.toList());
+//    }
 
     @Override
     public List<Permission> getAllPermissions() {
@@ -207,12 +207,12 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        if (user.getPermissions() != null) {
-            List<UUID> permissions = user.getPermissions().stream()
-                    .map(Permission::getId)
-                    .collect(Collectors.toList());
-            dto.setPermissions(permissions);
-        }
+//        if (user.getPermissions() != null) {
+//            List<UUID> permissions = user.getPermissions().stream()
+//                    .map(Permission::getId)
+//                    .collect(Collectors.toList());
+//            dto.setPermissions(permissions);
+//        }
 
         return dto;
     }

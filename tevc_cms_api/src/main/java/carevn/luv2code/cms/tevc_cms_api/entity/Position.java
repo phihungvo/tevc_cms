@@ -33,8 +33,8 @@ public class Position {
     @Column(name = "base_salary", nullable = false)
     Double baseSalary;
 
-//    @JsonManagedReference
-//    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    Set<Employee> employees;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    Set<Employee> employees;
 
 }

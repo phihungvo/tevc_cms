@@ -88,18 +88,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Page<EmployeeDTO> getAllEmployees(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        return employeeRepository.findAll(pageRequest)
+        return employeeRepository.findAllWithDepartmentAndPosition(pageRequest)
                 .map(employeeMapper::toDTO);
     }
 
-
-//    @Override
-//    public Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size) {
-//        PageRequest pageRequest = PageRequest.of(page, size);
-//        return employeeRepository.findAll(pageRequest)
-//                .map(employeeMapper::toDTO)
-//                .filter(dto -> departmentId.equals(dto.getDepartmentId()));
-//    }
+    @Override
+    public Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return employeeRepository.findByDepartmentId(departmentId, pageRequest)
+                .map(employeeMapper::toDTO);
+    }
 
     @Override
     @Transactional
@@ -107,20 +105,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
-        // Check if employee is a department manager
         if (!employee.getManagedDepartments().isEmpty()) {
             throw new AppException(ErrorCode.DEPARTMENT_HAS_EMPLOYEES);
         }
-
-//        if (!employee.getDepartment().getEmployees().isEmpty()) {
-//            throw new AppException(ErrorCode.DEPARTMENT_HAS_EMPLOYEES);
-//        }
 
         if (employee.getDepartment() != null) {
             employee.setDepartment(null);
         }
 
-        // Check if employee has any associated entities
         if (employee.getPosition() != null) {
             employee.setPosition(null);
         }
@@ -147,6 +139,18 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Page<EmployeeDTO> searchEmployees(String keyword, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return employeeRepository.searchEmployees(keyword, pageRequest)
+                .map(employeeMapper::toDTO);
+    }
+
+    @Override
+    public long countEmployeesByStatus(boolean isActive) {
+        return employeeRepository.countByIsActive(isActive);
+    }
+
     private String generateNextEmployeeCode() {
         String lastCode = employeeRepository.findMaxEmployeeCode();
         int nextNumber = 1;
@@ -158,5 +162,4 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return String.format("EMP%04d", nextNumber);
     }
-
 }

@@ -73,9 +73,9 @@ public class PermissionServiceImpl implements PermissionService {
         });
 
         // Remove permission from all users that have it directly
-        permission.getUsers().forEach(user -> {
-            user.getPermissions().remove(permission);
-        });
+//        permission.getUsers().forEach(user -> {
+//            user.getPermissions().remove(permission);
+//        });
         
         permissionRepository.delete(permission);
     }

@@ -25,7 +25,7 @@ const cx = classNames.bind(styles);
 function User() {
     const [userSource, setUserSource] = useState([]);
     const [roleOptions, setRoleOptions] = useState([]);
-    const [permissionOptions, setPermissionOptions] = useState([]);
+    // const [permissionOptions, setPermissionOptions] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -54,7 +54,7 @@ function User() {
         },
         {
             title: 'Role',
-            dataIndex: 'roleNames', // roleNames is array, process agaign
+            dataIndex: 'roleNames',
             key: 'roleNames',
             width: 100,
         },
@@ -172,14 +172,16 @@ function User() {
             label: 'Role',
             name: 'roles',
             type: 'select',
+            multiple: true,
             options: roleOptions
         },
-        {
-            label: 'Permission',
-            name: 'permissions',
-            type: 'select',
-            options: permissionOptions
-        },
+        // {
+        //     label: 'Permission',
+        //     name: 'permissions',
+        //     type: 'select',
+        //     multiple: true,
+        //     options: permissionOptions
+        // },
         {
             label: 'Enable',
             name: 'enabled',
@@ -237,15 +239,15 @@ function User() {
                 setRoleOptions(roles);
             }
     
-            const perResponse = await getAllPermissionsNoPaging();
-            console.log('per Response: ', perResponse);
-            if (perResponse && Array.isArray(perResponse)) {
-                const permissions = perResponse.map(per => ({
-                    label: per.resource + ' - ' + per.action,
-                    value: per.id,
-                }));
-                setPermissionOptions(permissions);
-            }
+            // const perResponse = await getAllPermissionsNoPaging();
+            // console.log('per Response: ', perResponse);
+            // if (perResponse && Array.isArray(perResponse)) {
+            //     const permissions = perResponse.map(per => ({
+            //         label: per.resource + ' - ' + per.action,
+            //         value: per.id,
+            //     }));
+            //     setPermissionOptions(permissions);
+            // }
         } catch (error) {
             console.error('Error fetching options:', error);
         }
