@@ -14,9 +14,9 @@ public interface PositionMapper {
 //    @Mapping(target = "positionType", expression = "java(dto.getPositionType() != null ? carevn.luv2code.cms.tevc_cms_api.enums.PositionType.valueOf(dto.getPositionType()) : null)")
     Position toEntity(PositionDTO dto);
 
-//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-//    @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "employees", ignore = true)
-//    @Mapping(target = "positionType", expression = "java(dto.getPositionType() != null ? carevn.luv2code.cms.tevc_cms_api.enums.PositionType.valueOf(dto.getPositionType()) : null)")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    //@Mapping(target = "employees", ignore = true)
+    @Mapping(target = "positionType", expression = "java(dto.getPositionType() != null ? carevn.luv2code.cms.tevc_cms_api.enums.PositionType.valueOf(dto.getPositionType()) : null)")
     void updatePositionFromDto(PositionDTO dto, @MappingTarget Position entity);
 }

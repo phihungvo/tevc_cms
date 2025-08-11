@@ -60,7 +60,7 @@ public class PositionServiceImpl implements PositionService {
     public Page<PositionDTO> getAllPositions(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return positionRepository.findAll(pageRequest)
-                .map(positionMapper::toDTO);
+                .map(this::toDTO);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class PositionServiceImpl implements PositionService {
         positionDTO.setDescription(position.getDescription());
         positionDTO.setBaseSalary(position.getBaseSalary());
         positionDTO.setPositionType(position.getPositionType() != null ? position.getPositionType().name() : null);
-//        positionDTO.setEmployeeCount(position.getEmployees() != null ? position.getEmployees().size() : 0);
+        //positionDTO.setEmployeeCount(position.getEmployees() != null ? position.getEmployees().size() : 0);
         return positionDTO;
     }
 }
