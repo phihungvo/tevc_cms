@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.DepartmentDTO;
-import carevn.luv2code.cms.tevc_cms_api.entity.Department;
 import carevn.luv2code.cms.tevc_cms_api.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -9,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,7 +32,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('DEPARTMENT:READ')")
+//    @PreAuthorize("hasAuthority('DEPARTMENT:READ')")
     public ResponseEntity<DepartmentDTO> getDepartment(@PathVariable UUID id) {
         return ResponseEntity.ok(departmentService.getDepartment(id));
     }
@@ -45,6 +45,12 @@ public class DepartmentController {
         return ResponseEntity.ok(departmentService.getAllDepartments(page, size));
     }
 
+    @GetMapping("/no-paging")
+//    @PreAuthorize("hasAuthority('DEPARTMENT:READ')")
+    public ResponseEntity<List<DepartmentDTO>> getAllDepartmentsNoPaging() {
+        return ResponseEntity.ok(departmentService.getAllDepartmentsNoPaging());
+    }
+
     @DeleteMapping("/{id}")
 //    @PreAuthorize("hasAuthority('DEPARTMENT:DELETE')")
     public ResponseEntity<Void> deleteDepartment(@PathVariable UUID id) {
@@ -53,7 +59,7 @@ public class DepartmentController {
     }
 
     @PatchMapping("/{id}/manager/{managerId}")
-    @PreAuthorize("hasAuthority('DEPARTMENT:UPDATE')")
+//    @PreAuthorize("hasAuthority('DEPARTMENT:UPDATE')")
     public ResponseEntity<DepartmentDTO> assignManager(
             @PathVariable UUID id,
             @PathVariable UUID managerId) {

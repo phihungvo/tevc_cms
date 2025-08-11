@@ -16,7 +16,7 @@ import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import {Form, message, Tag, DatePicker} from 'antd';
 import {getAllEmployees, createEmployee, updateEmployee, deleteEmployee} from '~/service/admin/employee';
-import {getAllDepartments} from '~/service/admin/department';
+import {getAllDepartmentsNoPaging} from '~/service/admin/department';
 import {getAllPositions, getAllNoPaging} from '~/service/admin/position';
 
 // Thiết lập locale tiếng Việt cho Moment.js
@@ -226,9 +226,9 @@ function Employee() {
 
     const fetchDepartmentAndPositionOptions = async () => {
         try {
-            const deptResponse = await getAllDepartments({page: 0, pageSize: 100});
-            if (deptResponse && Array.isArray(deptResponse.content)) {
-                const departments = deptResponse.content.map(dept => ({
+            const deptResponse = await getAllDepartmentsNoPaging();
+            if (deptResponse && Array.isArray(deptResponse)) {
+                const departments = deptResponse.map(dept => ({
                     label: dept.name,
                     value: dept.id,
                 }));
@@ -327,7 +327,7 @@ function Employee() {
     };
 
     const handleFormSubmit = (formData) => {
-        console.log('Form Data:', formData); // Debug dữ liệu form
+        console.log('Form Data:', formData);
         if (modalMode === 'create') {
             handleCallCreatePermission(formData);
         } else if (modalMode === 'edit') {
