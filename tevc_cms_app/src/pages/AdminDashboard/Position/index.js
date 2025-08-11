@@ -60,12 +60,6 @@ function Position() {
             width: 150,
         },
         {
-            title: 'Employee Count',
-            dataIndex: 'employeeCount',
-            key: 'employeeCount',
-            width: 150,
-        },
-        {
             title: 'Actions',
             fixed: 'right',
             width: 180,
