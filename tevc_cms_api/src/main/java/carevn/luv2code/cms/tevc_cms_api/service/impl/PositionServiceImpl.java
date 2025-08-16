@@ -1,5 +1,14 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.PositionDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Position;
 import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
@@ -9,15 +18,6 @@ import carevn.luv2code.cms.tevc_cms_api.mapper.PositionMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.PositionRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.PositionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +40,9 @@ public class PositionServiceImpl implements PositionService {
     @Override
     @Transactional
     public PositionDTO updatePosition(UUID id, PositionDTO positionDTO) {
-        Position position = positionRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
-        
+        Position position =
+                positionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
+
         positionMapper.updatePositionFromDto(positionDTO, position);
         Position updatedPosition = positionRepository.save(position);
         return positionMapper.toDTO(updatedPosition);
@@ -50,8 +50,8 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public PositionDTO getPosition(UUID id) {
-        Position position = positionRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
+        Position position =
+                positionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
         return positionMapper.toDTO(position);
     }
 
@@ -59,17 +59,13 @@ public class PositionServiceImpl implements PositionService {
     @Transactional(readOnly = true)
     public Page<PositionDTO> getAllPositions(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        return positionRepository.findAll(pageRequest)
-                .map(this::toDTO);
+        return positionRepository.findAll(pageRequest).map(this::toDTO);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PositionDTO> getAllNoPaging() {
-        return positionRepository.findAll()
-                .stream()
-                .map(positionMapper::toDTO)
-                .collect(Collectors.toList());
+        return positionRepository.findAll().stream().map(positionMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -80,11 +76,11 @@ public class PositionServiceImpl implements PositionService {
     @Override
     @Transactional
     public void deletePosition(UUID id) {
-        Position position = positionRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
-//        if (!position.getEmployees().isEmpty()) {
-//            throw new AppException(ErrorCode.POSITION_HAS_EMPLOYEES);
-//        }
+        Position position =
+                positionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
+        //        if (!position.getEmployees().isEmpty()) {
+        //            throw new AppException(ErrorCode.POSITION_HAS_EMPLOYEES);
+        //        }
         positionRepository.delete(position);
     }
 
@@ -100,8 +96,9 @@ public class PositionServiceImpl implements PositionService {
         positionDTO.setTitle(position.getTitle());
         positionDTO.setDescription(position.getDescription());
         positionDTO.setBaseSalary(position.getBaseSalary());
-        positionDTO.setPositionType(position.getPositionType() != null ? position.getPositionType().name() : null);
-        //positionDTO.setEmployeeCount(position.getEmployees() != null ? position.getEmployees().size() : 0);
+        positionDTO.setPositionType(
+                position.getPositionType() != null ? position.getPositionType().name() : null);
+        // positionDTO.setEmployeeCount(position.getEmployees() != null ? position.getEmployees().size() : 0);
         return positionDTO;
     }
 }

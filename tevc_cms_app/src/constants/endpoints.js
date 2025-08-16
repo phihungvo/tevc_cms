@@ -12,7 +12,9 @@ const API_ENDPOINTS = {
         GET_INFO: `${BASE_URL}/storage/files`,
         GET_FILE: (filePath) => `${BASE_URL}/storage/files/${filePath}`,
     },
-
+    SERVICE: {
+        EXPORT_EXCEL: `${BASE_URL}/export/excel`,
+    },
     USER: {
         GET_ALL: `${BASE_URL}/user/getAll`,
         CREATE: `${BASE_URL}/user/createUser`,

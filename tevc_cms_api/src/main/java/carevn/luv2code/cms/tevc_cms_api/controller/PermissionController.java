@@ -1,15 +1,16 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.PermissionDTO;
-import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
-import carevn.luv2code.cms.tevc_cms_api.service.PermissionService;
-import lombok.RequiredArgsConstructor;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import carevn.luv2code.cms.tevc_cms_api.dto.PermissionDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
+import carevn.luv2code.cms.tevc_cms_api.service.PermissionService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/permissions")
@@ -18,7 +19,7 @@ public class PermissionController {
     private final PermissionService permissionService;
 
     @PostMapping
-//    @PreAuthorize("hasAuthority('PERMISSION:CREATE')")
+    //    @PreAuthorize("hasAuthority('PERMISSION:CREATE')")
     public ResponseEntity<ApiResponse<PermissionDTO>> createPermission(@RequestBody PermissionDTO permissionDTO) {
         return ResponseEntity.ok(ApiResponse.<PermissionDTO>builder()
                 .code(200)
@@ -30,8 +31,7 @@ public class PermissionController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('PERMISSION:UPDATE')")
     public ResponseEntity<ApiResponse<PermissionDTO>> updatePermission(
-            @PathVariable UUID id,
-            @RequestBody PermissionDTO permissionDTO) {
+            @PathVariable UUID id, @RequestBody PermissionDTO permissionDTO) {
         return ResponseEntity.ok(ApiResponse.<PermissionDTO>builder()
                 .code(200)
                 .message("Permission updated successfully")
@@ -49,10 +49,9 @@ public class PermissionController {
     }
 
     @GetMapping
-//    @PreAuthorize("hasAuthority('PERMISSION:READ')")
+    //    @PreAuthorize("hasAuthority('PERMISSION:READ')")
     public ResponseEntity<ApiResponse<Page<PermissionDTO>>> getAllPermissions(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(ApiResponse.<Page<PermissionDTO>>builder()
                 .code(200)
                 .result(permissionService.getAllPermissions(page, size))
@@ -60,7 +59,7 @@ public class PermissionController {
     }
 
     @GetMapping("/noPaging")
-//    @PreAuthorize("hasAuthority('PERMISSION:READ')")
+    //    @PreAuthorize("hasAuthority('PERMISSION:READ')")
     public ResponseEntity<ApiResponse<java.util.List<PermissionDTO>>> getAllPermissionsNoPaging() {
         return ResponseEntity.ok(ApiResponse.<java.util.List<PermissionDTO>>builder()
                 .code(200)

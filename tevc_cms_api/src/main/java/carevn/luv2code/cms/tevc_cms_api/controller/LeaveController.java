@@ -1,28 +1,15 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.LeaveDTO;
-import carevn.luv2code.cms.tevc_cms_api.dto.requests.AuthenticationRequest;
-import carevn.luv2code.cms.tevc_cms_api.dto.requests.LogoutRequest;
-import carevn.luv2code.cms.tevc_cms_api.dto.requests.RegisterRequest;
-import carevn.luv2code.cms.tevc_cms_api.dto.response.AuthenticationResponse;
-import carevn.luv2code.cms.tevc_cms_api.dto.response.LogoutResponse;
-import carevn.luv2code.cms.tevc_cms_api.entity.User;
-import carevn.luv2code.cms.tevc_cms_api.repository.UserRepository;
-import carevn.luv2code.cms.tevc_cms_api.security.AuthService;
-import carevn.luv2code.cms.tevc_cms_api.security.JwtService;
-import carevn.luv2code.cms.tevc_cms_api.security.TokenBlacklist;
-import carevn.luv2code.cms.tevc_cms_api.service.LeaveService;
-import lombok.RequiredArgsConstructor;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-import java.util.UUID;
+import carevn.luv2code.cms.tevc_cms_api.dto.LeaveDTO;
+import carevn.luv2code.cms.tevc_cms_api.service.LeaveService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/leaves")
@@ -31,16 +18,14 @@ public class LeaveController {
     private final LeaveService leaveService;
 
     @PostMapping
-//    @PreAuthorize("hasAuthority('LEAVE:CREATE')")
+    //    @PreAuthorize("hasAuthority('LEAVE:CREATE')")
     public ResponseEntity<LeaveDTO> createLeave(@RequestBody LeaveDTO leaveDTO) {
         return ResponseEntity.ok(leaveService.createLeave(leaveDTO));
     }
 
     @PatchMapping("/{id}")
-//    @PreAuthorize("hasAuthority('LEAVE:UPDATE')")
-    public ResponseEntity<LeaveDTO> updateLeave(
-            @PathVariable UUID id,
-            @RequestBody LeaveDTO leaveDTO) {
+    //    @PreAuthorize("hasAuthority('LEAVE:UPDATE')")
+    public ResponseEntity<LeaveDTO> updateLeave(@PathVariable UUID id, @RequestBody LeaveDTO leaveDTO) {
         return ResponseEntity.ok(leaveService.updateLeave(id, leaveDTO));
     }
 
@@ -51,31 +36,26 @@ public class LeaveController {
     }
 
     @GetMapping
-//    @PreAuthorize("hasAuthority('LEAVE:READ')")
+    //    @PreAuthorize("hasAuthority('LEAVE:READ')")
     public ResponseEntity<Page<LeaveDTO>> getAllLeaves(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(leaveService.getAllLeaves(page, size));
     }
 
     @PatchMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('LEAVE:APPROVE')")
-    public ResponseEntity<LeaveDTO> approveLeave(
-            @PathVariable UUID id,
-            @RequestParam String comments) {
+    public ResponseEntity<LeaveDTO> approveLeave(@PathVariable UUID id, @RequestParam String comments) {
         return ResponseEntity.ok(leaveService.approveLeave(id, comments));
     }
 
     @PatchMapping("/{id}/reject")
     @PreAuthorize("hasAuthority('LEAVE:APPROVE')")
-    public ResponseEntity<LeaveDTO> rejectLeave(
-            @PathVariable UUID id,
-            @RequestParam String comments) {
+    public ResponseEntity<LeaveDTO> rejectLeave(@PathVariable UUID id, @RequestParam String comments) {
         return ResponseEntity.ok(leaveService.rejectLeave(id, comments));
     }
 
     @DeleteMapping("/{id}")
-//    @PreAuthorize("hasAuthority('LEAVE:DELETE')")
+    //    @PreAuthorize("hasAuthority('LEAVE:DELETE')")
     public ResponseEntity<Void> deleteLeave(@PathVariable UUID id) {
         leaveService.deleteLeave(id);
         return ResponseEntity.ok().build();

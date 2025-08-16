@@ -1,16 +1,17 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.ContractDTO;
-import carevn.luv2code.cms.tevc_cms_api.service.ContractService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
 
-import java.util.List;
-import java.util.UUID;
+import carevn.luv2code.cms.tevc_cms_api.dto.ContractDTO;
+import carevn.luv2code.cms.tevc_cms_api.service.ContractService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/contracts")
@@ -19,16 +20,14 @@ public class ContractController {
     private final ContractService contractService;
 
     @PostMapping
-//    @PreAuthorize("hasAuthority('CONTRACT:CREATE')")
+    //    @PreAuthorize("hasAuthority('CONTRACT:CREATE')")
     public ResponseEntity<ContractDTO> createContract(@RequestBody ContractDTO contractDTO) {
         return ResponseEntity.ok(contractService.createContract(contractDTO));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('CONTRACT:UPDATE')")
-    public ResponseEntity<ContractDTO> updateContract(
-            @PathVariable UUID id,
-            @RequestBody ContractDTO contractDTO) {
+    public ResponseEntity<ContractDTO> updateContract(@PathVariable UUID id, @RequestBody ContractDTO contractDTO) {
         return ResponseEntity.ok(contractService.updateContract(id, contractDTO));
     }
 
@@ -41,8 +40,7 @@ public class ContractController {
     @GetMapping
     @PreAuthorize("hasAuthority('CONTRACT:READ')")
     public ResponseEntity<Page<ContractDTO>> getAllContracts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(contractService.getAllContracts(page, size));
     }
 
@@ -54,9 +52,7 @@ public class ContractController {
 
     @PatchMapping("/{id}/terminate")
     @PreAuthorize("hasAuthority('CONTRACT:UPDATE')")
-    public ResponseEntity<ContractDTO> terminateContract(
-            @PathVariable UUID id,
-            @RequestParam String reason) {
+    public ResponseEntity<ContractDTO> terminateContract(@PathVariable UUID id, @RequestParam String reason) {
         return ResponseEntity.ok(contractService.terminateContract(id, reason));
     }
 

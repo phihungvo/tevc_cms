@@ -1,5 +1,14 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.ContractDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Contract;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
@@ -10,14 +19,6 @@ import carevn.luv2code.cms.tevc_cms_api.repository.ContractRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.ContractService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,18 +31,21 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public ContractDTO createContract(ContractDTO contractDTO) {
         // Check if employee has active contract
-        if (contractRepository.findByEmployeeIdAndStatus(contractDTO.getEmployeeId(), "ACTIVE").isPresent()) {
+        if (contractRepository
+                .findByEmployeeIdAndStatus(contractDTO.getEmployeeId(), "ACTIVE")
+                .isPresent()) {
             throw new AppException(ErrorCode.CONTRACT_ALREADY_EXISTS);
         }
 
         Contract contract = contractMapper.toEntity(contractDTO);
-        Employee employee = employeeRepository.findById(contractDTO.getEmployeeId())
+        Employee employee = employeeRepository
+                .findById(contractDTO.getEmployeeId())
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
-        
+
         contract.setEmployee(employee);
         contract.setStatus("ACTIVE");
         contract.setSignedDate(new Date());
-        
+
         return contractMapper.toDTO(contractRepository.save(contract));
     }
 
@@ -51,9 +55,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public void deleteContract(UUID id) {
-
-    }
+    public void deleteContract(UUID id) {}
 
     @Override
     public ContractDTO getContract(UUID id) {
@@ -68,17 +70,17 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public ContractDTO terminateContract(UUID id, String reason) {
-        Contract contract = contractRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.CONTRACT_NOT_FOUND));
-        
+        Contract contract =
+                contractRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CONTRACT_NOT_FOUND));
+
         if (!"ACTIVE".equals(contract.getStatus())) {
             throw new AppException(ErrorCode.CONTRACT_NOT_ACTIVE);
         }
-        
+
         contract.setStatus("TERMINATED");
         contract.setTerminationReason(reason);
         contract.setTerminationDate(new Date());
-        
+
         return contractMapper.toDTO(contractRepository.save(contract));
     }
 
@@ -91,4 +93,3 @@ public class ContractServiceImpl implements ContractService {
 
     // ... other standard CRUD methods implementation ...
 }
-

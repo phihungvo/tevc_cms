@@ -1,11 +1,11 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
+import java.util.Set;
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
-import java.util.UUID;
 
 @Setter
 @Getter

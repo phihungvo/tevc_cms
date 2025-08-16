@@ -19,6 +19,7 @@ import { Form, message, Tag } from 'antd';
 import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
 import { getAllRolesNoPaging } from '~/service/admin/role';
 import { getAllPermissionsNoPaging } from '~/service/admin/permission';
+import { exportExcelFile } from '~/service/admin/export_service';
 
 const cx = classNames.bind(styles);
 
@@ -175,13 +176,6 @@ function User() {
             multiple: true,
             options: roleOptions
         },
-        // {
-        //     label: 'Permission',
-        //     name: 'permissions',
-        //     type: 'select',
-        //     multiple: true,
-        //     options: permissionOptions
-        // },
         {
             label: 'Enable',
             name: 'enabled',
@@ -238,21 +232,11 @@ function User() {
                 }));
                 setRoleOptions(roles);
             }
-    
-            // const perResponse = await getAllPermissionsNoPaging();
-            // console.log('per Response: ', perResponse);
-            // if (perResponse && Array.isArray(perResponse)) {
-            //     const permissions = perResponse.map(per => ({
-            //         label: per.resource + ' - ' + per.action,
-            //         value: per.id,
-            //     }));
-            //     setPermissionOptions(permissions);
-            // }
         } catch (error) {
             console.error('Error fetching options:', error);
         }
     };
-    
+
     const handleAddUser = () => {
         setModalMode('create');
         setSelectedUser(null);
@@ -285,6 +269,27 @@ function User() {
         setIsModalOpen(true);
     };
 
+    const handleExportFile = async () => {
+        try {
+            const response = await exportExcelFile('user');
+            const blob = await response.blob(); // Chuyển phản hồi thành Blob
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            // Đặt tên file với định dạng user_YYYYMMDD_HHMMSS.xlsx
+            const timestamp = moment().format('YYYYMMDD_HHMMSS');
+            link.setAttribute('download', `user_${timestamp}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            message.success('Excel file downloaded successfully!');
+        } catch (error) {
+            console.error('Error exporting Excel file:', error);
+            message.error('Failed to download Excel file.');
+        }
+    };
+
     const handleCallDeleteUser = async () => {
         console.log('selected row key: ', selectedRowKeys);
         await deleteUser(selectedRowKeys);
@@ -306,7 +311,7 @@ function User() {
             handleCallCreateUser(formData);
         } else if (modalMode === 'edit') {
             handleCallUpdateUser(formData);
-        }else if (modalMode === 'delete') {
+        } else if (modalMode === 'delete') {
             handleCallDeleteUser();
         }
     };
@@ -314,6 +319,7 @@ function User() {
     const handleTableChange = (pagination) => {
         handleGetAllUsers(pagination.current, pagination.pageSize);
     };
+
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
@@ -343,7 +349,11 @@ function User() {
                         onClick={handleAddUser}
                     />
                     <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined />} />
+                    <SmartButton 
+                        title="Excel" 
+                        icon={<CloudUploadOutlined />}
+                        onClick={handleExportFile}
+                    />
                 </div>
             </div>
             <div className={cx('trailer-container')}>

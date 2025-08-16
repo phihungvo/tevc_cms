@@ -1,9 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.PayrollDetailDTO;
-
 import java.util.List;
 import java.util.UUID;
+
+import carevn.luv2code.cms.tevc_cms_api.dto.PayrollDetailDTO;
 
 public interface PayrollDetailService {
 

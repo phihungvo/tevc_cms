@@ -1,9 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.dto.requests;
 
+import java.util.Set;
+
 import carevn.luv2code.cms.tevc_cms_api.enums.Role;
 import lombok.Data;
-
-import java.util.Set;
 
 @Data
 public class RegisterRequest {
@@ -15,5 +15,4 @@ public class RegisterRequest {
     private String password;
 
     private Set<Role> roles;
-
 }

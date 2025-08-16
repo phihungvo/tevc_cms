@@ -1,14 +1,23 @@
 package carevn.luv2code.cms.tevc_cms_api.mapper;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
-import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {DepartmentMapper.class, PositionMapper.class})
+import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
+
+@Mapper(
+        componentModel = "spring",
+        uses = {DepartmentMapper.class, PositionMapper.class})
 public interface EmployeeMapper {
 
-    @Mapping(target = "departmentId", source = "department.id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
-    @Mapping(target = "positionId", source = "position.id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    @Mapping(
+            target = "departmentId",
+            source = "department.id",
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    @Mapping(
+            target = "positionId",
+            source = "position.id",
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     EmployeeDTO toDTO(Employee employee);
 
     @Mapping(target = "department", ignore = true)

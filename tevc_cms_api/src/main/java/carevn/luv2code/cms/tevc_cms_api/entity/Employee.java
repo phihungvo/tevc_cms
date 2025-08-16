@@ -1,15 +1,15 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
-import java.util.HashSet;
 
 @Entity
 @Table(name = "employees")
@@ -77,7 +77,10 @@ public class Employee {
     @EqualsAndHashCode.Exclude
     Set<Performance> performances = new HashSet<>();
 
-    @OneToMany(mappedBy = "manager", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "manager",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

@@ -1,14 +1,14 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
-import java.util.HashSet;
-import java.util.UUID;
 
 @Entity
 @Table(name = "departments")

@@ -1,5 +1,17 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.UserDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.UserUpdateRequest;
 import carevn.luv2code.cms.tevc_cms_api.entity.Permission;
@@ -15,18 +27,6 @@ import carevn.luv2code.cms.tevc_cms_api.service.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,9 +44,12 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
 
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository,
-                           PermissionRepository permissionRepository, RoleRepository roleRepository,
-                           UserMapper userMapper) {
+    public UserServiceImpl(
+            PasswordEncoder passwordEncoder,
+            UserRepository userRepository,
+            PermissionRepository permissionRepository,
+            RoleRepository roleRepository,
+            UserMapper userMapper) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.permissionRepository = permissionRepository;
@@ -56,8 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        return userRepository.findByUserName(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userRepository.findByUserName(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Override
@@ -70,15 +72,14 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreateAt(new Date());
         user.setRoles(convertToRoleSet(userDTO.getRoles()));
-//        user.setPermissions(convertToPermissionSet(userDTO.getPermissions()));
+        //        user.setPermissions(convertToPermissionSet(userDTO.getPermissions()));
 
         userRepository.save(user);
     }
 
     @Override
     public void updateUser(UUID userId, UserUpdateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         userMapper.updateUserFromDto(request, user);
         user.setUpdateAt(new Date());
@@ -88,7 +89,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setRoles(convertToRoleSet(request.getRoles()));
-//        user.setPermissions(convertToPermissionSet(request.getPermissions()));
+        //        user.setPermissions(convertToPermissionSet(request.getPermissions()));
         user.setEnabled(request.isEnabled());
 
         userRepository.save(user);
@@ -102,59 +103,57 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(UUID userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         userRepository.delete(user);
     }
 
     @Override
     @Transactional
     public void assignPermissions(UUID userId, List<String> permissionNames) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-//
-//        // Khóa người dùng bằng Pessimistic Locking
-//        entityManager.lock(user, LockModeType.PESSIMISTIC_WRITE);
-//
-//        Set<Permission> permissions = convertToPermissionSet(permissionNames);
-//        user.getPermissions().addAll(permissions);
-//        userRepository.save(user);
-//        log.info("Đã gán quyền cho người dùng ID: {}", userId);
+        //        User user = userRepository.findById(userId)
+        //                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        //
+        //        // Khóa người dùng bằng Pessimistic Locking
+        //        entityManager.lock(user, LockModeType.PESSIMISTIC_WRITE);
+        //
+        //        Set<Permission> permissions = convertToPermissionSet(permissionNames);
+        //        user.getPermissions().addAll(permissions);
+        //        userRepository.save(user);
+        //        log.info("Đã gán quyền cho người dùng ID: {}", userId);
     }
 
     @Override
     @Transactional
     public void removePermission(UUID userId, String resource, String action) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Khóa người dùng bằng Pessimistic Locking
         entityManager.lock(user, LockModeType.PESSIMISTIC_WRITE);
 
-//        Permission permission = permissionRepository.findByResourceAndAction(resource, action)
-//                .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
-//        user.getPermissions().remove(permission);
+        //        Permission permission = permissionRepository.findByResourceAndAction(resource, action)
+        //                .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
+        //        user.getPermissions().remove(permission);
         userRepository.save(user);
         log.info("Đã xóa quyền {}:{} khỏi người dùng ID: {}", resource, action, userId);
     }
 
-//    @Override
-//    public List<String> getUserPermissions(UUID userId) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-//
-//        // Get direct permissions
-////        Set<Permission> allPermissions = new HashSet<>(user.getPermissions());
-//
-//        // Add permissions from roles
-////        user.getRoles().forEach(role -> {
-////            allPermissions.addAll(role.getPermissions());
-////        });
-////
-////        return allPermissions.stream()
-////                .map(p -> p.getResource() + ":" + p.getAction())
-////                .collect(Collectors.toList());
-//    }
+    //    @Override
+    //    public List<String> getUserPermissions(UUID userId) {
+    //        User user = userRepository.findById(userId)
+    //                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    //
+    //        // Get direct permissions
+    ////        Set<Permission> allPermissions = new HashSet<>(user.getPermissions());
+    //
+    //        // Add permissions from roles
+    ////        user.getRoles().forEach(role -> {
+    ////            allPermissions.addAll(role.getPermissions());
+    ////        });
+    ////
+    ////        return allPermissions.stream()
+    ////                .map(p -> p.getResource() + ":" + p.getAction())
+    ////                .collect(Collectors.toList());
+    //    }
 
     @Override
     public List<Permission> getAllPermissions() {
@@ -165,8 +164,7 @@ public class UserServiceImpl implements UserService {
         if (roleIds == null) return Collections.emptySet();
 
         return roleIds.stream()
-                .map(id -> roleRepository.findById(id)
-                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
+                .map(id -> roleRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
                 .collect(Collectors.toSet());
     }
 
@@ -174,7 +172,8 @@ public class UserServiceImpl implements UserService {
         if (permissionIds == null) return Collections.emptySet();
 
         return permissionIds.stream()
-                .map(id -> permissionRepository.findById(id)
+                .map(id -> permissionRepository
+                        .findById(id)
                         .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND)))
                 .collect(Collectors.toSet());
     }
@@ -194,25 +193,21 @@ public class UserServiceImpl implements UserService {
         dto.setProfilePicture(user.getProfilePicture());
 
         if (user.getRoles() != null) {
-            List<UUID> roleIds = user.getRoles().stream()
-                    .map(Role::getId)
-                    .collect(Collectors.toList());
+            List<UUID> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toList());
             dto.setRoles(roleIds);
 
-            dto.setRoleNames(
-                    user.getRoles().stream()
-                            .map(Role::getName)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList())
-            );
+            dto.setRoleNames(user.getRoles().stream()
+                    .map(Role::getName)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
         }
 
-//        if (user.getPermissions() != null) {
-//            List<UUID> permissions = user.getPermissions().stream()
-//                    .map(Permission::getId)
-//                    .collect(Collectors.toList());
-//            dto.setPermissions(permissions);
-//        }
+        //        if (user.getPermissions() != null) {
+        //            List<UUID> permissions = user.getPermissions().stream()
+        //                    .map(Permission::getId)
+        //                    .collect(Collectors.toList());
+        //            dto.setPermissions(permissions);
+        //        }
 
         return dto;
     }

@@ -1,11 +1,11 @@
 package carevn.luv2code.cms.tevc_cms_api.mapper;
 
+import java.util.List;
+
 import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-
-import java.util.List;
 
 public interface EntityMapper<D, E> {
     E toEntity(D d);
