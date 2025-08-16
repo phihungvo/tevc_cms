@@ -1,6 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.exception;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,9 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,8 +24,7 @@ public class GlobalExceptionHandler {
         ApiResponse<ErrorCode> apiResponse = new ApiResponse<>();
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
-        return ResponseEntity.status(
-                        errorCode.getStatusCode())
+        return ResponseEntity.status(errorCode.getStatusCode())
                 .body(ApiResponse.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
@@ -72,12 +72,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = MaxUploadSizeExceededException.class)
     public ResponseEntity<ApiResponse> handleMaxUploadSizeException(MaxUploadSizeExceededException exception) {
-        ErrorCode  errorCode = ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED;
+        ErrorCode errorCode = ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED;
         ApiResponse<ErrorCode> apiResponse = new ApiResponse<>();
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
     }
-
-
 }

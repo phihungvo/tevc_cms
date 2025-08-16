@@ -1,13 +1,14 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
+import java.util.Set;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "positions")
@@ -36,5 +37,4 @@ public class Position {
     @JsonManagedReference
     @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     Set<Employee> employees;
-
 }

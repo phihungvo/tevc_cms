@@ -1,5 +1,11 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.*;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AuthenticationRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.LogoutRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.RegisterRequest;
@@ -11,11 +17,6 @@ import carevn.luv2code.cms.tevc_cms_api.security.AuthService;
 import carevn.luv2code.cms.tevc_cms_api.security.JwtService;
 import carevn.luv2code.cms.tevc_cms_api.security.TokenBlacklist;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,10 +50,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        return userRepository.findByEmail(request.getEmail())
+        return userRepository
+                .findByEmail(request.getEmail())
                 .filter(User::isEnabled)
                 .map(user -> {
                     String token = jwtService.generateToken(user);
@@ -75,4 +76,3 @@ public class AuthController {
         return ResponseEntity.ok(new LogoutResponse("Đăng xuất thành công"));
     }
 }
-

@@ -1,11 +1,11 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
+import java.util.Date;
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "salaries")
@@ -17,23 +17,23 @@ import java.util.UUID;
 public class Salary {
     @Id
     @GeneratedValue
-     UUID id;
+    UUID id;
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
-     Employee employee;
+    Employee employee;
 
-     Date paymentDate;
+    Date paymentDate;
 
-     Double basicSalary;
+    Double basicSalary;
 
-     Double bonus;
+    Double bonus;
 
-     Double deductions;
+    Double deductions;
 
-     Double netSalary;
+    Double netSalary;
 
-     String paymentStatus;
+    String paymentStatus;
 
-     String period; // Monthly period: YYYY-MM
+    String period; // Monthly period: YYYY-MM
 }

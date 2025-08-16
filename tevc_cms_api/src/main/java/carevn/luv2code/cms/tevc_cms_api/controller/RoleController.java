@@ -1,16 +1,17 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.RoleDTO;
-import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
-import carevn.luv2code.cms.tevc_cms_api.service.RoleService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
+import carevn.luv2code.cms.tevc_cms_api.dto.RoleDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
+import carevn.luv2code.cms.tevc_cms_api.service.RoleService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -19,7 +20,7 @@ public class RoleController {
     private final RoleService roleService;
 
     @PostMapping
-//    @PreAuthorize("hasAuthority('ROLE:CREATE')")
+    //    @PreAuthorize("hasAuthority('ROLE:CREATE')")
     public ResponseEntity<ApiResponse<RoleDTO>> createRole(@RequestBody RoleDTO roleDTO) {
         RoleDTO created = roleService.createRole(roleDTO);
         return ResponseEntity.ok(ApiResponse.<RoleDTO>builder()
@@ -30,10 +31,8 @@ public class RoleController {
     }
 
     @PatchMapping("/{id}")
-//    @PreAuthorize("hasAuthority('ROLE:UPDATE')")
-    public ResponseEntity<ApiResponse<RoleDTO>> updateRole(
-            @PathVariable UUID id,
-            @RequestBody RoleDTO roleDTO) {
+    //    @PreAuthorize("hasAuthority('ROLE:UPDATE')")
+    public ResponseEntity<ApiResponse<RoleDTO>> updateRole(@PathVariable UUID id, @RequestBody RoleDTO roleDTO) {
         RoleDTO updated = roleService.updateRole(id, roleDTO);
         return ResponseEntity.ok(ApiResponse.<RoleDTO>builder()
                 .code(200)
@@ -52,10 +51,9 @@ public class RoleController {
     }
 
     @GetMapping
-//    @PreAuthorize("hasAuthority('ROLE:READ')")
+    //    @PreAuthorize("hasAuthority('ROLE:READ')")
     public ResponseEntity<ApiResponse<Page<RoleDTO>>> getAllRoles(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(ApiResponse.<Page<RoleDTO>>builder()
                 .code(200)
                 .result(roleService.getAllRoles(page, size))
@@ -73,8 +71,7 @@ public class RoleController {
     @PostMapping("/{roleId}/permissions")
     @PreAuthorize("hasAuthority('ROLE:UPDATE')")
     public ResponseEntity<ApiResponse<Void>> assignPermissionsToRole(
-            @PathVariable UUID roleId,
-            @RequestBody List<UUID> permissionIds) {
+            @PathVariable UUID roleId, @RequestBody List<UUID> permissionIds) {
         roleService.assignPermissionsToRole(roleId, permissionIds);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(200)
@@ -85,8 +82,7 @@ public class RoleController {
     @DeleteMapping("/{roleId}/permissions/{permissionId}")
     @PreAuthorize("hasAuthority('ROLE:UPDATE')")
     public ResponseEntity<ApiResponse<Void>> removePermissionFromRole(
-            @PathVariable UUID roleId,
-            @PathVariable UUID permissionId) {
+            @PathVariable UUID roleId, @PathVariable UUID permissionId) {
         roleService.removePermissionFromRole(roleId, permissionId);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(200)
@@ -95,7 +91,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
-//    @PreAuthorize("hasAuthority('ROLE:DELETE')")
+    //    @PreAuthorize("hasAuthority('ROLE:DELETE')")
     public ResponseEntity<ApiResponse<Void>> deleteRole(@PathVariable UUID id) {
         roleService.deleteRole(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()

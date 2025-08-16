@@ -1,17 +1,17 @@
 package carevn.luv2code.cms.tevc_cms_api.exception;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized exception", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_KEY(1000, "Invalid key", HttpStatus.BAD_GATEWAY),
-    USER_EXISTED(1001,"User existed", HttpStatus.BAD_GATEWAY),
+    USER_EXISTED(1001, "User existed", HttpStatus.BAD_GATEWAY),
     USERNAME_INVALID(1002, "Username must be at least {min} characters", HttpStatus.BAD_GATEWAY),
     PASSWORD_INVALID(1003, "Password must be at least {min} characters", HttpStatus.BAD_GATEWAY),
     USER_NOT_FOUND(1004, "User not found", HttpStatus.NOT_FOUND),
@@ -65,14 +65,13 @@ public enum ErrorCode {
     TRAINING_ALREADY_PROCESSED(1052, "Training already processed", HttpStatus.CONFLICT),
     POSITION_HAS_EMPLOYEES(1053, "Position has employees", HttpStatus.BAD_REQUEST),
     INVALID_PAYROLL_PERIOD(1054, "Invalid payroll period format. Expected format: YYYY-MM", HttpStatus.BAD_REQUEST),
-    PASSWORD_NOT_MATCHES(1055, "Password does not match", HttpStatus.BAD_REQUEST)
-    ;
+    PASSWORD_NOT_MATCHES(1055, "Password does not match", HttpStatus.BAD_REQUEST);
 
     int code;
     String message;
     HttpStatus statusCode;
 
-    ErrorCode(int code, String message, HttpStatus statusCode){
+    ErrorCode(int code, String message, HttpStatus statusCode) {
         this.code = code;
         this.message = message;
         this.statusCode = statusCode;

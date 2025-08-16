@@ -1,10 +1,11 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.LeaveDTO;
-import org.springframework.data.domain.Page;
-
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+
+import carevn.luv2code.cms.tevc_cms_api.dto.LeaveDTO;
 
 public interface LeaveService {
 
@@ -23,5 +24,4 @@ public interface LeaveService {
     LeaveDTO rejectLeave(UUID id, String comments);
 
     List<LeaveDTO> getEmployeeLeaves(UUID employeeId);
-
 }

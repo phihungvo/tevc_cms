@@ -1,9 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
-import lombok.Data;
-
 import java.util.Set;
 import java.util.UUID;
+
+import lombok.Data;
 
 @Data
 public class RoleDTO {
@@ -13,5 +13,5 @@ public class RoleDTO {
 
     private String description;
 
-    private Set<UUID> permissions; 
+    private Set<UUID> permissions;
 }

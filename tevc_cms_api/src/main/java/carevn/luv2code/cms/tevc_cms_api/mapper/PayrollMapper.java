@@ -1,14 +1,18 @@
 package carevn.luv2code.cms.tevc_cms_api.mapper;
 
+import org.mapstruct.*;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.PayrollDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Payroll;
-import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface PayrollMapper {
-    
+
     @Mapping(target = "employeeId", source = "employee.id")
-    @Mapping(target = "employeeName", expression = "java(payroll.getEmployee() != null ? payroll.getEmployee().getFirstName() + \" \" + payroll.getEmployee().getLastName() : null)")
+    @Mapping(
+            target = "employeeName",
+            expression =
+                    "java(payroll.getEmployee() != null ? payroll.getEmployee().getFirstName() + \" \" + payroll.getEmployee().getLastName() : null)")
     PayrollDTO toDTO(Payroll payroll);
 
     @Mapping(target = "employee", ignore = true)
