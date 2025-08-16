@@ -1,16 +1,17 @@
 package carevn.luv2code.cms.tevc_cms_api.mapper;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.UserDTO;
-import carevn.luv2code.cms.tevc_cms_api.dto.requests.UserUpdateRequest;
-import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.stereotype.Component;
 
+import carevn.luv2code.cms.tevc_cms_api.dto.UserDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.UserUpdateRequest;
+import carevn.luv2code.cms.tevc_cms_api.entity.User;
+
 @Component
 @Mapper(componentModel = "spring")
-public interface UserMapper{
+public interface UserMapper {
 
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "permissions", ignore = true)
@@ -24,4 +25,3 @@ public interface UserMapper{
     @Mapping(target = "permissions", ignore = true)
     void updateUserFromDto(UserUpdateRequest request, @MappingTarget User user);
 }
-

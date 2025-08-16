@@ -1,9 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.dto.requests;
 
-import lombok.*;
-
 import java.util.List;
 import java.util.UUID;
+
+import lombok.*;
 
 @Getter
 @Setter

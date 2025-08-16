@@ -1,15 +1,5 @@
 package carevn.luv2code.cms.tevc_cms_api.security;
 
-import carevn.luv2code.cms.tevc_cms_api.entity.Role;
-import carevn.luv2code.cms.tevc_cms_api.entity.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -17,6 +7,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import carevn.luv2code.cms.tevc_cms_api.entity.Role;
+import carevn.luv2code.cms.tevc_cms_api.entity.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
@@ -39,17 +40,16 @@ public class JwtService {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", user.getUserName());
-        claims.put("roles", user.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toList()));
-        claims.put("permissions", user.getPermissions().stream()
-                .map(p -> p.getResource() + ":" + p.getAction())
-                .collect(Collectors.toList()));
+        claims.put("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        claims.put(
+                "permissions",
+                user.getPermissions().stream()
+                        .map(p -> p.getResource() + ":" + p.getAction())
+                        .collect(Collectors.toList()));
         claims.put("userId", user.getId());
         claims.put("email", user.getEmail());
 
-        return Jwts
-                .builder()
+        return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -68,8 +68,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
+        return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)

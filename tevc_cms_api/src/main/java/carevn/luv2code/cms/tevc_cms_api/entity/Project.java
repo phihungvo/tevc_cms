@@ -1,12 +1,13 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "projects")
@@ -41,8 +42,7 @@ public class Project {
     @JoinTable(
             name = "project_members",
             joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "employee_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "employee_id"))
     @ToString.Exclude
     Set<Employee> members = new HashSet<>();
 }

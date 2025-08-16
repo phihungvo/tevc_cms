@@ -1,7 +1,8 @@
 package carevn.luv2code.cms.tevc_cms_api.repository;
 
-import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
-import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,8 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-import java.util.List;
+import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
+import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
@@ -30,10 +31,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
     @Query("SELECT e FROM Employee e JOIN e.position p WHERE p.positionType = :type")
     List<Employee> findByPositionType(@Param("type") PositionType type);
 
-    @Query("SELECT e FROM Employee e WHERE " +
-            "LOWER(e.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(e.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    @Query("SELECT e FROM Employee e WHERE " + "LOWER(e.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
+            + "LOWER(e.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
+            + "LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Employee> searchEmployees(@Param("keyword") String keyword, Pageable pageable);
 
     long countByIsActive(boolean isActive);

@@ -1,7 +1,17 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.PayrollDTO;
-import carevn.luv2code.cms.tevc_cms_api.dto.PayrollDetailDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.entity.Payroll;
 import carevn.luv2code.cms.tevc_cms_api.enums.PayrollStatus;
@@ -13,16 +23,6 @@ import carevn.luv2code.cms.tevc_cms_api.repository.PayrollRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.PayrollService;
 import carevn.luv2code.cms.tevc_cms_api.service.TimesheetService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +40,13 @@ public class PayrollServiceImpl implements PayrollService {
         if (payrollDTO.getEmployeeId() == null) {
             throw new AppException(ErrorCode.EMPLOYEE_NOT_FOUND);
         }
-        if (payrollDTO.getPeriod() == null || !PERIOD_PATTERN.matcher(payrollDTO.getPeriod()).matches()) {
+        if (payrollDTO.getPeriod() == null
+                || !PERIOD_PATTERN.matcher(payrollDTO.getPeriod()).matches()) {
             throw new AppException(ErrorCode.INVALID_PAYROLL_PERIOD);
         }
 
-        Employee employee = employeeRepository.findById(payrollDTO.getEmployeeId())
+        Employee employee = employeeRepository
+                .findById(payrollDTO.getEmployeeId())
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
         Payroll payroll = payrollMapper.toEntity(payrollDTO);
@@ -62,34 +64,31 @@ public class PayrollServiceImpl implements PayrollService {
     @Override
     @Transactional
     public PayrollDTO updatePayroll(UUID id, PayrollDTO payrollDTO) {
-        Payroll payroll = payrollRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
+        Payroll payroll =
+                payrollRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
         payrollMapper.updateFromDto(payrollDTO, payroll);
         return payrollMapper.toDTO(payrollRepository.save(payroll));
     }
 
     @Override
-    public void deletePayroll(UUID id) {
-
-    }
+    public void deletePayroll(UUID id) {}
 
     @Override
     public PayrollDTO getPayroll(UUID id) {
-        return payrollMapper.toDTO(payrollRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND)));
+        return payrollMapper.toDTO(
+                payrollRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND)));
     }
 
     @Override
     public Page<PayrollDTO> getAllPayrolls(int page, int size) {
-        return payrollRepository.findAll(PageRequest.of(page, size))
-                .map(payrollMapper::toDTO);
+        return payrollRepository.findAll(PageRequest.of(page, size)).map(payrollMapper::toDTO);
     }
 
     @Override
     @Transactional
     public PayrollDTO processPayroll(UUID id) {
-        Payroll payroll = payrollRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
+        Payroll payroll =
+                payrollRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
 
         if (!PayrollStatus.PENDING.equals(payroll.getStatus())) {
             throw new AppException(ErrorCode.PAYROLL_ALREADY_PROCESSED);
@@ -107,8 +106,8 @@ public class PayrollServiceImpl implements PayrollService {
     @Override
     @Transactional
     public PayrollDTO finalizePayroll(UUID id) {
-        Payroll payroll = payrollRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
+        Payroll payroll =
+                payrollRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
 
         if (!PayrollStatus.PROCESSED.equals(payroll.getStatus())) {
             throw new AppException(ErrorCode.PAYROLL_ALREADY_PROCESSED);
@@ -134,7 +133,8 @@ public class PayrollServiceImpl implements PayrollService {
             throw new AppException(ErrorCode.INVALID_PAYROLL_PERIOD);
         }
 
-        Employee employee = employeeRepository.findById(employeeId)
+        Employee employee = employeeRepository
+                .findById(employeeId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
         if (payrollRepository.findByEmployeeIdAndPeriod(employeeId, period).isPresent()) {
@@ -150,7 +150,8 @@ public class PayrollServiceImpl implements PayrollService {
         payrollDTO.setPeriod(period);
 
         // Lấy lương cơ bản từ position
-        payrollDTO.setBasicSalary(employeeRepository.findById(employeeId)
+        payrollDTO.setBasicSalary(employeeRepository
+                .findById(employeeId)
                 .map(emp -> emp.getPosition() != null ? emp.getPosition().getBaseSalary() : null)
                 .orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND)));
 
@@ -169,7 +170,7 @@ public class PayrollServiceImpl implements PayrollService {
         calculateNetSalary(payrollDTO);
 
         // Tạo chi tiết lương
-        //payrollDTO.setDetails(createPayrollDetails(payrollDTO));
+        // payrollDTO.setDetails(createPayrollDetails(payrollDTO));
 
         // Tạo bảng lương
         PayrollDTO result = createPayroll(payrollDTO);
@@ -183,26 +184,29 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     private double calculateAllowances(Employee employee, String period) {
-       // Implement logic to calculate allowances based on employee's position or company policy
+        // Implement logic to calculate allowances based on employee's position or company policy
         return 0.0;
     }
 
     private double calculateDeductions(Employee employee, String period) {
-       // Implement logic to calculate deductions based on employee's loans or other deductions
+        // Implement logic to calculate deductions based on employee's loans or other deductions
         return 0.0;
     }
 
     private double calculateTax(Employee employee, String period) {
-        double income = (employee.getPosition() != null &&
-                employee.getPosition().getBaseSalary() != null
-                ? employee.getPosition().getBaseSalary() : 0.0);
+        double income =
+                (employee.getPosition() != null && employee.getPosition().getBaseSalary() != null
+                        ? employee.getPosition().getBaseSalary()
+                        : 0.0);
         return income * 0.1;
     }
 
     private double calculateInsurance(Employee employee, String period) {
         // Giả định: Bảo hiểm 8% của lương cơ bản
-        return (employee.getPosition() != null && employee.getPosition().getBaseSalary()
-                != null ? employee.getPosition().getBaseSalary() : 0.0) * 0.08;
+        return (employee.getPosition() != null && employee.getPosition().getBaseSalary() != null
+                        ? employee.getPosition().getBaseSalary()
+                        : 0.0)
+                * 0.08;
     }
 
     private void calculateSalaryComponents(Payroll payroll) {
@@ -255,17 +259,17 @@ public class PayrollServiceImpl implements PayrollService {
         payrollDTO.setNetSalary(netSalary);
     }
 
-//    private List<PayrollDetailDTO> createPayrollDetails(PayrollDTO payrollDTO) {
-//        return List.of(
-//                        new PayrollDetailDTO("Basic Salary", payrollDTO.getBasicSalary()),
-//                        new PayrollDetailDTO("Overtime", payrollDTO.getOvertime()),
-//                        new PayrollDetailDTO("Bonus", payrollDTO.getBonus()),
-//                        new PayrollDetailDTO("Allowances", payrollDTO.getAllowances()),
-//                        new PayrollDetailDTO("Deductions", payrollDTO.getDeductions()),
-//                        new PayrollDetailDTO("Tax", payrollDTO.getTax()),
-//                        new PayrollDetailDTO("Insurance", payrollDTO.getInsurance())
-//                ).stream()
-//                .filter(detail -> detail.getAmount() != null && detail.getAmount() != 0.0)
-//                .collect(Collectors.toList());
-//    }
+    //    private List<PayrollDetailDTO> createPayrollDetails(PayrollDTO payrollDTO) {
+    //        return List.of(
+    //                        new PayrollDetailDTO("Basic Salary", payrollDTO.getBasicSalary()),
+    //                        new PayrollDetailDTO("Overtime", payrollDTO.getOvertime()),
+    //                        new PayrollDetailDTO("Bonus", payrollDTO.getBonus()),
+    //                        new PayrollDetailDTO("Allowances", payrollDTO.getAllowances()),
+    //                        new PayrollDetailDTO("Deductions", payrollDTO.getDeductions()),
+    //                        new PayrollDetailDTO("Tax", payrollDTO.getTax()),
+    //                        new PayrollDetailDTO("Insurance", payrollDTO.getInsurance())
+    //                ).stream()
+    //                .filter(detail -> detail.getAmount() != null && detail.getAmount() != 0.0)
+    //                .collect(Collectors.toList());
+    //    }
 }

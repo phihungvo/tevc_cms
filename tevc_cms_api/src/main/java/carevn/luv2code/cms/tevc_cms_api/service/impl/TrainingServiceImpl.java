@@ -1,5 +1,12 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
+import java.util.*;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.TrainingDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.*;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
@@ -8,12 +15,6 @@ import carevn.luv2code.cms.tevc_cms_api.mapper.TrainingMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.*;
 import carevn.luv2code.cms.tevc_cms_api.service.TrainingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +26,7 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     @Transactional
     public TrainingDTO createTraining(TrainingDTO trainingDTO) {
-        if (trainingRepository.existsByNameAndStartDate(
-                trainingDTO.getName(), trainingDTO.getStartDate())) {
+        if (trainingRepository.existsByNameAndStartDate(trainingDTO.getName(), trainingDTO.getStartDate())) {
             throw new AppException(ErrorCode.TRAINING_ALREADY_EXISTS);
         }
 
@@ -38,9 +38,9 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     @Transactional
     public TrainingDTO updateTraining(UUID id, TrainingDTO trainingDTO) {
-        Training training = trainingRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
-        
+        Training training =
+                trainingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
+
         trainingMapper.updateTrainingFromDto(trainingDTO, training);
         Training updatedTraining = trainingRepository.save(training);
         return trainingMapper.toDTO(updatedTraining);
@@ -48,27 +48,27 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDTO getTraining(UUID id) {
-        Training training = trainingRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
+        Training training =
+                trainingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
         return trainingMapper.toDTO(training);
     }
 
     @Override
     public Page<TrainingDTO> getAllTrainings(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        return trainingRepository.findAll(pageRequest)
-                .map(trainingMapper::toDTO);
+        return trainingRepository.findAll(pageRequest).map(trainingMapper::toDTO);
     }
 
     @Override
     @Transactional
     public TrainingDTO addParticipants(UUID trainingId, List<UUID> employeeIds) {
-        Training training = trainingRepository.findById(trainingId)
+        Training training = trainingRepository
+                .findById(trainingId)
                 .orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
 
         List<Employee> employees = employeeRepository.findAllById(employeeIds);
         training.getParticipants().addAll(employees);
-        
+
         Training updatedTraining = trainingRepository.save(training);
         return trainingMapper.toDTO(updatedTraining);
     }
@@ -76,12 +76,14 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     @Transactional
     public TrainingDTO removeParticipant(UUID trainingId, UUID employeeId) {
-        Training training = trainingRepository.findById(trainingId)
+        Training training = trainingRepository
+                .findById(trainingId)
                 .orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
-        
-        Employee employee = employeeRepository.findById(employeeId)
+
+        Employee employee = employeeRepository
+                .findById(employeeId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
-                
+
         training.getParticipants().remove(employee);
         Training updatedTraining = trainingRepository.save(training);
         return trainingMapper.toDTO(updatedTraining);
@@ -90,8 +92,8 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     @Transactional
     public void deleteTraining(UUID id) {
-        Training training = trainingRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
+        Training training =
+                trainingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
         trainingRepository.delete(training);
     }
 }
