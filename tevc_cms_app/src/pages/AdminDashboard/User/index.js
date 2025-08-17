@@ -1,213 +1,160 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/User/User.module.scss';
-import { useState, useEffect } from 'react';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
-    SearchOutlined,
-    PlusOutlined,
-    FilterOutlined,
-    CloudUploadOutlined,
-    EditOutlined,
-    DeleteOutlined,
+    SearchOutlined, PlusOutlined, FilterOutlined, CloudUploadOutlined, EditOutlined, DeleteOutlined,
 } from '@ant-design/icons';
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag } from 'antd';
-import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
-import { getAllRolesNoPaging } from '~/service/admin/role';
-import { getAllPermissionsNoPaging } from '~/service/admin/permission';
-import { exportExcelFile } from '~/service/admin/export_service';
+import {Form, message, Tag} from 'antd';
+import {getAllUser, createUser, updateUser, deleteUser} from '~/service/admin/user';
+import {getAllRolesNoPaging} from '~/service/admin/role';
+import {getAllPermissionsNoPaging} from '~/service/admin/permission';
+import {exportExcelFile} from '~/service/admin/export_service';
 
 const cx = classNames.bind(styles);
 
 function User() {
     const [userSource, setUserSource] = useState([]);
     const [roleOptions, setRoleOptions] = useState([]);
-    // const [permissionOptions, setPermissionOptions] = useState([]);
+    const [permissionOptions, setPermissionOptions] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
-        current: 1,
-        pageSize: 10,
-        total: 0,
+        current: 1, pageSize: 10, total: 0,
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [form] = Form.useForm();
+    const [dynamicColumns, setDynamicColumns] = useState([]);
 
-    const columns = [
-        {
-            title: 'User Name',
-            dataIndex: 'userName',
-            key: 'userName',
-            width: 150,
-            fixed: 'left',
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            width: 150,
-        },
-        {
-            title: 'Role',
-            dataIndex: 'roleNames',
-            key: 'roleNames',
-            width: 100,
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            width: 150,
-            render: (add) => (add ? add : 'Viet Nam'),
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phoneNumber',
-            key: 'phoneNumber',
-            width: 200,
-            render: (phone) => (phone ? phone : 'N/A'),
-        },
-        {
-            title: 'Enable',
-            dataIndex: 'enabled',
-            key: 'enabled',
-            width: 50,
-            render: (enabled) => {
-                const icon = enabled ? '✔️' : '❌';
-                const color = enabled ? 'green' : 'red';
-                return <Tag color={color}>{icon}</Tag>;
-            },
-        },
-        {
-            title: 'Create At',
-            dataIndex: 'createAt',
-            key: 'createAt',
-            width: 150,
-            render: (date) =>
-                date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
-        },
-        {
-            title: 'Update At',
-            dataIndex: 'updateAt',
-            key: 'updateAt',
-            width: 150,
-            render: (date) =>
-                date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
-        },
-        {
-            title: 'Actions',
-            fixed: 'right',
-            width: 180,
-            render: (_, record) => (
-                <>
-                    <SmartButton
-                        title="Edit"
-                        type="primary"
-                        icon={<EditOutlined />}
-                        buttonWidth={80}
-                        onClick={() => handleEditUser(record)}
-                    />
-                    <SmartButton
-                        title="Delete"
-                        type="danger"
-                        icon={<DeleteOutlined />}
-                        buttonWidth={80}
-                        onClick={() => handleDeleteUser(record)}
-                        style={{ marginLeft: '8px' }}
-                    />
-                </>
-            ),
-        },
-    ];
+    const baseColumns = [{
+        title: 'User Name',
+        dataIndex: 'userName',
+        key: 'userName',
+        width: 150,
+        fixed: 'left',
+        onFilter: (value, record) => record.userName.toLowerCase().startsWith(value.toLowerCase()),
+    }, {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+        width: 150,
+        onFilter: (value, record) => record.email.toLowerCase().startsWith(value.toLowerCase()),
+    }, {
+        title: 'Role',
+        dataIndex: 'roleNames',
+        key: 'roleNames',
+        width: 100,
+        onFilter: (value, record) => record.roleNames.toLowerCase().includes(value.toLowerCase()),
+    }, {
+        title: 'Address', dataIndex: 'address', key: 'address', width: 150, render: (add) => (add ? add : 'Viet Nam'),
+    }, {
+        title: 'Phone Number',
+        dataIndex: 'phoneNumber',
+        key: 'phoneNumber',
+        width: 200,
+        render: (phone) => (phone ? phone : 'N/A'),
+    }, {
+        title: 'Enable', dataIndex: 'enabled', key: 'enabled', width: 50, render: (enabled) => {
+            const icon = enabled ? '✔️' : '❌';
+            const color = enabled ? 'green' : 'red';
+            return <Tag color={color}>{icon}</Tag>;
+        }, onFilter: (value, record) => record.enabled === value,
+    }, {
+        title: 'Create At',
+        dataIndex: 'createAt',
+        key: 'createAt',
+        width: 150,
+        render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
+    }, {
+        title: 'Update At',
+        dataIndex: 'updateAt',
+        key: 'updateAt',
+        width: 150,
+        render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
+    }, {
+        title: 'Actions', fixed: 'right', width: 180, render: (_, record) => (<>
+                <SmartButton
+                    title="Edit"
+                    type="primary"
+                    icon={<EditOutlined/>}
+                    buttonWidth={80}
+                    onClick={() => handleEditUser(record)}
+                />
+                <SmartButton
+                    title="Delete"
+                    type="danger"
+                    icon={<DeleteOutlined/>}
+                    buttonWidth={80}
+                    onClick={() => handleDeleteUser(record)}
+                    style={{marginLeft: '8px'}}
+                />
+            </>),
+    },];
 
-    const userModalFields = [
-        {
-            label: 'User Name',
-            name: 'userName',
-            type: 'text',
-            rules: [{ required: true, message: 'User Name is required!' }],
-        },
-        {
-            label: 'First Name',
-            name: 'firstName',
-            type: 'text',
-        },
-        {
-            label: 'Last Name',
-            name: 'lastName',
-            type: 'text',
-        },
-        {
-            label: 'Email',
-            name: 'email',
-            type: 'text',
-            rules: [{ required: true, message: 'Email is required!' }],
-        },
-        {
-            label: 'Address',
-            name: 'address',
-            type: 'text',
-        },
-        {
-            label: 'Password',
-            name: 'password',
-            type: 'text',
-        },
-        {
-            label: 'Phone Number',
-            name: 'phoneNumber',
-            type: 'text',
-        },
-        {
-            label: 'Profile Picture',
-            name: 'profilePicture',
-            type: 'text',
-        },
-        {
-            label: 'Role',
-            name: 'roles',
-            type: 'select',
-            multiple: true,
-            options: roleOptions
-        },
-        {
-            label: 'Enable',
-            name: 'enabled',
-            type: 'yesno',
-        },
-        {
-            label: 'Bio',
-            name: 'bio',
-            type: 'textarea',
-        },
-    ];
+    // Cập nhật filters động dựa trên userSource
+    useEffect(() => {
+        const userNameFilters = [...new Set(userSource.map((user) => user.userName))]
+            .map((value) => ({text: value, value}));
+        const emailFilters = [...new Set(userSource.map((user) => user.email))]
+            .map((value) => ({text: value, value}));
+        const roleFilters = [...new Set(userSource.map((user) => user.roleNames))]
+            .map((value) => ({text: value, value}));
+
+        setDynamicColumns([{...baseColumns[0], filters: userNameFilters}, {
+            ...baseColumns[1],
+            filters: emailFilters
+        }, {...baseColumns[2], filters: roleFilters}, ...baseColumns.slice(3),]);
+    }, [userSource]);
+
+    const userModalFields = [{
+        label: 'User Name',
+        name: 'userName',
+        type: 'text',
+        rules: [{required: true, message: 'User Name is required!'}],
+    }, {
+        label: 'First Name', name: 'firstName', type: 'text',
+    }, {
+        label: 'Last Name', name: 'lastName', type: 'text',
+    }, {
+        label: 'Email', name: 'email', type: 'text', rules: [{required: true, message: 'Email is required!'}],
+    }, {
+        label: 'Address', name: 'address', type: 'text',
+    }, {
+        label: 'Password', name: 'password', type: 'text',
+    }, {
+        label: 'Phone Number', name: 'phoneNumber', type: 'text',
+    }, {
+        label: 'Profile Picture', name: 'profilePicture', type: 'text',
+    }, {
+        label: 'Role', name: 'roles', type: 'select', multiple: true, options: roleOptions,
+    }, {
+        label: 'Permission', name: 'permissions', type: 'select', options: permissionOptions
+    }, {
+        label: 'Enable', name: 'enabled', type: 'yesno',
+    }, {
+        label: 'Bio', name: 'bio', type: 'textarea',
+    },];
 
     const handleGetAllUsers = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getAllUser({ page: page - 1, pageSize });
+            const response = await getAllUser({page: page - 1, pageSize});
             const userList = response.content;
 
             if (response && Array.isArray(userList)) {
-                const transformedTrailers = userList.map((user) => {
-                    return {
-                        ...user,
-                        keyDisplay: user.key,
-                    };
-                });
+                const transformedTrailers = userList.map((user) => ({
+                    ...user, keyDisplay: user.key,
+                }));
 
                 setUserSource(transformedTrailers);
                 setPagination((prev) => ({
-                    ...prev,
-                    current: page,
-                    pageSize: pageSize,
-                    total: response.totalElements,
+                    ...prev, current: page, pageSize: pageSize, total: response.totalElements,
                 }));
             } else {
                 console.error('Invalid data users: ', response);
@@ -224,13 +171,19 @@ function User() {
     const fetchRolesAndPermissionOptions = async () => {
         try {
             const rolesResponse = await getAllRolesNoPaging();
-            console.log('roles response: ', rolesResponse);
             if (rolesResponse && Array.isArray(rolesResponse)) {
-                const roles = rolesResponse.map(role => ({
-                    label: role.name,
-                    value: role.id,
+                const roles = rolesResponse.map((role) => ({
+                    label: role.name, value: role.id,
                 }));
                 setRoleOptions(roles);
+            }
+            const perResponse = await getAllPermissionsNoPaging();
+            console.log('per Response: ', perResponse);
+            if (perResponse && Array.isArray(perResponse)) {
+                const permissions = perResponse.map(per => ({
+                    label: per.resource + ' - ' + per.action, value: per.id,
+                }));
+                setPermissionOptions(permissions);
             }
         } catch (error) {
             console.error('Error fetching options:', error);
@@ -252,7 +205,6 @@ function User() {
     const handleEditUser = (record) => {
         setSelectedUser(record);
         setModalMode('edit');
-
         form.setFieldsValue(record);
         setIsModalOpen(true);
     };
@@ -272,32 +224,29 @@ function User() {
     const handleExportFile = async () => {
         try {
             const response = await exportExcelFile('user');
-            const blob = await response.blob(); // Chuyển phản hồi thành Blob
-            const url = window.URL.createObjectURL(blob);
+            if (!response.headers['content-type'].includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+                throw new Error('Định dạng file không hợp lệ');
+            }
+            const url = window.URL.createObjectURL(response.data);
             const link = document.createElement('a');
             link.href = url;
-            // Đặt tên file với định dạng user_YYYYMMDD_HHMMSS.xlsx
-            const timestamp = moment().format('YYYYMMDD_HHMMSS');
-            link.setAttribute('download', `user_${timestamp}.xlsx`);
-            document.body.appendChild(link);
+            link.setAttribute('download', `user_${new Date().toISOString().replace(/[-:]/g, '')}.xlsx`);
             link.click();
-            document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-            message.success('Excel file downloaded successfully!');
+            message.success('Tải file Excel thành công!');
         } catch (error) {
-            console.error('Error exporting Excel file:', error);
-            message.error('Failed to download Excel file.');
+            console.error('Lỗi khi xuất file Excel:', error);
+            message.error('Không thể tải file Excel');
         }
     };
 
     const handleCallDeleteUser = async () => {
-        console.log('selected row key: ', selectedRowKeys);
         await deleteUser(selectedRowKeys);
         handleGetAllUsers();
         setIsModalOpen(false);
     };
 
-    const handleSelectChange = (newSelectedRowKeys, selectedRows) => {
+    const handleSelectChange = (newSelectedRowKeys) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
 
@@ -316,7 +265,8 @@ function User() {
         }
     };
 
-    const handleTableChange = (pagination) => {
+    const handleTableChange = (pagination, filters, sorter) => {
+        // Chỉ cần xử lý phân trang, bộ lọc được xử lý phía client
         handleGetAllUsers(pagination.current, pagination.pageSize);
     };
 
@@ -333,32 +283,31 @@ function User() {
         }
     };
 
-    return (
-        <div className={cx('trailer-wrapper')}>
+    return (<div className={cx('trailer-wrapper')}>
             <div className={cx('sub_header')}>
                 <SmartInput
                     size="large"
                     placeholder="Search"
-                    icon={<SearchOutlined />}
+                    icon={<SearchOutlined/>}
                 />
                 <div className={cx('features')}>
                     <SmartButton
                         title="Add new"
-                        icon={<PlusOutlined />}
+                        icon={<PlusOutlined/>}
                         type="primary"
                         onClick={handleAddUser}
                     />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton 
-                        title="Excel" 
-                        icon={<CloudUploadOutlined />}
+                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
+                    <SmartButton
+                        title="Excel"
+                        icon={<CloudUploadOutlined/>}
                         onClick={handleExportFile}
                     />
                 </div>
             </div>
             <div className={cx('trailer-container')}>
                 <SmartTable
-                    columns={columns}
+                    columns={dynamicColumns}
                     dataSources={userSource}
                     loading={loading}
                     pagination={pagination}
@@ -378,8 +327,7 @@ function User() {
                 isDeleteMode={modalMode === 'delete'}
                 formInstance={form}
             />
-        </div>
-    );
+        </div>);
 }
 
 export default User;
