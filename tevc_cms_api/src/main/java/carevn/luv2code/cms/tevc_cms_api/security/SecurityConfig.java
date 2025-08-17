@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 "/api/departments/**",
                                 "/api/leaves/**",
                                 "/api/payrolls/**",
+                                "/api/export/excel/**",
                                 "/api/payrolls/process")
                         .permitAll()
                         .requestMatchers("/api/user/createUser")

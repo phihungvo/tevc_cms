@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreateAt(new Date());
         user.setRoles(convertToRoleSet(userDTO.getRoles()));
-        //        user.setPermissions(convertToPermissionSet(userDTO.getPermissions()));
+        user.setPermissions(convertToPermissionSet(userDTO.getPermissions()));
 
         userRepository.save(user);
     }
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setRoles(convertToRoleSet(request.getRoles()));
-        //        user.setPermissions(convertToPermissionSet(request.getPermissions()));
+        user.setPermissions(convertToPermissionSet(request.getPermissions()));
         user.setEnabled(request.isEnabled());
 
         userRepository.save(user);
@@ -202,12 +202,11 @@ public class UserServiceImpl implements UserService {
                     .collect(Collectors.toList()));
         }
 
-        //        if (user.getPermissions() != null) {
-        //            List<UUID> permissions = user.getPermissions().stream()
-        //                    .map(Permission::getId)
-        //                    .collect(Collectors.toList());
-        //            dto.setPermissions(permissions);
-        //        }
+        if (user.getPermissions() != null) {
+            List<UUID> permissions =
+                    user.getPermissions().stream().map(Permission::getId).collect(Collectors.toList());
+            dto.setPermissions(permissions);
+        }
 
         return dto;
     }

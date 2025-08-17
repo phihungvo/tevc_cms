@@ -18,8 +18,8 @@ import {Form, message, Tag, DatePicker} from 'antd';
 import {getAllEmployees, createEmployee, updateEmployee, deleteEmployee} from '~/service/admin/employee';
 import {getAllDepartmentsNoPaging} from '~/service/admin/department';
 import {getAllPositions, getAllNoPaging} from '~/service/admin/position';
+import {exportExcelFile} from '~/service/admin/export_service';
 
-// Thiết lập locale tiếng Việt cho Moment.js
 import 'moment/locale/vi';
 
 moment.locale('vi');
@@ -354,6 +354,25 @@ function Employee() {
         setIsModalOpen(false);
     }
 
+    const handleExportFile = async () => {
+        try {
+            const response = await exportExcelFile('employee');
+            if (!response.headers['content-type'].includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+                throw new Error('Định dạng file không hợp lệ');
+            }
+            const url = window.URL.createObjectURL(response.data);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `employee_${new Date().toISOString().replace(/[-:]/g, '')}.xlsx`);
+            link.click();
+            window.URL.revokeObjectURL(url);
+            message.success('Tải file Excel thành công!');
+        } catch (error) {
+            console.error('Lỗi khi xuất file Excel:', error);
+            message.error('Không thể tải file Excel');
+        }
+    };
+
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
@@ -388,7 +407,11 @@ function Employee() {
                         onClick={handleAddRole}
                     />
                     <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined/>}/>
+                    <SmartButton
+                        title="Excel"
+                        icon={<CloudUploadOutlined/>}
+                        onClick={handleExportFile}
+                    />
                 </div>
             </div>
             <div className={cx('trailer-container')}>

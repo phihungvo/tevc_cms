@@ -19,6 +19,7 @@ import {Form, message, Tag} from 'antd';
 import {getAllDepartments, createDepartment, updateDepartment, deleteDepartment} from '~/service/admin/department';
 import {getAllByTitle, getAllNoPaging} from '~/service/admin/position';
 import {getEmployeeByPositionType} from '~/service/admin/employee';
+import {exportExcelFile} from "~/service/admin/export_service";
 
 const cx = classNames.bind(styles);
 
@@ -204,6 +205,25 @@ function Department() {
         setIsModalOpen(false);
     }
 
+    const handleExportFile = async () => {
+        try {
+            const response = await exportExcelFile('department');
+            if (!response.headers['content-type'].includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+                throw new Error('Định dạng file không hợp lệ');
+            }
+            const url = window.URL.createObjectURL(response.data);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `department_${new Date().toISOString().replace(/[-:]/g, '')}.xlsx`);
+            link.click();
+            window.URL.revokeObjectURL(url);
+            message.success('Tải file Excel thành công!');
+        } catch (error) {
+            console.error('Lỗi khi xuất file Excel:', error);
+            message.error('Không thể tải file Excel');
+        }
+    };
+
     // updateDepartment
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
@@ -248,7 +268,11 @@ function Department() {
                         onClick={handleAddRole}
                     />
                     <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined/>}/>
+                    <SmartButton
+                        title="Excel"
+                        icon={<CloudUploadOutlined/>}
+                        onClick={handleExportFile}
+                    />
                 </div>
             </div>
             <div className={cx('trailer-container')}>
