@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/PayRole/PayRole.module.scss';
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
@@ -16,9 +16,10 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag } from 'antd';
-import { calculatePayroll, getAllPayroll, processPayroll } from '~/service/admin/payroll';
-import { getAllEmployees } from '~/service/admin/employee';
+import {Form, message, Tag} from 'antd';
+import {calculatePayroll, getAllPayroll, processPayroll} from '~/service/admin/payroll';
+import {getAllEmployees} from '~/service/admin/employee';
+import {exportExcelFile} from '~/service/admin/export_service';
 import dayjs from 'dayjs';
 
 const cx = classNames.bind(styles);
@@ -39,10 +40,10 @@ function User() {
     const [form] = Form.useForm();
 
     const statusColors = {
-        PENDING: 'warning', 
-        PROCESSED: 'success', 
-        PAID: 'processing', 
-        CANCELLED: 'error', 
+        PENDING: 'warning',
+        PROCESSED: 'success',
+        PAID: 'processing',
+        CANCELLED: 'error',
         ERROR: 'error',
     };
 
@@ -142,17 +143,17 @@ function User() {
                     <SmartButton
                         title="Edit"
                         type="primary"
-                        icon={<EditOutlined />}
+                        icon={<EditOutlined/>}
                         buttonWidth={80}
                         onClick={() => handleEditUser(record)}
                     />
                     <SmartButton
                         title="Delete"
                         type="danger"
-                        icon={<DeleteOutlined />}
+                        icon={<DeleteOutlined/>}
                         buttonWidth={80}
                         // onClick={() => handleDeleteTrailer(record)}
-                        style={{ marginLeft: '8px' }}
+                        style={{marginLeft: '8px'}}
                     />
                 </>
             ),
@@ -165,13 +166,13 @@ function User() {
             name: 'employeeId',
             type: 'select',
             options: employeeSource,
-            rules: [{ required: true, message: 'Employee is required!' }],
+            rules: [{required: true, message: 'Employee is required!'}],
         },
         {
             label: 'period',
             name: 'period',
             type: 'date',
-            rules: [{ required: true, message: 'period is required!' }],
+            rules: [{required: true, message: 'period is required!'}],
         },
     ];
 
@@ -262,14 +263,14 @@ function User() {
 
             setEmployeeSource(employeesData);
         } catch (error) {
-            return { success: false, error: error.message };
+            return {success: false, error: error.message};
         }
     };
 
     const handleGetAllPayRolls = async (page = 1, pageSize = 5) => {
         setLoading(true);
         try {
-            const response = await getAllPayroll({ page: page - 1, pageSize });
+            const response = await getAllPayroll({page: page - 1, pageSize});
             const payRollList = response.content;
 
             if (response && Array.isArray(payRollList)) {
@@ -346,6 +347,24 @@ function User() {
         setIsModalOpen(false);
     };
 
+    const handleExportFile = async () => {
+        try {
+            const response = await exportExcelFile('payroll');
+            if (!response.headers['content-type'].includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+                throw new Error('Định dạng file không hợp lệ');
+            }
+            const url = window.URL.createObjectURL(response.data);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `payroll_${new Date().toISOString().replace(/[-:]/g, '')}.xlsx`);
+            link.click();
+            window.URL.revokeObjectURL(url);
+            message.success('Tải file Excel thành công!');
+        } catch (error) {
+            console.error('Lỗi khi xuất file Excel:', error);
+            message.error('Không thể tải file Excel');
+        }
+    };
     useEffect(() => {
         handleGetAllEmployees();
         handleGetAllPayRolls();
@@ -385,25 +404,29 @@ function User() {
                 <SmartInput
                     size="large"
                     placeholder="Search"
-                    icon={<SearchOutlined />}
+                    icon={<SearchOutlined/>}
                 />
                 <div className={cx('features')}>
                     <SmartButton
                         title="Add new"
-                        icon={<PlusOutlined />}
+                        icon={<PlusOutlined/>}
                         type="primary"
                         onClick={handleAddPayroll}
                     />
                     <SmartButton
                         title="Process"
-                        icon={<CheckCircleOutlined />}
+                        icon={<CheckCircleOutlined/>}
                         type="primary"
                         onClick={handleProcessPayrolls}
                         disabled={selectedRowKeys.length === 0}
-                        style={{ marginLeft: '8px' }}
+                        style={{marginLeft: '8px'}}
                     />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined />} />
+                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
+                    <SmartButton
+                        title="Excel"
+                        icon={<CloudUploadOutlined/>}
+                        onClick={handleExportFile}
+                    />
                 </div>
             </div>
             <div className={cx('trailer-container')}>
