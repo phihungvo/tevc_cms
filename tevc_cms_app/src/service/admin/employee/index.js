@@ -21,6 +21,22 @@ export const getAllEmployees = async ({ page = 0, pageSize = 10 }) => {
     }
 };
 
+export const getAllEmployeesNoPaging = async () => {
+    try {
+        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.NO_PAGING, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        return response.data;
+    } catch (error) {
+        message.error('Error get all employees: ');
+        return null;
+    }
+};
+
 export const createEmployee = async (formData) => {
     try {
         const response = await axios.post(
