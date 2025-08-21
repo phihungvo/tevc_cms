@@ -70,6 +70,10 @@ const API_ENDPOINTS = {
         CALCULATE: (employeeId) => `${BASE_URL}/payrolls/calculate/${employeeId}`,
         PROCESS: `${BASE_URL}/payrolls/process`,
         UPDATE: (payRollId) => `${BASE_URL}/payrolls/${payRollId}`,
+    },
+    ATTENDANCE: {
+        GET_ALL: `${BASE_URL}/attendances`,
+        CREATE: `${BASE_URL}/attendances`,
     }
 };
 

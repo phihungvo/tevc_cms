@@ -49,8 +49,8 @@ export const processPayroll = async (payrollIds) => {
     console.log("payrollIds: ", payrollIds)
     try {
         const response = await axios.patch(
-            API_ENDPOINTS.PAYROLL.PROCESS, 
-            payrollIds , 
+            API_ENDPOINTS.PAYROLL.PROCESS,
+            payrollIds,
             {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
@@ -73,17 +73,14 @@ export const processPayroll = async (payrollIds) => {
 export const updatePayroll = async (payrollIds, formData) => {
     try {
         const response = await axios.patch(
-            API_ENDPOINTS.PAYROLL.UPDATE, 
-            payrollIds , 
+            API_ENDPOINTS.PAYROLL.UPDATE(payrollIds),
+            formData,
             {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
                     'Content-Type': 'application/json',
                 },
             },
-            {
-                formData
-            }
         );
         if (response.data) {
             message.success('Payrolls updated successfully');
