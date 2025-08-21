@@ -44,6 +44,12 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getAllEmployees(page, size));
     }
 
+    @GetMapping("/no-paging")
+    //    @PreAuthorize("hasAuthority('EMPLOYEE:READ')")
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployeesNoPaging() {
+        return ResponseEntity.ok(employeeService.getAllEmployeesNoPaging());
+    }
+
     @DeleteMapping("/{id}")
     //    @PreAuthorize("hasAuthority('EMPLOYEE:DELETE')")
     public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id) {

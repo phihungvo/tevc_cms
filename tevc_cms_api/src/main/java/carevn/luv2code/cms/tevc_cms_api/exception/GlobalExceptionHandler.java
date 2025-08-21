@@ -17,15 +17,12 @@ import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = AppException.class)
-    public ResponseEntity<ApiResponse> handleAppException(AppException appException) {
-        appException.printStackTrace();
-        ErrorCode errorCode = appException.getErrorCode();
-        ApiResponse<ErrorCode> apiResponse = new ApiResponse<>();
-        apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAppException(AppException exception) {
+        ErrorCode errorCode = exception.getErrorCode();
+
         return ResponseEntity.status(errorCode.getStatusCode())
-                .body(ApiResponse.builder()
+                .body(ApiResponse.<Void>builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .build());
