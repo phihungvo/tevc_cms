@@ -35,6 +35,7 @@ const API_ENDPOINTS = {
     },
     EMPLOYEE: {
         GET_ALL: `${BASE_URL}/employees`,
+        NO_PAGING:  `${BASE_URL}/employees/no-paging`,
         CREATE: `${BASE_URL}/employees`,
         GET_EMPLOYEE_BY_POSITION_TYPE: `${BASE_URL}/employees/by-position-type`,
         UPDATE: (employeeId) => `${BASE_URL}/employees/${employeeId}`,
@@ -68,6 +69,11 @@ const API_ENDPOINTS = {
         CREATE: `${BASE_URL}/payrolls`,
         CALCULATE: (employeeId) => `${BASE_URL}/payrolls/calculate/${employeeId}`,
         PROCESS: `${BASE_URL}/payrolls/process`,
+        UPDATE: (payRollId) => `${BASE_URL}/payrolls/${payRollId}`,
+    },
+    ATTENDANCE: {
+        GET_ALL: `${BASE_URL}/attendances`,
+        CREATE: `${BASE_URL}/attendances`,
     }
 };
 

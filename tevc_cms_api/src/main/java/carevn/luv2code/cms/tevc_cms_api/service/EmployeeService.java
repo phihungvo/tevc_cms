@@ -20,6 +20,8 @@ public interface EmployeeService {
 
     Page<EmployeeDTO> getAllEmployees(int page, int size);
 
+    List<EmployeeDTO> getAllEmployeesNoPaging();
+
     Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size);
 
     boolean toggleEmployeeStatus(UUID id);

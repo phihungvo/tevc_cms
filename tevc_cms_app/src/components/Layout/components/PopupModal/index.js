@@ -81,6 +81,10 @@ function PopupModal({
                 updatedField.options = field.options || ['Yes', 'No'];
             }
 
+            // Đảm bảo readOnly hoặc disabled được truyền vào
+            updatedField.readOnly = field.readOnly || false;
+            updatedField.disabled = field.disabled || false;
+
             return updatedField;
         });
 
@@ -160,6 +164,7 @@ function PopupModal({
     };
 
     const renderField = (field) => {
+        // Truyền readOnly và disabled vào các component con
         switch (field.type) {
             case 'text':
                 return <TextField field={field} />;
@@ -197,7 +202,6 @@ function PopupModal({
         let row = [];
 
         processedFields.forEach((field) => {
-            // Nếu trường cần độ rộng đầy đủ hoặc hàng đã có 2 trường
             if (field.fullWidth || row.length >= 2) {
                 if (row.length > 0) {
                     groupedFields.push([...row]);
@@ -208,7 +212,6 @@ function PopupModal({
             }
         });
 
-        // Thêm hàng cuối cùng
         if (row.length > 0) {
             groupedFields.push([...row]);
         }

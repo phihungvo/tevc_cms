@@ -97,7 +97,7 @@ function User() {
         },
     ];
 
-    const handleGetAllPermissions = async (page = 1, pageSize = 5) => {
+    const handleGetAllPermissions = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
             const response = await getAllPermissions({ page: page - 1, pageSize });

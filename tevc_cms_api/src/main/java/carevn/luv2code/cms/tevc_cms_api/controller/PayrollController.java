@@ -44,4 +44,9 @@ public class PayrollController {
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(payrollService.getAllPayrolls(page, size));
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<PayrollDTO> updatePayroll(@PathVariable UUID id, @RequestBody PayrollDTO payrollDTO) {
+        return ResponseEntity.ok(payrollService.updatePayroll(id, payrollDTO));
+    }
 }

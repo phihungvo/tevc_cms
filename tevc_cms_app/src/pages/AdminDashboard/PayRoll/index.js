@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
-import styles from '~/pages/AdminDashboard/PayRole/PayRole.module.scss';
+import styles from '~/pages/AdminDashboard/PayRoll/PayRoll.module.scss';
 import {useState, useEffect} from 'react';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
@@ -17,29 +17,29 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import {Form, message, Tag} from 'antd';
-import {calculatePayroll, getAllPayroll, processPayroll} from '~/service/admin/payroll';
-import {getAllEmployees} from '~/service/admin/employee';
+import {calculatePayroll, getAllPayroll, processPayroll, updatePayroll} from '~/service/admin/payroll';
+import { getAllEmployeesNoPaging} from '~/service/admin/employee';
 import {exportExcelFile} from '~/service/admin/export_service';
 import dayjs from 'dayjs';
 
 const cx = classNames.bind(styles);
 
-function User() {
+function Payroll() {
     const [payRollSource, setPayRollSource] = useState([]);
     const [employeeSource, setEmployeeSource] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
-        pageSize: 5,
+        pageSize: 10,
         total: 0,
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedPayroll, setSelectedPayroll] = useState(null);
     const [form] = Form.useForm();
 
-    const statusColors = {
+    const statusPayroll = {
         PENDING: 'warning',
         PROCESSED: 'success',
         PAID: 'processing',
@@ -49,77 +49,77 @@ function User() {
 
     const columns = [
         {
-            title: 'Employee Name',
+            title: 'Tên nhân viên',
             dataIndex: 'employeeName',
             key: 'userName',
             width: 150,
             fixed: 'left',
         },
         {
-            title: 'Period',
+            title: 'Kỳ Lương',
             dataIndex: 'period',
             key: 'period',
             width: 100,
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
             width: 100,
             render: (status) => (
-                <Tag color={statusColors[status] || 'default'}>{status}</Tag>
+                <Tag color={statusPayroll[status] || 'default'}>{status}</Tag>
             ),
         },
         {
-            title: 'Basic Salary',
+            title: 'Lương cơ bản',
             dataIndex: 'basicSalary',
             key: 'basicSalary',
             width: 100,
         },
         {
-            title: 'Overtime',
+            title: 'Làm thêm giờ',
             dataIndex: 'overtime',
             key: 'overtime',
             width: 100,
         },
         {
-            title: 'Bonus',
+            title: 'Thưởng',
             dataIndex: 'bonus',
             key: 'bonus',
             width: 100,
         },
         {
-            title: 'Allowances',
+            title: 'Phụ cấp',
             dataIndex: 'allowances',
             key: 'allowances',
             width: 100,
         },
         {
-            title: 'Deductions',
+            title: 'Khấu trừ',
             dataIndex: 'deductions',
             key: 'deductions',
             width: 100,
         },
         {
-            title: 'Tax',
+            title: 'Thuế',
             dataIndex: 'tax',
             key: 'tax',
             width: 100,
         },
         {
-            title: 'Insurance',
+            title: 'Bảo hiểm',
             dataIndex: 'insurance',
             key: 'insurance',
             width: 100,
         },
         {
-            title: 'Net Salary',
+            title: 'Lương ròng',
             dataIndex: 'netSalary',
             key: 'netSalary',
             width: 100,
         },
         {
-            title: 'Processed Date',
+            title: 'Ngày xử lý',
             dataIndex: 'processedDate',
             key: 'processedDate',
             width: 150,
@@ -127,7 +127,7 @@ function User() {
                 date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
         },
         {
-            title: 'paidDate',
+            title: 'Ngày thanh toán',
             dataIndex: 'paidDate',
             key: 'paidDate',
             width: 150,
@@ -145,7 +145,7 @@ function User() {
                         type="primary"
                         icon={<EditOutlined/>}
                         buttonWidth={80}
-                        onClick={() => handleEditUser(record)}
+                        onClick={() => handleEditPayroll(record)}
                     />
                     <SmartButton
                         title="Delete"
@@ -176,98 +176,111 @@ function User() {
         },
     ];
 
-    // const userModalFields = [
-    //     {
-    //         label: 'Employee',
-    //         name: 'employeeId',
-    //         type: 'select',
-    //         options: employeeSource,
-    //         rules: [{ required: true, message: 'Employee is required!' }],
-    //     },
-    //     {
-    //         label: 'period',
-    //         name: 'period',
-    //         type: 'text',
-    //         rules: [{ required: true, message: 'period is required!' }],
-    //     },
-    //     {
-    //         label: 'basicSalary',
-    //         name: 'basicSalary',
-    //         type: 'text',
-    //     },
-    //     {
-    //         label: 'overtime',
-    //         name: 'overtime',
-    //         type: 'text',
-    //     },
-    //     {
-    //         label: 'bonus',
-    //         name: 'bonus',
-    //         type: 'text',
-    //     },
-    //     {
-    //         label: 'allowances',
-    //         name: 'allowances',
-    //         type: 'text',
-    //     },
-    //     {
-    //         label: 'deductions',
-    //         name: 'deductions',
-    //         type: 'text',
-    //     },
-    //     {
-    //         label: 'tax',
-    //         name: 'tax',
-    //         type: 'text',
-    //     },
-    //     {
-    //         label: 'insurance',
-    //         name: 'insurance',
-    //         type: 'text',
-    //     },
-    //     {
-    //         label: 'Permission',
-    //         name: 'permissions',
-    //         type: 'select',
-    //         options: ['ADMIN:MANAGE', 'ADMIN:CREATE', 'ADMIN:UPDATE', 'ADMIN:READ', 'ADMIN:DELETE'],
-    //     },
-    //     {
-    //         label: 'Enable',
-    //         name: 'enabled',
-    //         type: 'yesno',
-    //     },
-    //     {
-    //         label: 'Bio',
-    //         name: 'bio',
-    //         type: 'textarea',
-    //     },
-    // ];
+    const updateModalFields = [
+        {
+            label: 'ID',
+            name: 'id',
+            type: 'text',
+            readOnly: true,
+            disabled: true,
+        },
+        {
+            label: 'Employee',
+            name: 'employeeId',
+            type: 'select',
+            options: employeeSource,
+            rules: [{ required: true, message: 'Employee is required!' }],
+        },
+        {
+            label: 'Period',
+            name: 'period',
+            type: 'text',
+            rules: [{ required: true, message: 'period is required!' }],
+        },
+        {
+            label: 'Basic Salary',
+            name: 'basicSalary',
+            type: 'text',
+        },
+        {
+            label: 'Overtime',
+            name: 'overtime',
+            type: 'text',
+        },
+        {
+            label: 'Bonus',
+            name: 'bonus',
+            type: 'text',
+        },
+        {
+            label: 'Allowances',
+            name: 'allowances',
+            type: 'text',
+        },
+        {
+            label: 'Deductions',
+            name: 'deductions',
+            type: 'text',
+        },
+        {
+            label: 'Tax',
+            name: 'tax',
+            type: 'text',
+        },
+        {
+            label: 'Insurance',
+            name: 'insurance',
+            type: 'text',
+        },
+        {
+            label: 'NetSalary',
+            name: 'netSalary',
+            type: 'text',
+        },
+        {
+            label: 'Status',
+            name: 'status',
+            type: 'select',
+            options: Object.keys(statusPayroll).map(key => ({
+                label: key,
+                value: key,
+            }))
+        },
+        {
+            label: 'Processed Date',
+            name: 'processedDate',
+            type: 'date',
+        },
+        {
+            label: 'Paid Date',
+            name: 'paidDate',
+            type: 'date',
+        },
+    ];
 
-    const handleGetAllEmployees = async (page = 1, pageSize = 5) => {
+    const handleGetAllEmployees = async () => {
         try {
-            const response = await getAllEmployees({
-                page: page - 1,
-                pageSize,
-            });
+            const response = await getAllEmployeesNoPaging();
 
-            if (!response || !Array.isArray(response.content)) {
+            if (!response || !Array.isArray(response.result)) {
                 throw new Error(
                     'Invalid response: employees data is missing or not an array',
                 );
             }
 
-            const employeesData = response.content.map((employee) => ({
+            const employeesData = response.result.map((employee) => ({
                 label: `${employee.firstName} ${employee.lastName}`.trim(),
                 value: employee.id,
             }));
 
+            console.log('Employee data: ', employeesData)
             setEmployeeSource(employeesData);
         } catch (error) {
             return {success: false, error: error.message};
         }
     };
 
-    const handleGetAllPayRolls = async (page = 1, pageSize = 5) => {
+    const handleGetAllPayRolls = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
             const response = await getAllPayroll({page: page - 1, pageSize});
@@ -308,7 +321,7 @@ function User() {
             handleGetAllPayRolls();
             setSelectedRowKeys([]);
         } catch (error) {
-            message.error('Error when process oayrolls!');
+            console.error('Error when process oayrolls!');
         } finally {
             setLoading(false);
         }
@@ -316,7 +329,7 @@ function User() {
 
     const handleAddPayroll = () => {
         setModalMode('create');
-        setSelectedUser(null);
+        setSelectedPayroll(null);
         form.resetFields();
         setIsModalOpen(true);
     };
@@ -333,16 +346,16 @@ function User() {
         form.resetFields();
     };
 
-    const handleEditUser = (record) => {
-        setSelectedUser(record);
+    const handleEditPayroll = (record) => {
+        setSelectedPayroll(record);
         setModalMode('edit');
 
         form.setFieldsValue(record);
         setIsModalOpen(true);
     };
 
-    const handleCallUpdateUser = async (formData) => {
-        // await updateUser(selectedUser.id, formData);
+    const handleCallUpdatePayroll = async (formData) => {
+        await updatePayroll(selectedPayroll.id, formData);
         handleGetAllPayRolls();
         setIsModalOpen(false);
     };
@@ -374,7 +387,7 @@ function User() {
         if (modalMode === 'create') {
             handleCallCreateUser(formData);
         } else if (modalMode === 'edit') {
-            handleCallUpdateUser(formData);
+            handleCallUpdatePayroll(formData);
         }
     };
 
@@ -445,9 +458,14 @@ function User() {
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 title={getModalTitle()}
-                fields={modalMode === 'delete' ? [] : userModelFields}
+                fields={
+                    modalMode === 'delete'
+                    ? []
+                    : modalMode === 'create'
+                        ? userModelFields : updateModalFields
+                }
                 onSubmit={handleFormSubmit}
-                initialValues={selectedUser}
+                initialValues={selectedPayroll}
                 isDeleteMode={modalMode === 'delete'}
                 formInstance={form}
             />
@@ -455,4 +473,4 @@ function User() {
     );
 }
 
-export default User;
+export default Payroll;

@@ -97,6 +97,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public List<EmployeeDTO> getAllEmployeesNoPaging() {
+        return employeeRepository.findAll().stream().map(employeeMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
     public Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return employeeRepository.findByDepartmentId(departmentId, pageRequest).map(employeeMapper::toDTO);
