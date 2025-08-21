@@ -8,7 +8,7 @@ import Employee from '~/pages/AdminDashboard/Employee';
 import Department from '~/pages/AdminDashboard/Department';
 import Position from '~/pages/AdminDashboard/Position';
 import Leave from '~/pages/AdminDashboard/Leave';
-import PayRole from '~/pages/AdminDashboard/PayRole';
+import PayRoll from '~/pages/AdminDashboard/PayRoll';
 import RootRedirect from '~/components/RootRedirect';
 
 const publicRoutes = [
@@ -67,8 +67,8 @@ const privateRoutes = [
     },
     {
         path: '/admin/payroll',
-        component: PayRole,
-        title: 'PayRole Management',
+        component: PayRoll,
+        title: 'PayRoll Management',
         role: 'admin',
     },
     {
