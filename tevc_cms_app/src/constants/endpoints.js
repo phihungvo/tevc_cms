@@ -74,6 +74,7 @@ const API_ENDPOINTS = {
     ATTENDANCE: {
         GET_ALL: `${BASE_URL}/attendances`,
         CREATE: `${BASE_URL}/attendances`,
+        UPDATE: (attendanceId) => `${BASE_URL}/attendances/${attendanceId}`,
     }
 };
 

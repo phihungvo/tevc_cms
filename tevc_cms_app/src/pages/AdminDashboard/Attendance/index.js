@@ -19,8 +19,10 @@ import {
     createAttandance,
     getAllAttendancesWithPagination,
     deleteAttendance,
+    updateAttandance
 } from '~/service/admin/attendance';
 import { getAllEmployeesNoPaging } from '~/service/admin/employee';
+import {updateDepartment} from "~/service/admin/department";
 
 const cx = classNames.bind(styles);
 
@@ -35,7 +37,7 @@ function Attendance() {
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedPayroll, setSelectedPayroll] = useState(null);
+    const [selectedAttendance,  setSelectedAttendance] = useState(null);
     const [form] = Form.useForm();
 
     const columns = [
@@ -166,7 +168,7 @@ function Attendance() {
 
     const handleAddAttendance = () => {
         setModalMode('create');
-        setSelectedPayroll(null);
+         setSelectedAttendance(null);
         form.resetFields();
         setIsModalOpen(true);
     };
@@ -188,7 +190,16 @@ function Attendance() {
     };
 
     const handleEditAttendance = (record) => {
-        // Implement edit functionality here
+         setSelectedAttendance(record);
+        setModalMode('edit');
+        form.setFieldsValue(record);
+        setIsModalOpen(true);
+    };
+
+    const handleCallUpdateAttendance = async (formData) => {
+        await updateAttandance(selectedAttendance.id, formData);
+        fetchAttendances();
+        setIsModalOpen(false);
     };
 
     const handleTableChange = (pagination) => {
@@ -212,7 +223,7 @@ function Attendance() {
         if (modalMode === 'create') {
             handleCallCreateAttendance(formData);
         } else if (modalMode === 'edit') {
-            // handleCallUpdateLeave(formData);
+            handleCallUpdateAttendance(formData);
         } else if (modalMode === 'delete') {
             // handleCallDeleteLeave();
         }
@@ -265,7 +276,7 @@ function Attendance() {
                 title={getModalTitle()}
                 fields={modalMode === 'delete' ? [] : attendanceModalFields}
                 onSubmit={handleFormSubmit}
-                initialValues={selectedPayroll}
+                initialValues={selectedAttendance}
                 isDeleteMode={modalMode === 'delete'}
                 formInstance={form}
             />
