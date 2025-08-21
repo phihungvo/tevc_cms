@@ -65,7 +65,9 @@ public enum ErrorCode {
     TRAINING_ALREADY_PROCESSED(1052, "Training already processed", HttpStatus.CONFLICT),
     POSITION_HAS_EMPLOYEES(1053, "Position has employees", HttpStatus.BAD_REQUEST),
     INVALID_PAYROLL_PERIOD(1054, "Invalid payroll period format. Expected format: YYYY-MM", HttpStatus.BAD_REQUEST),
-    PASSWORD_NOT_MATCHES(1055, "Password does not match", HttpStatus.BAD_REQUEST);
+    PASSWORD_NOT_MATCHES(1055, "Password does not match", HttpStatus.BAD_REQUEST),
+    SALARY_NOT_FOUND(1056, "Salary not found", HttpStatus.NOT_FOUND),
+    ATTENDANCE_NOT_FOUND(1057, "Attendance not found", HttpStatus.NOT_FOUND);
 
     int code;
     String message;

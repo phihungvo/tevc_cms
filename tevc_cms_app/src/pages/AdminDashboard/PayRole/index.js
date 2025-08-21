@@ -49,20 +49,20 @@ function User() {
 
     const columns = [
         {
-            title: 'Employee Name',
+            title: 'Tên nhân viên',
             dataIndex: 'employeeName',
             key: 'userName',
             width: 150,
             fixed: 'left',
         },
         {
-            title: 'Period',
+            title: 'Kỳ Lương',
             dataIndex: 'period',
             key: 'period',
             width: 100,
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
             width: 100,
@@ -71,55 +71,55 @@ function User() {
             ),
         },
         {
-            title: 'Basic Salary',
+            title: 'Lương cơ bản',
             dataIndex: 'basicSalary',
             key: 'basicSalary',
             width: 100,
         },
         {
-            title: 'Overtime',
+            title: 'Làm thêm giờ',
             dataIndex: 'overtime',
             key: 'overtime',
             width: 100,
         },
         {
-            title: 'Bonus',
+            title: 'Thưởng',
             dataIndex: 'bonus',
             key: 'bonus',
             width: 100,
         },
         {
-            title: 'Allowances',
+            title: 'Phụ cấp',
             dataIndex: 'allowances',
             key: 'allowances',
             width: 100,
         },
         {
-            title: 'Deductions',
+            title: 'Khấu trừ',
             dataIndex: 'deductions',
             key: 'deductions',
             width: 100,
         },
         {
-            title: 'Tax',
+            title: 'Thuế',
             dataIndex: 'tax',
             key: 'tax',
             width: 100,
         },
         {
-            title: 'Insurance',
+            title: 'Bảo hiểm',
             dataIndex: 'insurance',
             key: 'insurance',
             width: 100,
         },
         {
-            title: 'Net Salary',
+            title: 'Lương ròng',
             dataIndex: 'netSalary',
             key: 'netSalary',
             width: 100,
         },
         {
-            title: 'Processed Date',
+            title: 'Ngày xử lý',
             dataIndex: 'processedDate',
             key: 'processedDate',
             width: 150,
@@ -127,7 +127,7 @@ function User() {
                 date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
         },
         {
-            title: 'paidDate',
+            title: 'Ngày thanh toán',
             dataIndex: 'paidDate',
             key: 'paidDate',
             width: 150,
@@ -250,17 +250,18 @@ function User() {
                 pageSize,
             });
 
-            if (!response || !Array.isArray(response.content)) {
+            if (!response || !Array.isArray(response.result)) {
                 throw new Error(
                     'Invalid response: employees data is missing or not an array',
                 );
             }
 
-            const employeesData = response.content.map((employee) => ({
+            const employeesData = response.result.map((employee) => ({
                 label: `${employee.firstName} ${employee.lastName}`.trim(),
                 value: employee.id,
             }));
 
+            console.log('Employee data: ', employeesData)
             setEmployeeSource(employeesData);
         } catch (error) {
             return {success: false, error: error.message};

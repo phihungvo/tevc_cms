@@ -68,4 +68,31 @@ export const processPayroll = async (payrollIds) => {
         message.error(responseMessage || fallbackMessage || 'Unexpected error occurred');
         throw error;
     }
+<<<<<<< Updated upstream
+=======
+};
+
+export const updatePayroll = async (payrollIds, formData) => {
+    try {
+        const response = await axios.patch(
+            API_ENDPOINTS.PAYROLL.UPDATE(payrollIds), 
+            formData, 
+            {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    'Content-Type': 'application/json',
+                },
+            },
+        );
+        if (response.data) {
+            message.success('Payrolls updated successfully');
+        }
+        return response.data;
+    } catch (error) {
+        const responseMessage = error.response?.data?.message;
+        const fallbackMessage = error.message;
+        message.error(responseMessage || fallbackMessage || 'Unexpected error occurred');
+        throw error;
+    }
+>>>>>>> Stashed changes
 };
