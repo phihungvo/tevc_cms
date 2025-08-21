@@ -18,7 +18,7 @@ import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import {Form, message, Tag} from 'antd';
 import {calculatePayroll, getAllPayroll, processPayroll, updatePayroll} from '~/service/admin/payroll';
-import {getAllEmployees, getAllEmployeesNoPaging} from '~/service/admin/employee';
+import { getAllEmployeesNoPaging} from '~/service/admin/employee';
 import {exportExcelFile} from '~/service/admin/export_service';
 import dayjs from 'dayjs';
 
@@ -31,7 +31,7 @@ function Payroll() {
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
-        pageSize: 5,
+        pageSize: 10,
         total: 0,
     });
     const [modalMode, setModalMode] = useState('create');

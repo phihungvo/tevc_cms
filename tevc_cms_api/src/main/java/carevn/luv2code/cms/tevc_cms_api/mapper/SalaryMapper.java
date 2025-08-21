@@ -12,10 +12,10 @@ import carevn.luv2code.cms.tevc_cms_api.entity.Salary;
 public interface SalaryMapper {
 
     @Mapping(target = "employeeId", source = "employee.id")
-    @Mapping(target = "employeeName", source = "employee.name")
+    //    @Mapping(target = "employeeName", source = "employee.name")
     SalaryDTO toDTO(Salary salary);
 
-    @Mapping(target = "employee", expression = "java(mapEmployee(dto.getEmployeeId()))")
+    // @Mapping(target = "employee", expression = "java(mapEmployee(dto.getEmployeeId()))")
     Salary toEntity(SalaryDTO salaryDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

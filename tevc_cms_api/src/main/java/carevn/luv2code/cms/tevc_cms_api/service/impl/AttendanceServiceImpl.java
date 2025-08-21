@@ -14,6 +14,7 @@ import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.AttendanceMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.AttendanceRepository;
+import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 
@@ -21,11 +22,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRepository attendanceRepository;
+    private final EmployeeRepository employeeRepository;
     private final AttendanceMapper attendanceMapper;
 
     @Override
     public AttendanceDTO createAttendance(AttendanceDTO attendanceDTO) {
         Attendance attendance = attendanceMapper.toEntity(attendanceDTO);
+
+        attendance.setEmployee(employeeRepository
+                .findById(attendanceDTO.getEmployeeId())
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND)));
         Attendance savedAttendance = attendanceRepository.save(attendance);
         return attendanceMapper.toDTO(savedAttendance);
     }
@@ -49,6 +55,11 @@ public class AttendanceServiceImpl implements AttendanceService {
         Attendance existingAttendance =
                 attendanceRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ATTENDANCE_NOT_FOUND));
         attendanceMapper.updateEntityFromDTO(attendanceDTO, existingAttendance);
+
+        existingAttendance.setEmployee(employeeRepository
+                .findById(attendanceDTO.getEmployeeId())
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND)));
+
         Attendance savedAttendance = attendanceRepository.save(existingAttendance);
         return attendanceMapper.toDTO(savedAttendance);
     }

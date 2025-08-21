@@ -9,6 +9,7 @@ import Department from '~/pages/AdminDashboard/Department';
 import Position from '~/pages/AdminDashboard/Position';
 import Leave from '~/pages/AdminDashboard/Leave';
 import PayRoll from '~/pages/AdminDashboard/PayRoll';
+import Attendance from '~/pages/AdminDashboard/Attendance';
 import RootRedirect from '~/components/RootRedirect';
 
 const publicRoutes = [
@@ -69,6 +70,12 @@ const privateRoutes = [
         path: '/admin/payroll',
         component: PayRoll,
         title: 'PayRoll Management',
+        role: 'admin',
+    },
+    {
+        path: '/admin/attendance',
+        component: Attendance,
+        title: 'Attendance Management',
         role: 'admin',
     },
     {

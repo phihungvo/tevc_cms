@@ -10,6 +10,10 @@ import carevn.luv2code.cms.tevc_cms_api.entity.Attendance;
 @Mapper(componentModel = "spring")
 public interface AttendanceMapper {
     @Mapping(target = "employeeId", source = "employee.id")
+    @Mapping(
+            target = "employeeName",
+            expression =
+                    "java(attendance.getEmployee().getFirstName() + \" \" + attendance.getEmployee().getLastName())")
     AttendanceDTO toDTO(Attendance attendance);
 
     @Mapping(target = "employee", ignore = true)

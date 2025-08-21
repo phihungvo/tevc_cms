@@ -49,8 +49,8 @@ export const processPayroll = async (payrollIds) => {
     console.log("payrollIds: ", payrollIds)
     try {
         const response = await axios.patch(
-            API_ENDPOINTS.PAYROLL.PROCESS, 
-            payrollIds , 
+            API_ENDPOINTS.PAYROLL.PROCESS,
+            payrollIds,
             {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
