@@ -46,3 +46,6 @@ jobs:
                 }
               ]
             }
+
+
+# This workflow sends a notification to a Discord channel whenever there is a push or pull request event in the repository.
