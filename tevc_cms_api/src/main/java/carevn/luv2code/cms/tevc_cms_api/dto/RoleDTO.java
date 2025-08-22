@@ -17,4 +17,5 @@ public class RoleDTO {
     String description;
 
     Set<UUID> permissions;
+
 }
