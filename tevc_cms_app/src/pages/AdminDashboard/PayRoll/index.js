@@ -402,6 +402,7 @@ function Payroll() {
             message.error('Không thể tải file Excel');
         }
     };
+
     useEffect(() => {
         handleGetAllEmployees();
         handleGetAllPayRolls();
@@ -418,6 +419,7 @@ function Payroll() {
     const handleTableChange = (pagination) => {
         handleGetAllPayRolls(pagination.current, pagination.pageSize);
     };
+
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
