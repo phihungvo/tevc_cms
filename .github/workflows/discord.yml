@@ -1,20 +1,47 @@
-name: Notify Discord on Push
+name: Notify Discord
 
 on:
-  push:
-    branches:
-      - main   # hoặc branch bạn muốn theo dõi
+  push:        # theo dõi mọi nhánh khi có commit/push
+  pull_request:  # theo dõi mọi nhánh khi có PR
+    types: [opened, closed, reopened, synchronize]
 
 jobs:
-  discordNotification:
+  notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send commit info to Discord
+      - name: Send Discord notification
         uses: Ilshidur/action-discord@master
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           args: |
-            🚀 New commit pushed to **${{ github.repository }}**
-            👤 Author: ${{ github.actor }}
-            📝 Message: ${{ github.event.head_commit.message }}
-            🔗 [View commit](${{ github.event.head_commit.url }})
+            {
+              "username": "GitHub Bot 🤖",
+              "embeds": [
+                {
+                  "title": "🔔 New Event in ${{ github.repository }}",
+                  "description": "Branch: **${{ github.ref_name }}**",
+                  "color": 5814783,
+                  "fields": [
+                    {
+                      "name": "👤 Author",
+                      "value": "${{ github.actor }}",
+                      "inline": true
+                    },
+                    {
+                      "name": "📝 Commit Message",
+                      "value": "${{ github.event.head_commit.message }}",
+                      "inline": false
+                    },
+                    {
+                      "name": "🔗 Commit URL",
+                      "value": "[View Commit](${{ github.event.head_commit.url }})",
+                      "inline": false
+                    }
+                  ],
+                  "footer": {
+                    "text": "GitHub Actions • ${{ github.event_name }}"
+                  },
+                  "timestamp": "${{ github.event.head_commit.timestamp }}"
+                }
+              ]
+            }
