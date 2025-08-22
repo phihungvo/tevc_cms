@@ -1,14 +1,16 @@
-name: Notify Discord on Project Changes
+name: Notify Discord on All Changes
 on:
-  issues:
-    types: [opened, edited, closed, reopened]
-  issue_comment:
-    types: [created, edited]
-  pull_request:
-    types: [opened, closed, reopened, synchronize]
   push:
     branches:
       - main
+  pull_request:
+    types: [ opened, closed, reopened, synchronize ]
+  issues:
+    types: [ opened, edited, closed, reopened ]
+  issue_comment:
+    types: [ created, edited ]
+  pull_request_review:
+    types: [ submitted, edited, dismissed ]
 
 jobs:
   notify:
@@ -21,142 +23,116 @@ jobs:
           AUTHOR="${{ github.actor }}"
           REPO="${{ github.repository }}"
           EVENT="${{ github.event_name }}"
+          ACTION="${{ github.event.action }}"
           AVATAR_URL="https://avatars.githubusercontent.com/u/${{ github.actor }}?v=4"
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          WEBHOOK_URL="${{ secrets.DISCORD_WEBHOOK }}"
 
-          if [ "$EVENT" = "issues" ]; then
-            ISSUE_TITLE="${{ github.event.issue.title }}"
-            ISSUE_URL="${{ github.event.issue.html_url }}"
-            ISSUE_STATE="${{ github.event.action }}"
-            PAYLOAD=$(jq -n \
-              --arg author "$AUTHOR" \
-              --arg avatar "$AVATAR_URL" \
-              --arg repo "$REPO" \
-              --arg issue_title "$ISSUE_TITLE" \
-              --arg issue_url "$ISSUE_URL" \
-              --arg issue_state "$ISSUE_STATE" \
-              --arg event "$EVENT" \
-              --arg timestamp "$TIMESTAMP" \
-              '{
-                "username": "GitHub Bot 🤖",
-                "embeds": [
-                  {
-                    "author": {
-                      "name": $author,
-                      "icon_url": $avatar,
-                      "url": "https://github.com/\($author)"
-                    },
-                    "title": "📌 Issue \($issue_state): \($issue_title)",
-                    "url": $issue_url,
-                    "color": 16711680,
-                    "footer": {
-                      "text": "GitHub Actions • \($event)"
-                    },
-                    "timestamp": $timestamp
-                  }
-                ]
-              }')
-          elif [ "$EVENT" = "issue_comment" ]; then
-            COMMENT_BODY="${{ github.event.comment.body }}"
-            ISSUE_URL="${{ github.event.issue.html_url }}"
-            PAYLOAD=$(jq -n \
-              --arg author "$AUTHOR" \
-              --arg avatar "$AVATAR_URL" \
-              --arg repo "$REPO" \
-              --arg comment_body "$COMMENT_BODY" \
-              --arg issue_url "$ISSUE_URL" \
-              --arg event "$EVENT" \
-              --arg timestamp "$TIMESTAMP" \
-              '{
-                "username": "GitHub Bot 🤖",
-                "embeds": [
-                  {
-                    "author": {
-                      "name": $author,
-                      "icon_url": $avatar,
-                      "url": "https://github.com/\($author)"
-                    },
-                    "title": "💬 New Comment on Issue",
-                    "url": $issue_url,
-                    "description": $comment_body,
-                    "color": 16776960,
-                    "footer": {
-                      "text": "GitHub Actions • \($event)"
-                    },
-                    "timestamp": $timestamp
-                  }
-                ]
-              }')
+          # Default embed settings
+          COLOR=16777215  # Màu trắng làm mặc định
+          TITLE=""
+          DESCRIPTION=""
+          URL=""
+          FIELDS="[]"
+          FOOTER_TEXT="GitHub Actions • $EVENT"
+
+          if [ "$EVENT" = "push" ]; then
+            COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+            COMMIT_URL="${{ github.event.head_commit.url }}"
+            COMMITTER="${{ github.event.head_commit.author.name }}"
+            BRANCH="${{ github.ref_name }}"
+            COLOR=3447003  # Màu xanh lá
+            TITLE="🚀 New Push to $REPO"
+            DESCRIPTION="📌 Branch: **$BRANCH**"
+            FIELDS=$(jq -n \
+              '[
+                {"name": "👤 Committer", "value": $committer, "inline": true},
+                {"name": "📝 Commit Message", "value": $commit_message, "inline": false},
+                {"name": "🔗 Commit URL", "value": "[View](\($commit_url))", "inline": false}
+              ]' --arg commit_message "$COMMIT_MESSAGE" --arg commit_url "$COMMIT_URL" --arg committer "$COMMITTER")
           elif [ "$EVENT" = "pull_request" ]; then
             PR_TITLE="${{ github.event.pull_request.title }}"
             PR_URL="${{ github.event.pull_request.html_url }}"
             PR_STATE="${{ github.event.action }}"
-            PAYLOAD=$(jq -n \
-              --arg author "$AUTHOR" \
-              --arg avatar "$AVATAR_URL" \
-              --arg repo "$REPO" \
-              --arg pr_title "$PR_TITLE" \
-              --arg pr_url "$PR_URL" \
-              --arg pr_state "$PR_STATE" \
-              --arg event "$EVENT" \
-              --arg timestamp "$TIMESTAMP" \
-              '{
-                "username": "GitHub Bot 🤖",
-                "embeds": [
-                  {
-                    "author": {
-                      "name": $author,
-                      "icon_url": $avatar,
-                      "url": "https://github.com/\($author)"
-                    },
-                    "title": "📥 Pull Request \($pr_state): \($pr_title)",
-                    "url": $pr_url,
-                    "color": 5763719,
-                    "footer": {
-                      "text": "GitHub Actions • \($event)"
-                    },
-                    "timestamp": $timestamp
-                  }
-                ]
-              }')
-          elif [ "$EVENT" = "push" ]; then
-            COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
-            COMMIT_URL="${{ github.event.head_commit.url }}"
-            PAYLOAD=$(jq -n \
-              --arg author "$AUTHOR" \
-              --arg avatar "$AVATAR_URL" \
-              --arg repo "$REPO" \
-              --arg commit_message "$COMMIT_MESSAGE" \
-              --arg commit_url "$COMMIT_URL" \
-              --arg event "$EVENT" \
-              --arg timestamp "$TIMESTAMP" \
-              '{
-                "username": "GitHub Bot 🤖",
-                "embeds": [
-                  {
-                    "author": {
-                      "name": $author,
-                      "icon_url": $avatar,
-                      "url": "https://github.com/\($author)"
-                    },
-                    "title": "🚀 Push to \($repo)",
-                    "description": $commit_message,
-                    "color": 3447003,
-                    "footer": {
-                      "text": "GitHub Actions • \($event)"
-                    },
-                    "timestamp": $timestamp
-                  }
-                ]
-              }')
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            COLOR=$(if [ "$PR_STATE" = "opened" ]; then echo 5763719; else echo 15548997; fi)  # Xanh lá (open), đỏ (closed)
+            TITLE="📥 Pull Request #$PR_NUMBER: $PR_TITLE"
+            URL="$PR_URL"
+            DESCRIPTION="${{ github.event.pull_request.body }}"
+            FIELDS=$(jq -n \
+              '[
+                {"name": "📌 Repository", "value": $repo, "inline": true},
+                {"name": "🌿 Branch", "value": $branch, "inline": true},
+                {"name": "🔗 View PR", "value": "[Open](\($pr_url))", "inline": false}
+              ]' --arg repo "$REPO" --arg branch "$BRANCH" --arg pr_url "$PR_URL")
+          elif [ "$EVENT" = "issues" ]; then
+            ISSUE_TITLE="${{ github.event.issue.title }}"
+            ISSUE_URL="${{ github.event.issue.html_url }}"
+            COLOR=16711680  # Màu đỏ
+            TITLE="📌 Issue $ACTION: $ISSUE_TITLE"
+            URL="$ISSUE_URL"
+            DESCRIPTION="${{ github.event.issue.body }}"
+            FIELDS=$(jq -n \
+              '[
+                {"name": "📋 State", "value": $action, "inline": true},
+                {"name": "🔗 View Issue", "value": "[Open](\($issue_url))", "inline": false}
+              ]' --arg action "$ACTION" --arg issue_url "$ISSUE_URL")
+          elif [ "$EVENT" = "issue_comment" ]; then
+            COMMENT_BODY="${{ github.event.comment.body }}"
+            ISSUE_URL="${{ github.event.issue.html_url }}"
+            COLOR=16776960  # Màu vàng
+            TITLE="💬 New Comment on Issue"
+            URL="$ISSUE_URL"
+            DESCRIPTION="$COMMENT_BODY"
+            FIELDS=$(jq -n \
+              '[
+                {"name": "📌 Issue", "value": $issue_url, "inline": false}
+              ]' --arg issue_url "$ISSUE_URL")
+          elif [ "$EVENT" = "pull_request_review" ]; then
+            REVIEW_STATE="${{ github.event.review.state }}"
+            PR_URL="${{ github.event.pull_request.html_url }}"
+            COLOR=$(if [ "$REVIEW_STATE" = "approved" ]; then echo 3066993; elif [ "$REVIEW_STATE" = "changes_requested" ]; then echo 15158332; else echo 10181046; fi)  # Xanh (approved), đỏ (changes), xám (comment)
+            TITLE="👀 Pull Request Review: $REVIEW_STATE"
+            URL="$PR_URL"
+            DESCRIPTION="${{ github.event.review.body }}"
+            FIELDS=$(jq -n \
+              '[
+                {"name": "📌 PR", "value": $pr_url, "inline": false}
+              ]' --arg pr_url "$PR_URL")
           fi
 
+          # Tạo payload JSON
+          PAYLOAD=$(jq -n \
+            --arg username "GitHub Bot 🤖" \
+            --arg avatar "$AVATAR_URL" \
+            --arg title "$TITLE" \
+            --arg description "$DESCRIPTION" \
+            --arg url "$URL" \
+            --argjson fields "$FIELDS" \
+            --arg footer_text "$FOOTER_TEXT" \
+            --arg timestamp "$TIMESTAMP" \
+            --argjson color "$COLOR" \
+            '{
+              "username": $username,
+              "avatar_url": $avatar,
+              "embeds": [
+                {
+                  "title": $title,
+                  "description": $description,
+                  "url": $url,
+                  "color": $color,
+                  "fields": $fields,
+                  "footer": {"text": $footer_text},
+                  "timestamp": $timestamp
+                }
+              ]
+            }')
+
+          # Gửi tới Discord
           curl -H "Content-Type: application/json" \
                -X POST \
                -d "$PAYLOAD" \
-               "${{ secrets.DISCORD_WEBHOOK }}"
-
-
+               "$WEBHOOK_URL"
 
 # This workflow sends a notification to a Discord channel whenever there is a push or pull request event in the repository.
 # It uses a JSON payload to create an embed message that includes details about the commit, such as the author, branch, commit message, and a link to the commit.
