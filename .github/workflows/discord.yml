@@ -69,3 +69,4 @@ jobs:
 
 
 # This workflow sends a notification to a Discord channel whenever there is a push or pull request event in the repository.
+# It uses a JSON payload to create an embed message that includes details about the commit, such as the author, branch, commit message, and a link to the commit.
