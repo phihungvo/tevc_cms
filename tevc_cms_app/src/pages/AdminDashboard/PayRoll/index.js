@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/PayRoll/PayRoll.module.scss';
-import {useState, useEffect} from 'react';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
@@ -16,10 +15,10 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import {Form, message, Tag} from 'antd';
-import {calculatePayroll, getAllPayroll, processPayroll, updatePayroll} from '~/service/admin/payroll';
-import { getAllEmployeesNoPaging} from '~/service/admin/employee';
-import {exportExcelFile} from '~/service/admin/export_service';
+import { Form, message, Tag, DatePicker } from 'antd';
+import { calculatePayroll, getAllPayroll, processPayroll, updatePayroll } from '~/service/admin/payroll';
+import { getAllEmployeesNoPaging } from '~/service/admin/employee';
+import { exportExcelFile } from '~/service/admin/export_service';
 import dayjs from 'dayjs';
 
 const cx = classNames.bind(styles);
@@ -124,7 +123,9 @@ function Payroll() {
             key: 'processedDate',
             width: 150,
             render: (date) =>
-                date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
+                date && moment(date, moment.ISO_8601, true).isValid()
+                    ? moment(date).format('DD/MM/YYYY HH:mm:ss')
+                    : 'N/A',
         },
         {
             title: 'Ngày thanh toán',
@@ -132,7 +133,9 @@ function Payroll() {
             key: 'paidDate',
             width: 150,
             render: (date) =>
-                date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
+                date && moment(date, moment.ISO_8601, true).isValid()
+                    ? moment(date).format('DD/MM/YYYY HH:mm:ss')
+                    : 'N/A',
         },
         {
             title: 'Actions',
@@ -143,17 +146,17 @@ function Payroll() {
                     <SmartButton
                         title="Edit"
                         type="primary"
-                        icon={<EditOutlined/>}
+                        icon={<EditOutlined />}
                         buttonWidth={80}
                         onClick={() => handleEditPayroll(record)}
                     />
                     <SmartButton
                         title="Delete"
                         type="danger"
-                        icon={<DeleteOutlined/>}
+                        icon={<DeleteOutlined />}
                         buttonWidth={80}
                         // onClick={() => handleDeleteTrailer(record)}
-                        style={{marginLeft: '8px'}}
+                        style={{ marginLeft: '8px' }}
                     />
                 </>
             ),
@@ -166,13 +169,14 @@ function Payroll() {
             name: 'employeeId',
             type: 'select',
             options: employeeSource,
-            rules: [{required: true, message: 'Employee is required!'}],
+            rules: [{ required: true, message: 'Employee is required!' }],
         },
         {
             label: 'period',
             name: 'period',
             type: 'date',
-            rules: [{required: true, message: 'period is required!'}],
+            render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
+            rules: [{ required: true, message: 'period is required!' }],
         },
     ];
 
@@ -188,8 +192,8 @@ function Payroll() {
             label: 'Employee',
             name: 'employeeId',
             type: 'select',
-            options: employeeSource,
-            rules: [{ required: true, message: 'Employee is required!' }],
+            readOnly: true,
+            disabled: true,
         },
         {
             label: 'Period',
@@ -250,11 +254,13 @@ function Payroll() {
             label: 'Processed Date',
             name: 'processedDate',
             type: 'date',
+            render: () => <DatePicker format="DD/MM/YYYY HH:mm:ss" showTime style={{ width: '100%' }} />,
         },
         {
             label: 'Paid Date',
             name: 'paidDate',
             type: 'date',
+            render: () => <DatePicker format="DD/MM/YYYY HH:mm:ss" showTime style={{ width: '100%' }} />,
         },
     ];
 
@@ -262,13 +268,7 @@ function Payroll() {
         try {
             const response = await getAllEmployeesNoPaging();
 
-            if (!response || !Array.isArray(response.result)) {
-                throw new Error(
-                    'Invalid response: employees data is missing or not an array',
-                );
-            }
-
-            const employeesData = response.result.map((employee) => ({
+            const employeesData = response.map((employee) => ({
                 label: `${employee.firstName} ${employee.lastName}`.trim(),
                 value: employee.id,
             }));
@@ -276,7 +276,8 @@ function Payroll() {
             console.log('Employee data: ', employeesData)
             setEmployeeSource(employeesData);
         } catch (error) {
-            return {success: false, error: error.message};
+            console.error('Lỗi khi lấy danh sách nhân viên:', error);
+            message.error('Không thể lấy danh sách nhân viên');
         }
     };
 
@@ -290,20 +291,23 @@ function Payroll() {
                 const transformedPayrolls = payRollList.map((payRoll) => {
                     return {
                         ...payRoll,
+                        processedDate: payRoll.processedDate ? payRoll.processedDate : null,
+                        paidDate: payRoll.paidDate ? payRoll.paidDate : null,
                     };
                 });
-                console.log('tranfer payroll: ', transformedPayrolls);
                 setPayRollSource(transformedPayrolls);
-                setPagination((prev) => ({
-                    ...prev,
+                setPagination({
                     current: page,
                     pageSize: pageSize,
-                    total: response.totalElements,
-                }));
+                    total: response.totalElements || 0,
+                });
             } else {
+                console.error('Định dạng dữ liệu không hợp lệ:', response);
                 setPayRollSource([]);
             }
         } catch (error) {
+            console.error('Lỗi khi lấy danh sách bảng lương:', error);
+            message.error('Không thể lấy danh sách bảng lương');
             setPayRollSource([]);
         } finally {
             setLoading(false);
@@ -321,7 +325,8 @@ function Payroll() {
             handleGetAllPayRolls();
             setSelectedRowKeys([]);
         } catch (error) {
-            console.error('Error when process oayrolls!');
+            console.error('Error when process payrolls!');
+            message.error('Không thể xử lý bảng lương');
         } finally {
             setLoading(false);
         }
@@ -344,20 +349,39 @@ function Payroll() {
         await calculatePayroll(formattedFormData.employeeId, formattedFormData.period);
         handleGetAllPayRolls();
         form.resetFields();
+        setIsModalOpen(false);
     };
 
     const handleEditPayroll = (record) => {
         setSelectedPayroll(record);
         setModalMode('edit');
 
-        form.setFieldsValue(record);
+        form.setFieldsValue({
+            ...record,
+            processedDate: record.processedDate && moment(record.processedDate, moment.ISO_8601, true).isValid()
+                ? moment(record.processedDate)
+                : null,
+            paidDate: record.paidDate && moment(record.paidDate, moment.ISO_8601, true).isValid()
+                ? moment(record.paidDate)
+                : null,
+        });
         setIsModalOpen(true);
     };
 
     const handleCallUpdatePayroll = async (formData) => {
-        await updatePayroll(selectedPayroll.id, formData);
-        handleGetAllPayRolls();
-        setIsModalOpen(false);
+        const formattedData = {
+            ...formData,
+            processedDate: formData.processedDate ? moment(formData.processedDate).format('YYYY-MM-DDTHH:mm:ss') : null,
+            paidDate: formData.paidDate ? moment(formData.paidDate).format('YYYY-MM-DDTHH:mm:ss') : null,
+        };
+        try {
+            await updatePayroll(selectedPayroll.id, formattedData);
+            message.success('Bảng lương đã được cập nhật thành công');
+            handleGetAllPayRolls();
+            setIsModalOpen(false);
+        } catch (error) {
+            message.error(`Lỗi khi cập nhật bảng lương: ${error.response?.data?.message || error.message}`);
+        }
     };
 
     const handleExportFile = async () => {
@@ -417,27 +441,27 @@ function Payroll() {
                 <SmartInput
                     size="large"
                     placeholder="Search"
-                    icon={<SearchOutlined/>}
+                    icon={<SearchOutlined />}
                 />
                 <div className={cx('features')}>
                     <SmartButton
                         title="Add new"
-                        icon={<PlusOutlined/>}
+                        icon={<PlusOutlined />}
                         type="primary"
                         onClick={handleAddPayroll}
                     />
                     <SmartButton
                         title="Process"
-                        icon={<CheckCircleOutlined/>}
+                        icon={<CheckCircleOutlined />}
                         type="primary"
                         onClick={handleProcessPayrolls}
                         disabled={selectedRowKeys.length === 0}
-                        style={{marginLeft: '8px'}}
+                        style={{ marginLeft: '8px' }}
                     />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
+                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
                     <SmartButton
                         title="Excel"
-                        icon={<CloudUploadOutlined/>}
+                        icon={<CloudUploadOutlined />}
                         onClick={handleExportFile}
                     />
                 </div>
@@ -460,9 +484,10 @@ function Payroll() {
                 title={getModalTitle()}
                 fields={
                     modalMode === 'delete'
-                    ? []
-                    : modalMode === 'create'
-                        ? userModelFields : updateModalFields
+                        ? []
+                        : modalMode === 'create'
+                            ? userModelFields
+                            : updateModalFields
                 }
                 onSubmit={handleFormSubmit}
                 initialValues={selectedPayroll}

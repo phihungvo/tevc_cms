@@ -6,19 +6,21 @@ import styles from './SmartTable.module.scss';
 const cx = classNames.bind(styles);
 
 function SmartTable({
-    columns,
-    dataSources,
-    loading,
-    pagination,
-    onTableChange,
-    selectedRowKeys = [],
-    onSelectChange,
-}) {
-    // Cấu hình checkbox chọn dòng
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange, // (selectedRowKeys, selectedRows) => {}
-    };
+                        columns,
+                        dataSources,
+                        loading,
+                        pagination,
+                        onTableChange,
+                        selectedRowKeys = [],
+                        onSelectChange,
+                    }) {
+
+    const rowSelection = onSelectChange
+        ? {
+            selectedRowKeys,
+            onChange: onSelectChange,
+        }
+        : undefined;
 
     return (
         <div className={cx('table-container')}>
@@ -31,11 +33,12 @@ function SmartTable({
                 loading={loading}
                 rowKey="id"
                 size="small"
-                rowSelection={rowSelection} // <-- Thêm dòng này
+                rowSelection={rowSelection}
                 pagination={{
                     ...pagination,
                     showSizeChanger: true,
-                    pageSizeOptions: ['5', '10'],
+                    pageSizeOptions: ['5', '10', '20', '50'],
+                    showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} bản ghi`,
                 }}
                 onChange={onTableChange}
                 scroll={{ x: 'max-content' }}

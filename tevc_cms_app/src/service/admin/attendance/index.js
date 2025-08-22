@@ -36,3 +36,17 @@ export const createAttandance = async (formData) => {
         console.error('Error when creating attandance: ', error); 
     }
 };
+
+
+export const updateAttandance = async (attandanceId, formData) => {
+    try {
+        const response = await axios.patch(
+            API_ENDPOINTS.ATTENDANCE.UPDATE(attandanceId),
+            formData,
+        );
+        message.success('Attandance update successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when update attandance: ', error);
+    }
+};
