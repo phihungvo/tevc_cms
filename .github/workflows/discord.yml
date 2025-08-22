@@ -136,3 +136,8 @@ jobs:
 
 # This workflow sends a notification to a Discord channel whenever there is a push or pull request event in the repository.
 # It uses a JSON payload to create an embed message that includes details about the commit, such as the author, branch, commit message, and a link to the commit.
+
+# Make sure to set the DISCORD_WEBHOOK secret in your repository settings with your Discord webhook URL.
+
+# The workflow uses jq to construct the JSON payload dynamically based on the event type.
+# It handles both push events and pull request events, formatting the message accordingly.
