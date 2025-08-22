@@ -32,7 +32,7 @@ jobs:
               "embeds": [
                 {
                   "title": "🔔 New Event in \($repo)",
-                  "description": "Branch: **\($branch)**",
+                  "description": "📌 Branch: **\($branch)**",
                   "color": 5814783,
                   "fields": [
                     {
@@ -47,12 +47,12 @@ jobs:
                     },
                     {
                       "name": "🔗 Commit URL",
-                      "value": "[View Commit](" + $commit_url + ")",
+                      "value": "[View Commit](\($commit_url))",
                       "inline": false
                     }
                   ],
                   "footer": {
-                    "text": "GitHub Actions • " + $event
+                    "text": "GitHub Actions • \($event)"
                   },
                   "timestamp": $timestamp
                 }
@@ -64,7 +64,6 @@ jobs:
                -X POST \
                -d "$PAYLOAD" \
                "${{ secrets.DISCORD_WEBHOOK }}"
-
 
 
 
