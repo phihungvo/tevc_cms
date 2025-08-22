@@ -39,10 +39,10 @@ jobs:
                     "author": {
                       "name": $author,
                       "icon_url": $avatar,
-                      "url": "https://github.com/" + $author
+                      "url": "https://github.com/\($author)"
                     },
-                    "title": "🚀 Push Event in " + $repo,
-                    "description": "📌 Branch: **" + $branch + "**",
+                    "title": "🚀 Push Event in \($repo)",
+                    "description": "📌 Branch: **\($branch)**",
                     "color": 3447003,
                     "fields": [
                       {
@@ -57,12 +57,12 @@ jobs:
                       },
                       {
                         "name": "🔗 Commit URL",
-                        "value": "[View Commit](" + $commit_url + ")",
+                        "value": "[View Commit](\($commit_url))",
                         "inline": false
                       }
                     ],
                     "footer": {
-                      "text": "GitHub Actions • " + $event
+                      "text": "GitHub Actions • \($event)"
                     },
                     "timestamp": $timestamp
                   }
@@ -94,9 +94,9 @@ jobs:
                     "author": {
                       "name": $author,
                       "icon_url": $avatar,
-                      "url": "https://github.com/" + $author
+                      "url": "https://github.com/\($author)"
                     },
-                    "title": "📥 Pull Request #" + $pr_number + ": " + $pr_title,
+                    "title": "📥 Pull Request #\($pr_number): \($pr_title)",
                     "url": $pr_url,
                     "description": (if $pr_body != "" then $pr_body else "No description provided" end),
                     "color": (if $pr_state == "open" then 5763719 else 15548997 end),
@@ -113,12 +113,12 @@ jobs:
                       },
                       {
                         "name": "🔗 PR URL",
-                        "value": "[View PR](" + $pr_url + ")",
+                        "value": "[View PR](\($pr_url))",
                         "inline": false
                       }
                     ],
                     "footer": {
-                      "text": "GitHub Actions • " + $event
+                      "text": "GitHub Actions • \($event)"
                     },
                     "timestamp": $timestamp
                   }
