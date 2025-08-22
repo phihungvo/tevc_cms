@@ -20,7 +20,8 @@ jobs:
           REPO="${{ github.repository }}"
           BRANCH="${{ github.ref_name }}"
           EVENT="${{ github.event_name }}"
-          AVATAR_URL="https://avatars.githubusercontent.com/u/${{ github.actor }}?v=4"  # Sửa URL avatar cho đúng
+          AVATAR_URL="https://avatars.githubusercontent.com/u/${{ github.actor }}?v=4"  
+          FALLBACK_AVATAR="https://github.com/${AUTHOR}.png"  # Avatar mặc định
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           if [ "$EVENT" = "push" ]; then
@@ -30,6 +31,7 @@ jobs:
             PAYLOAD=$(jq -n \
               --arg author "$AUTHOR" \
               --arg avatar "$AVATAR_URL" \
+              --arg fallback_avatar "$FALLBACK_AVATAR" \
               --arg repo "$REPO" \
               --arg branch "$BRANCH" \
               --arg commit_message "$COMMIT_MESSAGE" \
@@ -43,7 +45,7 @@ jobs:
                   {
                     "author": {
                       "name": $author,
-                      "icon_url": $avatar,
+                      "icon_url": (if $avatar != "" then $avatar else $fallback_avatar end),
                       "url": "https://github.com/\($author)"
                     },
                     "title": "🚀 Push Event in \($repo)",
@@ -83,6 +85,7 @@ jobs:
             PAYLOAD=$(jq -n \
               --arg author "$AUTHOR" \
               --arg avatar "$AVATAR_URL" \
+              --arg fallback_avatar "$FALLBACK_AVATAR" \
               --arg repo "$REPO" \
               --arg branch "$BRANCH" \
               --arg pr_title "$PR_TITLE" \
@@ -98,7 +101,7 @@ jobs:
                   {
                     "author": {
                       "name": $author,
-                      "icon_url": $avatar,
+                      "icon_url": (if $avatar != "" then $avatar else $fallback_avatar end),
                       "url": "https://github.com/\($author)"
                     },
                     "title": "📥 Pull Request #\($pr_number): \($pr_title)",
@@ -138,6 +141,7 @@ jobs:
             PAYLOAD=$(jq -n \
               --arg author "$AUTHOR" \
               --arg avatar "$AVATAR_URL" \
+              --arg fallback_avatar "$FALLBACK_AVATAR" \
               --arg repo "$REPO" \
               --arg issue_title "$ISSUE_TITLE" \
               --arg issue_url "$ISSUE_URL" \
@@ -151,7 +155,7 @@ jobs:
                   {
                     "author": {
                       "name": $author,
-                      "icon_url": $avatar,
+                      "icon_url": (if $avatar != "" then $avatar else $fallback_avatar end),
                       "url": "https://github.com/\($author)"
                     },
                     "title": "📌 Issue \($issue_action): \($issue_title)",
@@ -172,6 +176,7 @@ jobs:
             PAYLOAD=$(jq -n \
               --arg author "$AUTHOR" \
               --arg avatar "$AVATAR_URL" \
+              --arg fallback_avatar "$FALLBACK_AVATAR" \
               --arg repo "$REPO" \
               --arg comment_body "$COMMENT_BODY" \
               --arg issue_url "$ISSUE_URL" \
@@ -183,7 +188,7 @@ jobs:
                   {
                     "author": {
                       "name": $author,
-                      "icon_url": $avatar,
+                      "icon_url": (if $avatar != "" then $avatar else $fallback_avatar end),
                       "url": "https://github.com/\($author)"
                     },
                     "title": "💬 New Comment on Issue",
