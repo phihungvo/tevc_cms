@@ -1,9 +1,14 @@
-name: Notify Discord
-
+name: Notify Discord on All Changes
 on:
   push:
+    branches:
+      - main
   pull_request:
     types: [opened, closed, reopened, synchronize]
+  issues:
+    types: [opened, edited, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked]
+  issue_comment:
+    types: [created, edited, deleted]
 
 jobs:
   notify:
@@ -15,7 +20,7 @@ jobs:
           REPO="${{ github.repository }}"
           BRANCH="${{ github.ref_name }}"
           EVENT="${{ github.event_name }}"
-          AVATAR_URL="https://github.com/${AUTHOR}.png"
+          AVATAR_URL="https://avatars.githubusercontent.com/u/${{ github.actor }}?v=4"  # Sửa URL avatar cho đúng
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           if [ "$EVENT" = "push" ]; then
@@ -69,7 +74,7 @@ jobs:
                 ]
               }'
             )
-          else
+          elif [ "$EVENT" = "pull_request" ]; then
             PR_TITLE="${{ github.event.pull_request.title }}"
             PR_URL="${{ github.event.pull_request.html_url }}"
             PR_STATE="${{ github.event.pull_request.state }}"
@@ -125,6 +130,74 @@ jobs:
                 ]
               }'
             )
+          elif [ "$EVENT" = "issues" ]; then
+            ISSUE_TITLE="${{ github.event.issue.title }}"
+            ISSUE_URL="${{ github.event.issue.html_url }}"
+            ISSUE_ACTION="${{ github.event.action }}"
+            ISSUE_BODY="${{ github.event.issue.body }}"
+            PAYLOAD=$(jq -n \
+              --arg author "$AUTHOR" \
+              --arg avatar "$AVATAR_URL" \
+              --arg repo "$REPO" \
+              --arg issue_title "$ISSUE_TITLE" \
+              --arg issue_url "$ISSUE_URL" \
+              --arg issue_action "$ISSUE_ACTION" \
+              --arg issue_body "$ISSUE_BODY" \
+              --arg event "$EVENT" \
+              --arg timestamp "$TIMESTAMP" \
+              '{
+                "username": "GitHub Bot 🤖",
+                "embeds": [
+                  {
+                    "author": {
+                      "name": $author,
+                      "icon_url": $avatar,
+                      "url": "https://github.com/\($author)"
+                    },
+                    "title": "📌 Issue \($issue_action): \($issue_title)",
+                    "url": $issue_url,
+                    "description": (if $issue_body != "" then $issue_body else "No description provided" end),
+                    "color": 16711680,
+                    "footer": {
+                      "text": "GitHub Actions • \($event)"
+                    },
+                    "timestamp": $timestamp
+                  }
+                ]
+              }'
+            )
+          elif [ "$EVENT" = "issue_comment" ]; then
+            COMMENT_BODY="${{ github.event.comment.body }}"
+            ISSUE_URL="${{ github.event.issue.html_url }}"
+            PAYLOAD=$(jq -n \
+              --arg author "$AUTHOR" \
+              --arg avatar "$AVATAR_URL" \
+              --arg repo "$REPO" \
+              --arg comment_body "$COMMENT_BODY" \
+              --arg issue_url "$ISSUE_URL" \
+              --arg event "$EVENT" \
+              --arg timestamp "$TIMESTAMP" \
+              '{
+                "username": "GitHub Bot 🤖",
+                "embeds": [
+                  {
+                    "author": {
+                      "name": $author,
+                      "icon_url": $avatar,
+                      "url": "https://github.com/\($author)"
+                    },
+                    "title": "💬 New Comment on Issue",
+                    "url": $issue_url,
+                    "description": $comment_body,
+                    "color": 16776960,
+                    "footer": {
+                      "text": "GitHub Actions • \($event)"
+                    },
+                    "timestamp": $timestamp
+                  }
+                ]
+              }'
+            )
           fi
 
           curl -H "Content-Type: application/json" \
@@ -134,10 +207,7 @@ jobs:
 
 
 
-# This workflow sends a notification to a Discord channel whenever there is a push or pull request event in the repository.
-# It uses a JSON payload to create an embed message that includes details about the commit, such as the author, branch, commit message, and a link to the commit.
-
+# This workflow sends a notification to a Discord channel whenever there is a push, pull request, issue, or issue comment event in the repository.
+# It uses a JSON payload to create an embed message that includes details about the commit, pull request, issue, or comment.
 # Make sure to set the DISCORD_WEBHOOK secret in your repository settings with your Discord webhook URL.
-
 # The workflow uses jq to construct the JSON payload dynamically based on the event type.
-# It handles both push events and pull request events, formatting the message accordingly.
