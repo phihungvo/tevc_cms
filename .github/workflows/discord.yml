@@ -1,51 +1,71 @@
 name: Notify Discord
 
 on:
-  push:        # theo dõi mọi nhánh khi có commit/push
-  pull_request:  # theo dõi mọi nhánh khi có PR
+  push:
+  pull_request:
     types: [opened, closed, reopened, synchronize]
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Discord notification
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        with:
-          args: |
-            {
+      - name: Send Discord embed via curl
+        run: |
+          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+          COMMIT_URL="${{ github.event.head_commit.url }}"
+          AUTHOR="${{ github.actor }}"
+          REPO="${{ github.repository }}"
+          BRANCH="${{ github.ref_name }}"
+          EVENT="${{ github.event_name }}"
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          PAYLOAD=$(jq -n \
+            --arg author "$AUTHOR" \
+            --arg repo "$REPO" \
+            --arg branch "$BRANCH" \
+            --arg commit_message "$COMMIT_MESSAGE" \
+            --arg commit_url "$COMMIT_URL" \
+            --arg event "$EVENT" \
+            --arg timestamp "$TIMESTAMP" \
+            '{
               "username": "GitHub Bot 🤖",
               "embeds": [
                 {
-                  "title": "🔔 New Event in ${{ github.repository }}",
-                  "description": "Branch: **${{ github.ref_name }}**",
+                  "title": "🔔 New Event in \($repo)",
+                  "description": "Branch: **\($branch)**",
                   "color": 5814783,
                   "fields": [
                     {
                       "name": "👤 Author",
-                      "value": "${{ github.actor }}",
+                      "value": $author,
                       "inline": true
                     },
                     {
                       "name": "📝 Commit Message",
-                      "value": "${{ github.event.head_commit.message }}",
+                      "value": $commit_message,
                       "inline": false
                     },
                     {
                       "name": "🔗 Commit URL",
-                      "value": "[View Commit](${{ github.event.head_commit.url }})",
+                      "value": "[View Commit](" + $commit_url + ")",
                       "inline": false
                     }
                   ],
                   "footer": {
-                    "text": "GitHub Actions • ${{ github.event_name }}"
+                    "text": "GitHub Actions • " + $event
                   },
-                  "timestamp": "${{ github.event.head_commit.timestamp }}"
+                  "timestamp": $timestamp
                 }
               ]
-            }
+            }'
+          )
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$PAYLOAD" \
+               "${{ secrets.DISCORD_WEBHOOK }}"
+
+
 
 
 # This workflow sends a notification to a Discord channel whenever there is a push or pull request event in the repository.
