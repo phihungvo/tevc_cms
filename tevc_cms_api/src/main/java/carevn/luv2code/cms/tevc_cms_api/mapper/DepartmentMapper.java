@@ -11,6 +11,7 @@ public interface DepartmentMapper {
 
     @Mapping(target = "managerId", source = "manager.id")
     //    @Mapping(target = "managerName", expression = "java(getManagerName(department.getManager()))")
+    //    @Mapping(target = "employeeCount", expression = "java(department.getEmployees().size())")
     @Mapping(target = "employeeCount", expression = "java(getEmployeeCount(department))")
     DepartmentDTO toDTO(Department department);
 
@@ -40,8 +41,15 @@ public interface DepartmentMapper {
         try {
             return department.getEmployees() != null ? department.getEmployees().size() : 0;
         } catch (Exception e) {
-            // Nếu có lazy loading exception, return 0
             return 0;
         }
     }
+
+    //    default int getEmployeeCount(Department department) {
+    //        try {
+    //            return department.getEmployees() != null ? department.getEmployees().size() : 0;
+    //        } catch (Exception e) {
+    //            return 0;
+    //        }
+    //    }
 }

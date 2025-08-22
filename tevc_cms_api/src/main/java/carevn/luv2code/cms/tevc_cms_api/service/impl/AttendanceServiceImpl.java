@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.AttendanceDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Attendance;
+import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.AttendanceMapper;
@@ -51,16 +52,22 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public AttendanceDTO updateAttendance(UUID id, AttendanceDTO attendanceDTO) {
-        Attendance existingAttendance =
-                attendanceRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ATTENDANCE_NOT_FOUND));
+    public AttendanceDTO updateAttendance(UUID attendanceId, AttendanceDTO attendanceDTO) {
+        Attendance existingAttendance = attendanceRepository
+                .findById(attendanceId)
+                .orElseThrow(() -> new AppException(ErrorCode.ATTENDANCE_NOT_FOUND));
+
         attendanceMapper.updateEntityFromDTO(attendanceDTO, existingAttendance);
 
-        existingAttendance.setEmployee(employeeRepository
-                .findById(attendanceDTO.getEmployeeId())
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND)));
+        if (attendanceDTO.getEmployeeId() != null) {
+            Employee employee = employeeRepository
+                    .findById(attendanceDTO.getEmployeeId())
+                    .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+            existingAttendance.setEmployee(employee);
+        }
 
         Attendance savedAttendance = attendanceRepository.save(existingAttendance);
+
         return attendanceMapper.toDTO(savedAttendance);
     }
 
