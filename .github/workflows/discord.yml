@@ -6,7 +6,7 @@ on:
   pull_request:
     types: [opened, closed, reopened, synchronize]
   issues:
-    types: [opened, edited, closed, reopened]
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
   issue_comment:
     types: [created, edited]
   pull_request_review:
@@ -22,9 +22,17 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
           args: |
-            🔔 **${{ github.event_name }}** by ${{ github.actor }}
-            ${{ github.event.action || 'N/A' }}: [${{ github.event.issue.title || github.event.pull_request.title || github.event.head_commit.message || 'No details' }}](${{ github.event.issue.html_url || github.event.pull_request.html_url || github.event.head_commit.url || '' }})
-          color: ${{ github.event.action == 'opened' && '65280' || github.event.action == 'closed' && '16711680' || '16777215' }}
-          title: "${{ github.event_name }} Event"
-          username: "GitHub Bot 🤖"
+            🔔 **${{ github.event_name }}** by **${{ github.actor }}**
+            **${{ github.event.action || 'N/A' }}**: [${{ github.event.issue.title || github.event.pull_request.title || github.event.head_commit.message || 'No details' }}](${{ github.event.issue.html_url || github.event.pull_request.html_url || github.event.head_commit.url || '' }})
+            ${{(github.event.label && github.event.label.name) || ''}}
+          color: ${{
+            github.event.action == 'opened' && '3066993' ||
+            github.event.action == 'closed' && '15158332' ||
+            github.event_name == 'push' && '3447003' ||
+            github.event_name == 'issue_comment' && '16776960' ||
+            '10181046'
+        }}
+          title: "🌟 ${{ github.event_name }} Notification"
+          username: "GitHub Bot ✨"
           avatar_url: "https://avatars.githubusercontent.com/u/${{ github.actor }}?v=4"
+          thumbnail: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
