@@ -11,7 +11,7 @@ ARG REACT_APP_API_URL
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Cài đặt dependencies và build dự án
-RUN npm install && npm run build
+RUN npm install && NODE_OPTIONS="--max-old-space-size=2048" npm run build
 
 # Sử dụng nginx để phục vụ các file static
 FROM nginx:alpine
