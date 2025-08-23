@@ -134,7 +134,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>carevn.luv2code.cms.TevcCmsApiApplication</mainClass>
+							<mainClass>carevn.luv2code.cms.tevc_cms_api.TevcCmsApiApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
