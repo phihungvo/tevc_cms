@@ -10,44 +10,50 @@ services:
       MYSQL_DATABASE: tevc_db
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - tevc_net
 
   backend:
-    build: ./tevc_cms_api
+    build:
+      context: ./tevc_cms_api
+      dockerfile: Dockerfile
+    image: hungvo2410/tevc_cms_api:latest
     container_name: tevc_backend
     restart: always
     env_file:
       - .env.prod
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - tevc_net
-
-  frontend:
-    build: ./tevc_cms_app
-    container_name: tevc_frontend
-    restart: always
-    networks:
-      - tevc_net
+    ports:
+      - "8080:8080"  # Thêm để test local
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: ./tevc_cms_app
+      dockerfile: Dockerfile
+    image: hungvo2410/tevc_cms_app:latest
     container_name: tevc_nginx
     restart: always
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "80:80"
-      - "443:443"
+    volumes:
+      - tevc_cms_uploads:/uploads:ro
     depends_on:
       - backend
-      - frontend
     networks:
       - tevc_net
 
 volumes:
   mysql_data:
+  tevc_cms_uploads:
 
 networks:
   tevc_net:

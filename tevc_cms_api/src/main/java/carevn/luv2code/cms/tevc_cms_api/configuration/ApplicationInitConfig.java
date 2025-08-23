@@ -1,9 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.configuration;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -34,14 +32,13 @@ public class ApplicationInitConfig {
         return args -> {
             String adminEmail = "admin@example.com";
 
-            Role adminRole = roleRepository.findByName("ADMIN")
-                    .orElseGet(() -> {
-                        Role role = Role.builder()
-                                .name("ADMIN")
-                                .description("Administrator role with full access")
-                                .build();
-                        return roleRepository.save(role);
-                    });
+            Role adminRole = roleRepository.findByName("ADMIN").orElseGet(() -> {
+                Role role = Role.builder()
+                        .name("ADMIN")
+                        .description("Administrator role with full access")
+                        .build();
+                return roleRepository.save(role);
+            });
 
             if (userRepository.findByEmail(adminEmail).isEmpty()) {
                 User user = User.builder()
@@ -57,9 +54,10 @@ public class ApplicationInitConfig {
                         .build();
 
                 userRepository.save(user);
-                log.warn("Admin user created with email: {} and password: admin_example (please change it!)", adminEmail);
+                log.warn(
+                        "Admin user created with email: {} and password: admin_example (please change it!)",
+                        adminEmail);
             }
         };
     }
-
 }
