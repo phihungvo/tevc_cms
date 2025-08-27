@@ -17,9 +17,12 @@ pipeline {
 
         stage('Build Backend') {
             steps {
-                dir('tevc_cms_api') {
+                //dir('tevc_cms_api') {
+                //    sh 'mvn clean package -DskipTests'
+                //    sh "docker build -t ${IMAGE_BACKEND}:${TAG} ."
+                //}
+                withMaven(maven: 'Maven-3.8') {
                     sh 'mvn clean package -DskipTests'
-                    sh "docker build -t ${IMAGE_BACKEND}:${TAG} ."
                 }
             }
         }
