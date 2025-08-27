@@ -26,7 +26,7 @@ services:
     build:
       context: ./tevc_cms_app
       dockerfile: Dockerfile
-      args:
+      args: 
         REACT_APP_API_URL: /api
     image: tevc-cms-app
     platform: linux/amd64
