@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./mvnw clean package -DskipTests  # Sử dụng Maven wrapper, thay bằng "mvn" nếu dùng global
+RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Run JAR
 FROM eclipse-temurin:21-jre
