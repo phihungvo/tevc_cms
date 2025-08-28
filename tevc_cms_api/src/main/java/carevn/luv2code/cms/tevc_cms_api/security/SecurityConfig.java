@@ -35,7 +35,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF for REST APIs
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
                                 "/api/auth/**",
@@ -65,11 +65,14 @@ public class SecurityConfig {
                         .hasAnyAuthority("COMMENT:MODERATE", "ADMIN:MANAGE")
                         .requestMatchers("/api/storage/**")
                         .hasAnyAuthority("STORAGE:READ", "STORAGE:WRITE")
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN") // Protect admin endpoints
                         .anyRequest()
                         .authenticated())
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://"));
+                    configuration.setAllowedOrigins(
+                            List.of("http://localhost:3000", "https://", "https://2946f7d48d6d.ngrok-free.app"));
                     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                     configuration.setAllowedHeaders(List.of("*"));
                     configuration.setAllowCredentials(true);
@@ -102,7 +105,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "https://")
+                        .allowedOrigins("http://localhost:3000", "https://", "https://2946f7d48d6d.ngrok-free.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

@@ -26,7 +26,7 @@ services:
     build:
       context: ./tevc_cms_app
       dockerfile: Dockerfile
-      args:
+      args: 
         REACT_APP_API_URL: /api
     image: tevc-cms-app
     platform: linux/amd64
@@ -55,12 +55,26 @@ services:
       retries: 5
     networks:
       - tevc_cms_network
+  minio:
+    image: minio/minio:latest
+    container_name: tevc_cms_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+
 
 volumes:
   mysql_data:
     driver: local
   tevc_cms_uploads:
     driver: local
+  minio_data:
 
 networks:
   tevc_cms_network:

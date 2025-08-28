@@ -67,7 +67,16 @@ public enum ErrorCode {
     INVALID_PAYROLL_PERIOD(1054, "Invalid payroll period format. Expected format: YYYY-MM", HttpStatus.BAD_REQUEST),
     PASSWORD_NOT_MATCHES(1055, "Password does not match", HttpStatus.BAD_REQUEST),
     SALARY_NOT_FOUND(1056, "Salary not found", HttpStatus.NOT_FOUND),
-    ATTENDANCE_NOT_FOUND(1057, "Attendance not found", HttpStatus.NOT_FOUND);
+    ATTENDANCE_NOT_FOUND(1057, "Attendance not found", HttpStatus.NOT_FOUND),
+    MINIO_INIT_ERROR(1058, "Error initializing MinIO bucket", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_UPLOAD_ERROR(1059, "Error uploading file to MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_DOWNLOAD_ERROR(1060, "Error downloading file from MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_DELETE_ERROR(1061, "Error deleting file from MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_LIST_ERROR(1062, "Error listing files in MinIO bucket", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_METADATA_ERROR(1063, "Error retrieving file metadata from MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_COPY_ERROR(1064, "Error copying file in MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_MOVE_COPY_ERROR(1065, "Error moving file: Failed to copy", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_MOVE_DELETE_ERROR(1066, "Error moving file: Failed to delete", HttpStatus.INTERNAL_SERVER_ERROR);
 
     int code;
     String message;

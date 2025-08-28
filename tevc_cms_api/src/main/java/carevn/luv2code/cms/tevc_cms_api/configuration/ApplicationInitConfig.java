@@ -1,9 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.configuration;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -30,28 +28,25 @@ public class ApplicationInitConfig {
     RoleRepository roleRepository;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository) {
-        String adminEmail = "admin@example.com";
-        Role adminRole = roleRepository.findByNameForUpdate("ADMIN").orElseGet(() -> {
-            Role newRole = Role.builder()
-                    .id(UUID.randomUUID())
-                    .name("ADMIN")
-                    .description("Administrator role with full access")
-                    .build();
-            return roleRepository.save(newRole);
-        });
-
-        Set<Role> roles = new HashSet<>();
-        roles.add(adminRole);
-
+    ApplicationRunner applicationRunner() {
         return args -> {
+            String adminEmail = "admin@example.com";
+
+            Role adminRole = roleRepository.findByName("ADMIN").orElseGet(() -> {
+                Role role = Role.builder()
+                        .name("ADMIN")
+                        .description("Administrator role with full access")
+                        .build();
+                return roleRepository.save(role);
+            });
+
             if (userRepository.findByEmail(adminEmail).isEmpty()) {
                 User user = User.builder()
                         .userName("admin1")
                         .email(adminEmail)
                         .password(passwordEncoder.encode("admin_example"))
                         .createAt(new Date())
-                        .roles(roles)
+                        .roles(Set.of(adminRole))
                         .enabled(true)
                         .accountNonExpired(true)
                         .credentialsNonExpired(true)
@@ -59,8 +54,9 @@ public class ApplicationInitConfig {
                         .build();
 
                 userRepository.save(user);
-                log.warn("Admin user has been created with default email: admin@example.com"
-                        + " and password: admin_example, please change it!");
+                log.warn(
+                        "Admin user created with email: {} and password: admin_example (please change it!)",
+                        adminEmail);
             }
         };
     }
