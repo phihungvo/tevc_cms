@@ -20,24 +20,24 @@ pipeline {
 				dir('tevc_cms_api') {
 					withMaven(maven: 'Maven-3.8') {
 						sh 'mvn clean package -DskipTests'
-                }
+                    }
                 }
             }
         }
 
-		stage('Build Frontend') {
-					steps {
-						dir('tevc_cms_app') {
-							sh '''
-						docker run --rm \
-							-v $(pwd):/app \
-							-w /app \
-							docker:20.10.21-dind \
-							sh -c "docker build --build-arg REACT_APP_API_URL=/api -t hungvo2410/tevc_cms_app:${TAG} ."
-					'''
-				}
-			}
-		}
+        stage('Build Frontend') {
+			steps {
+				dir('tevc_cms_app') {
+					sh '''
+                        docker run --rm \
+                            -v $(pwd):/app \
+                            -w /app \
+                            docker:20.10.21-dind \
+                            sh -c "docker build --build-arg REACT_APP_API_URL=/api -t hungvo2410/tevc_cms_app:${TAG} ."
+                    '''
+                }
+            }
+        }
 
         stage('Push Images') {
 			steps {
