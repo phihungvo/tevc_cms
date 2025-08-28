@@ -1,14 +1,17 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.LeaveDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.TemplateMailRequest;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.entity.Leave;
 import carevn.luv2code.cms.tevc_cms_api.enums.LeaveStatus;
@@ -18,11 +21,13 @@ import carevn.luv2code.cms.tevc_cms_api.mapper.LeaveMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.LeaveRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.LeaveService;
+import carevn.luv2code.cms.tevc_cms_api.service.MailService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class LeaveServiceImpl implements LeaveService {
+    private final MailService mailService;
     private final LeaveRepository leaveRepository;
     private final EmployeeRepository employeeRepository;
     private final LeaveMapper leaveMapper;
@@ -38,7 +43,38 @@ public class LeaveServiceImpl implements LeaveService {
         leave.setEmployee(employee);
         leave.setStatus(LeaveStatus.PENDING);
 
-        return leaveMapper.toDTO(leaveRepository.save(leave));
+        Leave savedLeave = leaveRepository.save(leave);
+
+        List<String> managerEmails = List.of();
+        if (employee.getDepartment() != null && employee.getDepartment().getManager() != null) {
+            String managerMail = employee.getDepartment().getManager().getEmail();
+            if (managerMail != null && !managerMail.isBlank()) {
+                managerEmails = List.of(managerMail);
+            }
+        }
+
+        TemplateMailRequest mail = getMailRequest(savedLeave, managerEmails);
+
+        mailService.sendTemplate(mail);
+
+        return leaveMapper.toDTO(savedLeave);
+    }
+
+    @NotNull
+    private static TemplateMailRequest getMailRequest(Leave savedLeave, List<String> toEmails) {
+        TemplateMailRequest mail = new TemplateMailRequest();
+        String employeeName = savedLeave.getEmployee().getFirstName() + " "
+                + savedLeave.getEmployee().getLastName();
+        mail.setTo(toEmails.isEmpty() ? List.of("hr@example.com") : toEmails);
+        mail.setSubject("Đơn xin phép mới từ " + employeeName);
+        mail.setTemplateName("leave-request-email");
+        mail.setVariables(Map.of(
+                "employeeName", employeeName,
+                "startDate", savedLeave.getStartDate(),
+                "endDate", savedLeave.getEndDate(),
+                "reason", savedLeave.getReason(),
+                "status", savedLeave.getStatus()));
+        return mail;
     }
 
     @Override
@@ -109,5 +145,32 @@ public class LeaveServiceImpl implements LeaveService {
         return List.of();
     }
 
-    // ... other standard CRUD methods implementation ...
+    //    private void sendMailToManagers(Employee employee, Leave leave) {
+    //        if (employee.getDepartment() == null) return;
+    //
+    //        // Lấy manager(s) của department
+    //        Department dept = employee.getDepartment();
+    //        if (dept.getManager() == null) return;
+    //
+    //        // ⚡ Nếu 1 department có nhiều manager thì sửa Department.java:
+    //        // @ManyToMany hoặc @OneToMany(mappedBy = "manager")
+    //        // giả sử hiện tại chỉ có 1 manager thì handle luôn:
+    //        Employee manager = dept.getManager();
+    //        if (manager.getEmail() == null) return;
+    //
+    //        String subject = "[HRM] Nhân viên " + employee.getFirstName() + " " + employee.getLastName()
+    //                + " đã tạo đơn nghỉ phép";
+    //        String body = String.format(
+    //                "Xin chào %s,<br/><br/>" +
+    //                        "Nhân viên <b>%s %s</b> đã tạo đơn nghỉ phép.<br/>" +
+    //                        "Trạng thái hiện tại: %s<br/><br/>" +
+    //                        "Vui lòng truy cập hệ thống để phê duyệt.",
+    //                manager.getFirstName(),
+    //                employee.getFirstName(),
+    //                employee.getLastName(),
+    //                leave.getStatus().name()
+    //        );
+    //
+    //        mailService.sendMail(List.of(manager.getEmail()), subject, body, true);
+    //    }
 }
