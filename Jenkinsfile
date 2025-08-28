@@ -28,7 +28,7 @@ pipeline {
         stage('Build Frontend') {
 			steps {
 				dir('tevc_cms_app') {
-					sh "docker build --build-arg REACT_APP_API_URL=/api -t ${IMAGE_FRONTEND}:${TAG} ."
+					sh 'docker run --rm -v $(pwd):/app -w /app docker:20.10.21-dind docker build --build-arg REACT_APP_API_URL=/api -t ${IMAGE_FRONTEND}:${TAG} .'
                 }
             }
         }
