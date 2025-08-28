@@ -4,110 +4,99 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-  jpa:maximum-pool-size: 10
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:eout: 30000
-      ddl-auto: update00000
-    show-sql: trueimeout: 30000
 
-  jackson:
-    time-zone: Asia/Ho_Chi_Minhrnate.dialect.MySQL8Dialect
+  # JPA and Hibernate configuration
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-  servlet:auto: update
-    multipart:true
-      max-file-size: 4MB
-      max-request-size: 4MB
+      ddl-auto: update
+    show-sql: true
+
+  # Jackson configuration for JSON serialization
+  jackson:
     time-zone: Asia/Ho_Chi_Minh
+
+  # File upload configuration
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # Liquibase configuration for database migrations
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
     default-schema: public
-    drop-first: falsee: 4MB
+    drop-first: false
     contexts: development, production
-  liquibase:
-  redis:ge-log: classpath:db/changelog/db.changelog-master.yaml
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:}
-    ssl: ${REDIS_SSL:false} # Enable SSL for secure connections
-    database: 0
-    timeout: 2000ms
-    lettuce:REDIS_HOST:localhost}
-      pool:{REDIS_PORT:6379}
-        max-active: 16 # Increase for high concurrency
-        max-idle: 8L:false} # Enable SSL for secure connections
-        min-idle: 2
-        max-wait: 1000ms # Timeout for acquiring a connection
-    cluster:
-      enabled: ${REDIS_CLUSTER:false} # Enable Redis cluster if needed
-        max-active: 16 # Increase for high concurrency
-  session:x-idle: 8
-    store-type: redis
-    redis:x-wait: 1000ms # Timeout for acquiring a connection
-      flush-mode: on-save
-      namespace: tevc_cms_sessionlse} # Enable Redis cluster if needed
 
-  mail:on:
+  # Redis configuration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 16 # Increase for high concurrency
+          max-idle: 8
+          min-idle: 2
+          max-wait: 1000ms # Timeout for acquiring a connection
+
+  # Session management configuration
+  session:
+    redis:
+      flush-mode: on-save
+      cleanup-cron: "0 * * * * *" # Cleanup expired sessions every minute
+      namespace: tevc_cms_session
+
+  # Mail server configuration
+  mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
     username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}ion
+    password: ${MAIL_PASSWORD}
     protocol: smtp
     default-encoding: UTF-8
-    properties:L_HOST:smtp.gmail.com}
-      mail:{MAIL_PORT:587}
-        smtp: ${MAIL_USERNAME}
-          auth: true_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
           starttls:
-            enable: trueF-8
-          connectiontimeout: 5000
+            enable: true
+          connection-timeout: 5000
           timeout: 5000
-          writetimeout: 5000
+          write-timeout: 5000
         debug: ${MAIL_DEBUG:false} # Enable debug logging for troubleshooting
-          starttls:
-jwt:        enable: true
-  secret: ${JWT_SECRET}eout: 5000
+
+# JWT configuration for authentication
+jwt:
+  secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
-          writetimeout: 5000
-minio:  debug: ${MAIL_DEBUG:false} # Enable debug logging for troubleshooting
-  url: ${MINIO_URL:http://localhost:9000}
-  access-key: ${MINIO_ACCESS_KEY:admin}
-  secret-key: ${MINIO_SECRET_KEY:password}
-  bucket: ${MINIO_BUCKET:tevc-cms}
 
+# MinIO configuration for file storage
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET}
+
+# Logging configuration
 logging:
-  level:{MINIO_URL:http://localhost:9000}
-    org:-key: ${MINIO_ACCESS_KEY:admin}: INFO
-      springframework:SECRET_KEY:password}k: DEBUG
-        security: DEBUGT:tevc-cms}: DEBUG # Enable detailed logging for your application
-  file:
-file:ng:ame: logs/tevc_cms.log # Log file location
-  upload-dir: ${FILE_UPLOAD_DIR:/uploads}
-    org:file:
+  level:
+    root: INFO
+    org.springframework: WARN
 
+# File upload directory
+file:
+  upload-dir: ${FILE_UPLOAD_DIR:/var/uploads}
 
-
-
-
-
-    path: /swagger-ui.html  swagger-ui:    path: /api-docs  api-docs:springdoc:
-
-
-
-
-
-  upload-dir: ${FILE_UPLOAD_DIR:/uploads}file:        security: DEBUG      springframework:
-
-  upload-dir: ${FILE_UPLOAD_DIR:/uploads}management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, metrics, prometheus # Expose specific endpoints
-  endpoint:
-    health:
-      show-details: always # Show detailed health information
-  metrics:
-    export:
-      prometheus:
-        enabled: true # Enable Prometheus metrics
+# Swagger/OpenAPI configuration
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
