@@ -35,7 +35,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF for REST APIs
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
                                 "/api/auth/**",
@@ -65,6 +65,8 @@ public class SecurityConfig {
                         .hasAnyAuthority("COMMENT:MODERATE", "ADMIN:MANAGE")
                         .requestMatchers("/api/storage/**")
                         .hasAnyAuthority("STORAGE:READ", "STORAGE:WRITE")
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN") // Protect admin endpoints
                         .anyRequest()
                         .authenticated())
                 .cors(cors -> cors.configurationSource(request -> {

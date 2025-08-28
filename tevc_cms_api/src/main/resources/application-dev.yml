@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/tevc_cms_dev
+    username: dev_user
+    password: dev_password
