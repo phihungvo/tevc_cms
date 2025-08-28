@@ -19,6 +19,13 @@ spring:
       max-file-size: 4MB
       max-request-size: 4MB
 
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+    default-schema: public
+    drop-first: false
+    contexts: development, production
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
