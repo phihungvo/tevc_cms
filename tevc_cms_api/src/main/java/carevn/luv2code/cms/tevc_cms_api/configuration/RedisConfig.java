@@ -19,19 +19,19 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableCaching
 public class RedisConfig {
 
-    @Value("${spring.redis.host}")
+    @Value("${spring.data.redis.host}")
     private String redisHost;
 
-    @Value("${spring.redis.port}")
+    @Value("${spring.data.redis.port}")
     private int redisPort;
 
-    @Value("${spring.redis.password}")
+    @Value("${spring.data.redis.password}")
     private String redisPassword;
 
-    @Value("${spring.redis.ssl}")
+    @Value("${spring.data.redis.ssl}")
     private boolean redisSsl;
 
-    @Value("${spring.redis.cluster.enabled}")
+    @Value("${spring.data.redis.cluster.enabled}")
     private boolean redisClusterEnabled;
 
     @Bean

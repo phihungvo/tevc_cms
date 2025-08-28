@@ -5,57 +5,56 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  # JPA and Hibernate configuration
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
 
-  # Jackson configuration for JSON serialization
   jackson:
     time-zone: Asia/Ho_Chi_Minh
 
-  # File upload configuration
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
-  # Liquibase configuration for database migrations
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
-    enabled: true
-    default-schema: public
+    enabled: false
+    default-schema: tevc_cms
     drop-first: false
     contexts: development, production
 
-  # Redis configuration
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
+      ssl:
+        enabled: ${SPRING_DATA_REDIS_SSL:false}
       database: 0
       timeout: 2000ms
+      cluster:
+        enabled: ${SPRING_REDIS_CLUSTER_ENABLED:false}
       lettuce:
         pool:
-          max-active: 16 # Increase for high concurrency
+          max-active: 16
           max-idle: 8
           min-idle: 2
-          max-wait: 1000ms # Timeout for acquiring a connection
+          max-wait: 1000ms
 
-  # Session management configuration
   session:
     redis:
+      repository-type: indexed
+#      cleanup-cron: "0 * * * * *"
+      cleanup-cron: "-"
       flush-mode: on-save
-      cleanup-cron: "0 * * * * *" # Cleanup expired sessions every minute
       namespace: tevc_cms_session
 
-  # Mail server configuration
   mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     protocol: smtp
@@ -69,31 +68,26 @@ spring:
           connection-timeout: 5000
           timeout: 5000
           write-timeout: 5000
-        debug: ${MAIL_DEBUG:false} # Enable debug logging for troubleshooting
+        debug: ${MAIL_DEBUG}
 
-# JWT configuration for authentication
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
 
-# MinIO configuration for file storage
 minio:
   url: ${MINIO_URL}
   access-key: ${MINIO_ACCESS_KEY}
   secret-key: ${MINIO_SECRET_KEY}
   bucket: ${MINIO_BUCKET}
 
-# Logging configuration
 logging:
   level:
     root: INFO
     org.springframework: WARN
 
-# File upload directory
 file:
   upload-dir: ${FILE_UPLOAD_DIR:/var/uploads}
 
-# Swagger/OpenAPI configuration
 springdoc:
   api-docs:
     enabled: true
