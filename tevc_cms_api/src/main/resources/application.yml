@@ -24,10 +24,10 @@ jwt:
   expiration: ${JWT_EXPIRATION}
 
 minio:
-  url: http://minio:9000
+  url: ${MINIO_URL:http://localhost:9000}
   access-key: ${MINIO_ACCESS_KEY:admin}
   secret-key: ${MINIO_SECRET_KEY:password}
-  bucket: tevc-cms
+  bucket: ${MINIO_BUCKET:tevc-cms}
 
 logging:
   level:
