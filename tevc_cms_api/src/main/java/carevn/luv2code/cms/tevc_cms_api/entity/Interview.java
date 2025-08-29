@@ -3,6 +3,8 @@ package carevn.luv2code.cms.tevc_cms_api.entity;
 import java.util.Date;
 import java.util.UUID;
 
+import carevn.luv2code.cms.tevc_cms_api.enums.InterviewStatus;
+import carevn.luv2code.cms.tevc_cms_api.enums.InterviewType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

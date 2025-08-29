@@ -1,8 +1,10 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import carevn.luv2code.cms.tevc_cms_api.enums.CandidateStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -38,7 +40,10 @@ public class Candidate {
     @Enumerated(EnumType.STRING)
     CandidateStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_posting_id", nullable = false)
-    JobPosting jobPosting;
+    @ManyToMany
+    @JoinTable(
+            name = "candidate_job_posting",
+            joinColumns = @JoinColumn(name = "candidate_id"),
+            inverseJoinColumns = @JoinColumn(name = "job_posting_id"))
+    List<JobPosting> jobPostings;
 }

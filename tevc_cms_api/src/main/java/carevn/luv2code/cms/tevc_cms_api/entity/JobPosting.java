@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.JobPostingStatus;
@@ -52,4 +53,7 @@ public class JobPosting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recruiter_id")
     Employee recruiter;
+
+    @ManyToMany(mappedBy = "jobPostings")
+    List<Candidate> candidates;
 }
