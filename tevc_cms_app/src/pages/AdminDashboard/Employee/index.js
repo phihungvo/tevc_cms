@@ -151,6 +151,13 @@ function Employee() {
 
     const userModalFields = [
         {
+            label: 'Employee Code',
+            name: 'employeeCode',
+            type: 'text',
+            readOnly: true,
+            disabled: true,
+        },
+        {
             label: 'First Name',
             name: 'firstName',
             type: 'text',

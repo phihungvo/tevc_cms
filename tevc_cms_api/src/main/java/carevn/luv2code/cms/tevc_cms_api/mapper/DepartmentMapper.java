@@ -9,10 +9,9 @@ import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 @Mapper(componentModel = "spring")
 public interface DepartmentMapper {
 
-    @Mapping(target = "managerId", source = "manager.id")
-    //    @Mapping(target = "managerName", expression = "java(getManagerName(department.getManager()))")
-    //    @Mapping(target = "employeeCount", expression = "java(department.getEmployees().size())")
-    @Mapping(target = "employeeCount", expression = "java(getEmployeeCount(department))")
+    // @Mapping(target = "managerId", source = "manager.id")
+    @Mapping(target = "employeeCount", ignore = true)
+    @Mapping(target = "managerName", expression = "java(getManagerName(department.getManager()))")
     DepartmentDTO toDTO(Department department);
 
     @Mapping(target = "id", ignore = true)
