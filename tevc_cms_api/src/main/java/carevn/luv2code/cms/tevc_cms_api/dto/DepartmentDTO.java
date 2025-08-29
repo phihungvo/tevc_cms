@@ -18,4 +18,6 @@ public class DepartmentDTO {
     UUID managerId;
 
     int employeeCount;
+
+    String managerName;
 }

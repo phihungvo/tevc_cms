@@ -91,14 +91,24 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDTO getDepartment(UUID id) {
         Department department =
                 departmentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
-        return departmentMapper.toDTO(department);
+
+        DepartmentDTO dto = departmentMapper.toDTO(department);
+        int count = departmentRepository.countEmployeesByDepartment(department.getId());
+        dto.setEmployeeCount(count);
+        return dto;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DepartmentDTO> getAllDepartments(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        return departmentRepository.findAll(pageRequest).map(departmentMapper::toDTO);
+
+        return departmentRepository.findAll(pageRequest).map(dept -> {
+            DepartmentDTO dto = departmentMapper.toDTO(dept);
+            int count = departmentRepository.countEmployeesByDepartment(dept.getId());
+            dto.setEmployeeCount(count);
+            return dto;
+        });
     }
 
     @Override
