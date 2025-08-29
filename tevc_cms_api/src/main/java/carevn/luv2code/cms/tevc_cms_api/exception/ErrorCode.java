@@ -76,7 +76,10 @@ public enum ErrorCode {
     MINIO_METADATA_ERROR(1063, "Error retrieving file metadata from MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
     MINIO_COPY_ERROR(1064, "Error copying file in MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
     MINIO_MOVE_COPY_ERROR(1065, "Error moving file: Failed to copy", HttpStatus.INTERNAL_SERVER_ERROR),
-    MINIO_MOVE_DELETE_ERROR(1066, "Error moving file: Failed to delete", HttpStatus.INTERNAL_SERVER_ERROR);
+    MINIO_MOVE_DELETE_ERROR(1066, "Error moving file: Failed to delete", HttpStatus.INTERNAL_SERVER_ERROR),
+    CANDIDATE_NOT_FOUND(1067, "Candidate not found", HttpStatus.NOT_FOUND),
+    JOB_POSTING_NOT_FOUND(1068, "Job posting not found", HttpStatus.NOT_FOUND),
+    CANDIDATE_ALREADY_APPLIED(1069, "Candidate has already applied to this job posting", HttpStatus.CONFLICT);
 
     int code;
     String message;

@@ -46,9 +46,9 @@ function Department() {
             fixed: 'left',
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
+            title: 'Manager',
+            dataIndex: 'managerName',
+            key: 'managerName',
         },
         {
             title: 'Number Empl',
@@ -56,11 +56,9 @@ function Department() {
             key: 'employeeCount',
         },
         {
-            title: 'Created At',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            render: (date) =>
-                date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
         },
         {
             title: 'Actions',
