@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import carevn.luv2code.cms.tevc_cms_api.entity.Role;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Role, UUID> {
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     boolean existsByName(String name);
 

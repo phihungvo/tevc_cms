@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.dto.requests;
 
 import java.util.List;
-import java.util.UUID;
 
 import lombok.*;
 
@@ -31,7 +30,7 @@ public class UserUpdateRequest {
 
     private boolean enabled;
 
-    private List<UUID> roles;
+    private List<Integer> roles;
 
-    private List<UUID> permissions;
+    private List<Integer> permissions;
 }

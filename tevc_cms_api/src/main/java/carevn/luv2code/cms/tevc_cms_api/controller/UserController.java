@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,7 @@ public class UserController {
     @PatchMapping("/{userId}/update")
     //    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<ApiResponse<String>> updateUser(
-            @PathVariable UUID userId, @RequestBody UserUpdateRequest request) {
+            @PathVariable Integer userId, @RequestBody UserUpdateRequest request) {
         userService.updateUser(userId, request);
         return ResponseEntity.ok(ApiResponse.<String>builder()
                 .code(200)
@@ -64,7 +63,7 @@ public class UserController {
 
     @DeleteMapping()
     //    @PreAuthorize("hasAuthority('USER:DELETE')")
-    public ResponseEntity<ApiResponse<String>> deleteUser(@RequestBody List<UUID> userIds) {
+    public ResponseEntity<ApiResponse<String>> deleteUser(@RequestBody List<Integer> userIds) {
         userIds.forEach(userService::deleteUser);
 
         return ResponseEntity.ok(ApiResponse.<String>builder()
@@ -76,7 +75,7 @@ public class UserController {
     //    @PreAuthorize("hasAuthority('USER:MANAGE')")
     @PostMapping("/assignPermissions")
     public ResponseEntity<ApiResponse<String>> assignPermissions(
-            @RequestParam UUID userId, @RequestBody List<String> permissionNames) {
+            @RequestParam Integer userId, @RequestBody List<String> permissionNames) {
         userService.assignPermissions(userId, permissionNames);
         return ResponseEntity.ok(ApiResponse.<String>builder()
                 .code(200)
@@ -87,7 +86,7 @@ public class UserController {
     @DeleteMapping("/removePermission")
     @PreAuthorize("hasAuthority('USER:MANAGE')")
     public ResponseEntity<ApiResponse<String>> removePermission(
-            @RequestParam UUID userId, @RequestParam String resource, @RequestParam String action) {
+            @RequestParam Integer userId, @RequestParam String resource, @RequestParam String action) {
         userService.removePermission(userId, resource, action);
         return ResponseEntity.ok(ApiResponse.<String>builder()
                 .code(200)
@@ -97,7 +96,7 @@ public class UserController {
 
     //    @PreAuthorize("hasAuthority('USER:READ')")
     // @GetMapping("/{userId}/permissions")
-    // public ResponseEntity<ApiResponse<List<String>>> getUserPermissions(@PathVariable UUID userId) {
+    // public ResponseEntity<ApiResponse<List<String>>> getUserPermissions(@PathVariable Integer userId) {
     //        List<String> permissions = userService.getUserPermissions(userId);
     //        return ResponseEntity.ok(ApiResponse.<List<String>>builder()
     //                .code(200)

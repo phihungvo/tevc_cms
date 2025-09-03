@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -41,7 +40,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional
-    public PermissionDTO updatePermission(UUID id, PermissionDTO permissionDTO) {
+    public PermissionDTO updatePermission(Integer id, PermissionDTO permissionDTO) {
         Permission permission =
                 permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
 
@@ -63,7 +62,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional
-    public void deletePermission(UUID id) {
+    public void deletePermission(Integer id) {
         Permission permission =
                 permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
 
@@ -81,7 +80,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public PermissionDTO getPermission(UUID id) {
+    public PermissionDTO getPermission(Integer id) {
         Permission permission =
                 permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
         return convertToDTO(permission);

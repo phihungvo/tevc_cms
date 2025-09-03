@@ -5,96 +5,90 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import carevn.luv2code.cms.tevc_cms_api.entity.ApiPermission;
+import carevn.luv2code.cms.tevc_cms_api.repository.ApiPermissionRepository;
 import lombok.RequiredArgsConstructor;
 
-/**
- * Security configuration class named {@link SecurityConfig} for setting up authentication and authorization in the application.
- */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
-@EnableMethodSecurity
 public class SecurityConfig {
 
-    /**
-     * Defines the session authentication strategy to be used.
-     *
-     * @return a {@link SessionAuthenticationStrategy} for registering session authentication.
-     */
-    @Bean
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-        return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-    }
+    private final CustomBearerTokenAuthenticationFilter customBearerTokenAuthenticationFilter;
+    private final ApiPermissionRepository apiPermissionRepository;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-    /**
-     * Configures the security filter chain for the application.
-     *
-     * @param httpSecurity the {@link HttpSecurity} object to configure.
-     * @param customBearerTokenAuthenticationFilter the custom filter for bearer token authentication.
-     * @param customAuthenticationEntryPoint the custom authentication entry point.
-     * @return a {@link SecurityFilterChain} defining the security configuration.
-     * @throws Exception if an error occurs while configuring security.
-     */
     @Bean
-    public SecurityFilterChain filterChain(
-            final HttpSecurity httpSecurity,
-            final CustomBearerTokenAuthenticationFilter customBearerTokenAuthenticationFilter,
-            final CustomAuthenticationEntryPoint customAuthenticationEntryPoint)
-            throws Exception {
-
-        httpSecurity
-                .exceptionHandling(customizer -> customizer.authenticationEntryPoint(customAuthenticationEntryPoint))
-                .cors(customizer -> customizer.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(customizer -> customizer
-                        .requestMatchers(HttpMethod.POST, "/api/auth/**")
-                        .permitAll()
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v2/api-docs/**", "/v3/api-docs/**")
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource())) // Add CORS configuration
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable())
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthenticationEntryPoint))
+                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**")
+                        .permitAll() // Allow OPTIONS requests
+                        .requestMatchers("/api/auth/**")
                         .permitAll()
                         .anyRequest()
-                        .authenticated())
-                .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(customBearerTokenAuthenticationFilter, BearerTokenAuthenticationFilter.class);
+                        .access(dynamicAuthorizationManager()))
+                .addFilterBefore(customBearerTokenAuthenticationFilter, AuthorizationFilter.class);
 
-        return httpSecurity.build();
+        return http.build();
     }
 
-    /**
-     * Configures CORS settings for the application.
-     *
-     * @return a {@link CorsConfigurationSource} defining the CORS configuration.
-     */
-    private CorsConfigurationSource corsConfigurationSource() {
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowedMethods(List.of("*"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Adjust to your frontend URL
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
-    /**
-     * Defines the password encoder to be used for encoding passwords.
-     *
-     * @return a {@link PasswordEncoder} using BCrypt hashing algorithm.
-     */
+    @Bean
+    public AuthorizationManager<RequestAuthorizationContext> dynamicAuthorizationManager() {
+        return (authentication, context) -> {
+            String method = context.getRequest().getMethod();
+            String uri = context.getRequest().getRequestURI();
+
+            List<ApiPermission> apiPermissions = apiPermissionRepository.findAll();
+
+            for (ApiPermission apiPermission : apiPermissions) {
+                AntPathRequestMatcher matcher =
+                        new AntPathRequestMatcher(apiPermission.getEndpoint(), apiPermission.getHttpMethod());
+
+                if (matcher.matches(context.getRequest())) {
+                    boolean hasPermission = authentication.get().getAuthorities().stream()
+                            .anyMatch(granted -> granted.getAuthority()
+                                    .equals(apiPermission.getPermission().getName()));
+
+                    return new AuthorizationDecision(hasPermission);
+                }
+            }
+
+            return new AuthorizationDecision(false);
+        };
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

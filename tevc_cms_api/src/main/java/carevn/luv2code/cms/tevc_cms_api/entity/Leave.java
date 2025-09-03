@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.util.Date;
-import java.util.UUID;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.LeaveStatus;
 import carevn.luv2code.cms.tevc_cms_api.enums.LeaveType;
@@ -18,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Leave {
     @Id
-    @GeneratedValue
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)

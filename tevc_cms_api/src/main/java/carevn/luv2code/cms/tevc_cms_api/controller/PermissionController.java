@@ -1,7 +1,5 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
-import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +24,7 @@ public class PermissionController {
 
     @PostMapping
     @PreAuthorize("@securityService.hasPermission('PERMISSION', 'CREATE')")
-    public CustomResponse<UUID> createPermission(@RequestBody @Valid PermissionCreateRequest request) {
+    public CustomResponse<Integer> createPermission(@RequestBody @Valid PermissionCreateRequest request) {
         Permission permission = Permission.builder()
                 .name(request.getResource() + ":" + request.getAction())
                 .build();
@@ -37,7 +35,7 @@ public class PermissionController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('PERMISSION:UPDATE')")
     public ResponseEntity<ApiResponse<PermissionDTO>> updatePermission(
-            @PathVariable UUID id, @RequestBody PermissionDTO permissionDTO) {
+            @PathVariable Integer id, @RequestBody PermissionDTO permissionDTO) {
         return ResponseEntity.ok(ApiResponse.<PermissionDTO>builder()
                 .code(200)
                 .message("Permission updated successfully")
@@ -47,7 +45,7 @@ public class PermissionController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('PERMISSION:READ')")
-    public ResponseEntity<ApiResponse<PermissionDTO>> getPermission(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<PermissionDTO>> getPermission(@PathVariable Integer id) {
         return ResponseEntity.ok(ApiResponse.<PermissionDTO>builder()
                 .code(200)
                 .result(permissionService.getPermission(id))
@@ -75,7 +73,7 @@ public class PermissionController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('PERMISSION:DELETE')")
-    public ResponseEntity<ApiResponse<Void>> deletePermission(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deletePermission(@PathVariable Integer id) {
         permissionService.deletePermission(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(200)

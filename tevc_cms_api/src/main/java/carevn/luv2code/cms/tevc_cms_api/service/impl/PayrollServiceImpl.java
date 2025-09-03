@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -63,7 +62,7 @@ public class PayrollServiceImpl implements PayrollService {
 
     @Override
     @Transactional
-    public PayrollDTO updatePayroll(UUID id, PayrollDTO payrollDTO) {
+    public PayrollDTO updatePayroll(Integer id, PayrollDTO payrollDTO) {
         Payroll payroll =
                 payrollRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
         payrollMapper.updateFromDto(payrollDTO, payroll);
@@ -71,10 +70,10 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    public void deletePayroll(UUID id) {}
+    public void deletePayroll(Integer id) {}
 
     @Override
-    public PayrollDTO getPayroll(UUID id) {
+    public PayrollDTO getPayroll(Integer id) {
         return payrollMapper.toDTO(
                 payrollRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND)));
     }
@@ -86,7 +85,7 @@ public class PayrollServiceImpl implements PayrollService {
 
     @Override
     @Transactional
-    public PayrollDTO processPayroll(UUID id) {
+    public PayrollDTO processPayroll(Integer id) {
         Payroll payroll =
                 payrollRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
 
@@ -105,7 +104,7 @@ public class PayrollServiceImpl implements PayrollService {
 
     @Override
     @Transactional
-    public PayrollDTO finalizePayroll(UUID id) {
+    public PayrollDTO finalizePayroll(Integer id) {
         Payroll payroll =
                 payrollRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYROLL_NOT_FOUND));
 
@@ -120,7 +119,7 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    public List<PayrollDTO> getEmployeePayrolls(UUID employeeId) {
+    public List<PayrollDTO> getEmployeePayrolls(Integer employeeId) {
         return payrollRepository.findByEmployeeId(employeeId).stream()
                 .map(payrollMapper::toDTO)
                 .collect(Collectors.toList());
@@ -128,7 +127,7 @@ public class PayrollServiceImpl implements PayrollService {
 
     @Override
     @Transactional
-    public PayrollDTO calculatePayroll(UUID employeeId, String period) {
+    public PayrollDTO calculatePayroll(Integer employeeId, String period) {
         if (period == null || !PERIOD_PATTERN.matcher(period).matches()) {
             throw new AppException(ErrorCode.INVALID_PAYROLL_PERIOD);
         }
@@ -235,7 +234,7 @@ public class PayrollServiceImpl implements PayrollService {
         payroll.setNetSalary(netSalary);
     }
 
-    private double calculateOvertime(UUID employeeId, String period) {
+    private double calculateOvertime(Integer employeeId, String period) {
         try {
             return timesheetService.calculateOvertimeForEmployee(employeeId, period);
         } catch (Exception e) {

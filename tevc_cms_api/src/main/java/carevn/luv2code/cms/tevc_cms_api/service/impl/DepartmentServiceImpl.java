@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,7 +45,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public DepartmentDTO assignManager(UUID departmentId, UUID managerId) {
+    public DepartmentDTO assignManager(Integer departmentId, Integer managerId) {
         Department department = departmentRepository
                 .findById(departmentId)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
@@ -62,7 +61,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public DepartmentDTO updateDepartment(UUID id, DepartmentDTO departmentDTO) {
+    public DepartmentDTO updateDepartment(Integer id, DepartmentDTO departmentDTO) {
         Department department =
                 departmentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
 
@@ -88,7 +87,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public DepartmentDTO getDepartment(UUID id) {
+    public DepartmentDTO getDepartment(Integer id) {
         Department department =
                 departmentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
 
@@ -119,7 +118,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public void deleteDepartment(UUID id) {
+    public void deleteDepartment(Integer id) {
         Department department =
                 departmentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         if (!department.getEmployees().isEmpty()) {

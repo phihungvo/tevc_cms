@@ -19,9 +19,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * A custom filter named {@link CustomBearerTokenAuthenticationFilter} for processing bearer token authentication.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor

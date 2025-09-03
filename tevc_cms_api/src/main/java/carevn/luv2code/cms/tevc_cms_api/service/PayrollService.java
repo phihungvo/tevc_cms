@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -11,19 +10,19 @@ public interface PayrollService {
 
     PayrollDTO createPayroll(PayrollDTO payrollDTO);
 
-    PayrollDTO updatePayroll(UUID id, PayrollDTO payrollDTO);
+    PayrollDTO updatePayroll(Integer id, PayrollDTO payrollDTO);
 
-    void deletePayroll(UUID id);
+    void deletePayroll(Integer id);
 
-    PayrollDTO getPayroll(UUID id);
+    PayrollDTO getPayroll(Integer id);
 
     Page<PayrollDTO> getAllPayrolls(int page, int size);
 
-    PayrollDTO processPayroll(UUID id);
+    PayrollDTO processPayroll(Integer id);
 
-    PayrollDTO finalizePayroll(UUID id);
+    PayrollDTO finalizePayroll(Integer id);
 
-    List<PayrollDTO> getEmployeePayrolls(UUID employeeId);
+    List<PayrollDTO> getEmployeePayrolls(Integer employeeId);
 
-    PayrollDTO calculatePayroll(UUID employeeId, String period);
+    PayrollDTO calculatePayroll(Integer employeeId, String period);
 }

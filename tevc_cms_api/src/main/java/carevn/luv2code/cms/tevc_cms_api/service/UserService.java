@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -16,17 +15,17 @@ public interface UserService {
 
     void save(UserDTO userDTO);
 
-    void updateUser(UUID userId, UserUpdateRequest request);
+    void updateUser(Integer userId, UserUpdateRequest request);
 
     Page<UserDTO> findAll(int page, int size);
 
-    void deleteUser(UUID userId);
+    void deleteUser(Integer userId);
 
-    void assignPermissions(UUID userId, List<String> permissionNames);
+    void assignPermissions(Integer userId, List<String> permissionNames);
 
-    void removePermission(UUID userId, String resource, String action);
+    void removePermission(Integer userId, String resource, String action);
 
-    //    List<String> getUserPermissions(UUID userId);
+    //    List<String> getUserPermissions(Integer userId);
 
     List<Permission> getAllPermissions();
 }

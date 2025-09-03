@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +25,13 @@ public class DepartmentController {
     @PatchMapping("/{id}")
     //    @PreAuthorize("hasAuthority('DEPARTMENT:UPDATE')")
     public ResponseEntity<DepartmentDTO> updateDepartment(
-            @PathVariable UUID id, @RequestBody DepartmentDTO departmentDTO) {
+            @PathVariable Integer id, @RequestBody DepartmentDTO departmentDTO) {
         return ResponseEntity.ok(departmentService.updateDepartment(id, departmentDTO));
     }
 
     @GetMapping("/{id}")
     //    @PreAuthorize("hasAuthority('DEPARTMENT:READ')")
-    public ResponseEntity<DepartmentDTO> getDepartment(@PathVariable UUID id) {
+    public ResponseEntity<DepartmentDTO> getDepartment(@PathVariable Integer id) {
         return ResponseEntity.ok(departmentService.getDepartment(id));
     }
 
@@ -51,14 +50,14 @@ public class DepartmentController {
 
     @DeleteMapping("/{id}")
     //    @PreAuthorize("hasAuthority('DEPARTMENT:DELETE')")
-    public ResponseEntity<Void> deleteDepartment(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteDepartment(@PathVariable Integer id) {
         departmentService.deleteDepartment(id);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{id}/manager/{managerId}")
     //    @PreAuthorize("hasAuthority('DEPARTMENT:UPDATE')")
-    public ResponseEntity<DepartmentDTO> assignManager(@PathVariable UUID id, @PathVariable UUID managerId) {
+    public ResponseEntity<DepartmentDTO> assignManager(@PathVariable Integer id, @PathVariable Integer managerId) {
         return ResponseEntity.ok(departmentService.assignManager(id, managerId));
     }
 }

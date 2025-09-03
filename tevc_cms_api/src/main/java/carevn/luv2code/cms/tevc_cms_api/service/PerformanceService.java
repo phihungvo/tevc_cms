@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -11,15 +10,15 @@ public interface PerformanceService {
 
     PerformanceDTO createPerformance(PerformanceDTO performanceDTO);
 
-    PerformanceDTO updatePerformance(UUID id, PerformanceDTO performanceDTO);
+    PerformanceDTO updatePerformance(Integer id, PerformanceDTO performanceDTO);
 
-    void deletePerformance(UUID id);
+    void deletePerformance(Integer id);
 
-    PerformanceDTO getPerformance(UUID id);
+    PerformanceDTO getPerformance(Integer id);
 
     Page<PerformanceDTO> getAllPerformances(int page, int size);
 
-    List<PerformanceDTO> getEmployeePerformances(UUID employeeId);
+    List<PerformanceDTO> getEmployeePerformances(Integer employeeId);
 
-    List<PerformanceDTO> getReviewerPerformances(UUID reviewerId);
+    List<PerformanceDTO> getReviewerPerformances(Integer reviewerId);
 }

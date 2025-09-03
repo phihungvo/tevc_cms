@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -11,11 +10,11 @@ public interface PermissionService {
 
     PermissionDTO createPermission(PermissionDTO permissionDTO);
 
-    PermissionDTO updatePermission(UUID id, PermissionDTO permissionDTO);
+    PermissionDTO updatePermission(Integer id, PermissionDTO permissionDTO);
 
-    void deletePermission(UUID id);
+    void deletePermission(Integer id);
 
-    PermissionDTO getPermission(UUID id);
+    PermissionDTO getPermission(Integer id);
 
     Page<PermissionDTO> getAllPermissions(int page, int size);
 

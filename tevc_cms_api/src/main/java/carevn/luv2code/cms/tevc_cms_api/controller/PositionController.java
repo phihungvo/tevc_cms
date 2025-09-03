@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +24,13 @@ public class PositionController {
 
     @PatchMapping("/{id}")
     //    @PreAuthorize("hasAuthority('POSITION:UPDATE')")
-    public ResponseEntity<PositionDTO> updatePosition(@PathVariable UUID id, @RequestBody PositionDTO positionDTO) {
+    public ResponseEntity<PositionDTO> updatePosition(@PathVariable Integer id, @RequestBody PositionDTO positionDTO) {
         return ResponseEntity.ok(positionService.updatePosition(id, positionDTO));
     }
 
     @GetMapping("/{id}")
     //    @PreAuthorize("hasAuthority('POSITION:READ')")
-    public ResponseEntity<PositionDTO> getPosition(@PathVariable UUID id) {
+    public ResponseEntity<PositionDTO> getPosition(@PathVariable Integer id) {
         return ResponseEntity.ok(positionService.getPosition(id));
     }
 
@@ -49,7 +48,7 @@ public class PositionController {
 
     @DeleteMapping("/{id}")
     //    @PreAuthorize("hasAuthority('POSITION:DELETE')")
-    public ResponseEntity<Void> deletePosition(@PathVariable UUID id) {
+    public ResponseEntity<Void> deletePosition(@PathVariable Integer id) {
         positionService.deletePosition(id);
         return ResponseEntity.ok().build();
     }

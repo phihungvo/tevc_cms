@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +26,13 @@ public class ContractController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('CONTRACT:UPDATE')")
-    public ResponseEntity<ContractDTO> updateContract(@PathVariable UUID id, @RequestBody ContractDTO contractDTO) {
+    public ResponseEntity<ContractDTO> updateContract(@PathVariable Integer id, @RequestBody ContractDTO contractDTO) {
         return ResponseEntity.ok(contractService.updateContract(id, contractDTO));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('CONTRACT:READ')")
-    public ResponseEntity<ContractDTO> getContract(@PathVariable UUID id) {
+    public ResponseEntity<ContractDTO> getContract(@PathVariable Integer id) {
         return ResponseEntity.ok(contractService.getContract(id));
     }
 
@@ -46,19 +45,19 @@ public class ContractController {
 
     @GetMapping("/employee/{employeeId}")
     @PreAuthorize("hasAuthority('CONTRACT:READ')")
-    public ResponseEntity<List<ContractDTO>> getEmployeeContracts(@PathVariable UUID employeeId) {
+    public ResponseEntity<List<ContractDTO>> getEmployeeContracts(@PathVariable Integer employeeId) {
         return ResponseEntity.ok(contractService.getEmployeeContracts(employeeId));
     }
 
     @PatchMapping("/{id}/terminate")
     @PreAuthorize("hasAuthority('CONTRACT:UPDATE')")
-    public ResponseEntity<ContractDTO> terminateContract(@PathVariable UUID id, @RequestParam String reason) {
+    public ResponseEntity<ContractDTO> terminateContract(@PathVariable Integer id, @RequestParam String reason) {
         return ResponseEntity.ok(contractService.terminateContract(id, reason));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('CONTRACT:DELETE')")
-    public ResponseEntity<Void> deleteContract(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteContract(@PathVariable Integer id) {
         contractService.deleteContract(id);
         return ResponseEntity.ok().build();
     }

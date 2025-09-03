@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
-import java.util.UUID;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.InterviewType;
 import lombok.AccessLevel;
@@ -12,13 +11,13 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InterviewDTO {
 
-    UUID id;
+    Integer id;
 
     Date interviewDate;
 
     InterviewType interviewType;
 
-    UUID interviewerId;
+    Integer interviewerId;
 
     String feedback;
 
@@ -27,9 +26,9 @@ public class InterviewDTO {
     String interviewStatus;
 
     //    Candidate candidate;
-    UUID candidateId;
+    Integer candidateId;
 
     String candidateName;
 
-    UUID jobPostingId;
+    Integer jobPostingId;
 }

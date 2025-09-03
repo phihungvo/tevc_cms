@@ -12,7 +12,6 @@ import carevn.luv2code.cms.tevc_cms_api.exception.ExcelExportException;
 import carevn.luv2code.cms.tevc_cms_api.repository.DepartmentRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.PayrollRepository;
-import carevn.luv2code.cms.tevc_cms_api.repository.StudentRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.UserRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.ExcelExportService;
 import carevn.luv2code.cms.tevc_cms_api.util.ExcelColumn;
@@ -21,19 +20,16 @@ import carevn.luv2code.cms.tevc_cms_api.util.ExcelGenerator;
 @Service
 public class ExcelExportServiceImpl implements ExcelExportService {
 
-    private final StudentRepository studentRepository;
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final PayrollRepository payrollRepository;
 
     public ExcelExportServiceImpl(
-            StudentRepository studentRepository,
             UserRepository userRepository,
             EmployeeRepository employeeRepository,
             DepartmentRepository departmentRepository,
             PayrollRepository payrollRepository) {
-        this.studentRepository = studentRepository;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
@@ -49,8 +45,6 @@ public class ExcelExportServiceImpl implements ExcelExportService {
 
     private Exportable getExportableEntity(String entityType) {
         switch (entityType.toLowerCase()) {
-            case "student":
-                return getStudentExportable();
             case "user":
                 return getUserExportable();
             case "employee":
@@ -62,25 +56,6 @@ public class ExcelExportServiceImpl implements ExcelExportService {
             default:
                 throw new ExcelExportException("Unsupported entity type: " + entityType);
         }
-    }
-
-    private Exportable getStudentExportable() {
-        return new Exportable() {
-            @Override
-            public List<ExcelColumn> getExcelColumns() {
-                return List.of(
-                        new ExcelColumn("STT", "stt", Integer.class),
-                        new ExcelColumn("ID", "id", UUID.class),
-                        new ExcelColumn("Name", "name", String.class),
-                        new ExcelColumn("Email", "email", String.class),
-                        new ExcelColumn("Mobile No.", "mobileNo", String.class));
-            }
-
-            @Override
-            public List<?> getData() {
-                return studentRepository.findAll();
-            }
-        };
     }
 
     private Exportable getUserExportable() {
@@ -146,7 +121,7 @@ public class ExcelExportServiceImpl implements ExcelExportService {
             public List<?> getData() {
                 return departmentRepository.findAll().stream()
                         .map(department -> new Object() {
-                            public UUID id = department.getId();
+                            public Integer id = department.getId();
                             public String name = department.getName();
                             public String description = department.getDescription();
                             public String managerName = department.getManager() != null
@@ -185,7 +160,7 @@ public class ExcelExportServiceImpl implements ExcelExportService {
             public List<?> getData() {
                 return payrollRepository.findAll().stream()
                         .map(payroll -> new Object() {
-                            public UUID id = payroll.getId();
+                            public Integer id = payroll.getId();
                             public String employeeName = payroll.getEmployee() != null
                                     ? payroll.getEmployee().getFirstName() + " "
                                             + payroll.getEmployee().getLastName()

@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,7 @@ public class RoleController {
 
     @PatchMapping("/{id}")
     //    @PreAuthorize("hasAuthority('ROLE:UPDATE')")
-    public ResponseEntity<ApiResponse<RoleDTO>> updateRole(@PathVariable UUID id, @RequestBody RoleDTO roleDTO) {
+    public ResponseEntity<ApiResponse<RoleDTO>> updateRole(@PathVariable Integer id, @RequestBody RoleDTO roleDTO) {
         RoleDTO updated = roleService.updateRole(id, roleDTO);
         return ResponseEntity.ok(ApiResponse.<RoleDTO>builder()
                 .code(200)
@@ -43,7 +42,7 @@ public class RoleController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE:READ')")
-    public ResponseEntity<ApiResponse<RoleDTO>> getRole(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<RoleDTO>> getRole(@PathVariable Integer id) {
         return ResponseEntity.ok(ApiResponse.<RoleDTO>builder()
                 .code(200)
                 .result(roleService.getRole(id))
@@ -71,7 +70,7 @@ public class RoleController {
     @PostMapping("/{roleId}/permissions")
     @PreAuthorize("hasAuthority('ROLE:UPDATE')")
     public ResponseEntity<ApiResponse<Void>> assignPermissionsToRole(
-            @PathVariable UUID roleId, @RequestBody List<UUID> permissionIds) {
+            @PathVariable Integer roleId, @RequestBody List<Integer> permissionIds) {
         roleService.assignPermissionsToRole(roleId, permissionIds);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(200)
@@ -82,7 +81,7 @@ public class RoleController {
     @DeleteMapping("/{roleId}/permissions/{permissionId}")
     @PreAuthorize("hasAuthority('ROLE:UPDATE')")
     public ResponseEntity<ApiResponse<Void>> removePermissionFromRole(
-            @PathVariable UUID roleId, @PathVariable UUID permissionId) {
+            @PathVariable Integer roleId, @PathVariable Integer permissionId) {
         roleService.removePermissionFromRole(roleId, permissionId);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(200)
@@ -92,7 +91,7 @@ public class RoleController {
 
     @DeleteMapping("/{id}")
     //    @PreAuthorize("hasAuthority('ROLE:DELETE')")
-    public ResponseEntity<ApiResponse<Void>> deleteRole(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteRole(@PathVariable Integer id) {
         roleService.deleteRole(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(200)

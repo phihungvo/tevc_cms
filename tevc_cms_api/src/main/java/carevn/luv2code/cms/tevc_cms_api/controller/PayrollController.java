@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +19,13 @@ public class PayrollController {
 
     @PostMapping("/calculate/{employeeId}")
     //    @PreAuthorize("hasAuthority('PAYROLL:CREATE')")
-    public ResponseEntity<PayrollDTO> calculatePayroll(@PathVariable UUID employeeId, @RequestParam String period) {
+    public ResponseEntity<PayrollDTO> calculatePayroll(@PathVariable Integer employeeId, @RequestParam String period) {
         return ResponseEntity.ok(payrollService.calculatePayroll(employeeId, period));
     }
 
     @PatchMapping("/process")
     //    @PreAuthorize("hasAuthority('PAYROLL:PROCESS')")
-    public ResponseEntity<List<PayrollDTO>> processPayroll(@RequestBody List<UUID> payrollIds) {
+    public ResponseEntity<List<PayrollDTO>> processPayroll(@RequestBody List<Integer> payrollIds) {
         List<PayrollDTO> processedPayrolls =
                 payrollIds.stream().map(payrollService::processPayroll).toList();
         return ResponseEntity.ok(processedPayrolls);
@@ -34,7 +33,7 @@ public class PayrollController {
 
     @PatchMapping("/{id}/finalize")
     @PreAuthorize("hasAuthority('PAYROLL:FINALIZE')")
-    public ResponseEntity<PayrollDTO> finalizePayroll(@PathVariable UUID id) {
+    public ResponseEntity<PayrollDTO> finalizePayroll(@PathVariable Integer id) {
         return ResponseEntity.ok(payrollService.finalizePayroll(id));
     }
 
@@ -46,7 +45,7 @@ public class PayrollController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<PayrollDTO> updatePayroll(@PathVariable UUID id, @RequestBody PayrollDTO payrollDTO) {
+    public ResponseEntity<PayrollDTO> updatePayroll(@PathVariable Integer id, @RequestBody PayrollDTO payrollDTO) {
         return ResponseEntity.ok(payrollService.updatePayroll(id, payrollDTO));
     }
 }

@@ -3,7 +3,6 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,7 +39,7 @@ public class RegisterServiceImpl implements RegisterService {
         final User userEntityToBeSaved = registerRequestToUserEntityMapper.mapForSaving(registerRequest);
         userEntityToBeSaved.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
-        List<UUID> roleIds = registerRequest.getRoleIds();
+        List<Integer> roleIds = registerRequest.getRoleIds();
         if (roleIds == null || roleIds.isEmpty()) {
             throw new AppException(ErrorCode.ROLE_NOT_FOUND);
         }

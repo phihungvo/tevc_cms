@@ -15,9 +15,8 @@ import lombok.experimental.FieldDefaults;
 public class InvalidatedToken {
 
     @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     String tokenId;
 }

@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
 
-    UUID id;
+    Integer id;
 
     String userName;
 
@@ -37,11 +36,11 @@ public class UserDTO {
 
     boolean enabled;
 
-    List<UUID> roles;
+    List<Integer> roles;
 
     List<String> roleNames;
 
-    List<UUID> permissions;
+    List<Integer> permissions;
 
     Date createAt;
 

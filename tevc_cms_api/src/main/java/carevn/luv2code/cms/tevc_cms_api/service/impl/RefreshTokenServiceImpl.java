@@ -1,7 +1,5 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.TokenRefreshRequest;
@@ -44,7 +42,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .toString();
 
         final User userEntityFromDB = userRepository
-                .findById(UUID.fromString(adminId))
+                .findById(Integer.parseInt(adminId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         this.validateAdminStatus(userEntityFromDB);

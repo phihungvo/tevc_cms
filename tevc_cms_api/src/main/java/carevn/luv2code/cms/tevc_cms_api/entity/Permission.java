@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.text.Normalizer;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 public class Permission {
 
     @Id
-    @GeneratedValue
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Column(nullable = false)
     String name;

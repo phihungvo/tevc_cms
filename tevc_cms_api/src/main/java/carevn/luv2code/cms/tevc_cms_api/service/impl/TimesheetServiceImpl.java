@@ -5,7 +5,6 @@ import static carevn.luv2code.cms.tevc_cms_api.constants.TimesheetConstants.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -58,7 +57,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     @Transactional
-    public TimesheetDTO updateTimesheet(UUID id, TimesheetDTO timesheetDTO) {
+    public TimesheetDTO updateTimesheet(Integer id, TimesheetDTO timesheetDTO) {
         Timesheet timesheet =
                 timesheetRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TIMESHEET_NOT_FOUND));
 
@@ -71,7 +70,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public TimesheetDTO getTimesheet(UUID id) {
+    public TimesheetDTO getTimesheet(Integer id) {
         return timesheetMapper.toDTO(
                 timesheetRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TIMESHEET_NOT_FOUND)));
     }
@@ -83,7 +82,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     @Transactional
-    public TimesheetDTO approveTimesheet(UUID id, UUID approverId, String comments) {
+    public TimesheetDTO approveTimesheet(Integer id, Integer approverId, String comments) {
         Timesheet timesheet =
                 timesheetRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TIMESHEET_NOT_FOUND));
 
@@ -105,7 +104,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     @Transactional
-    public TimesheetDTO rejectTimesheet(UUID id, UUID approverId, String comments) {
+    public TimesheetDTO rejectTimesheet(Integer id, Integer approverId, String comments) {
         Timesheet timesheet =
                 timesheetRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TIMESHEET_NOT_FOUND));
 
@@ -122,14 +121,14 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public List<TimesheetDTO> getEmployeeTimesheets(UUID employeeId) {
+    public List<TimesheetDTO> getEmployeeTimesheets(Integer employeeId) {
         return timesheetRepository.findByEmployeeId(employeeId).stream()
                 .map(timesheetMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public double calculateOvertimeForEmployee(UUID employeeId, String period) {
+    public double calculateOvertimeForEmployee(Integer employeeId, String period) {
         if (period == null || !PERIOD_PATTERN.matcher(period).matches()) {
             throw new AppException(ErrorCode.INVALID_PAYROLL_PERIOD);
         }
@@ -172,7 +171,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     @Transactional
-    public void deleteTimesheet(UUID id) {
+    public void deleteTimesheet(Integer id) {
         Timesheet timesheet =
                 timesheetRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TIMESHEET_NOT_FOUND));
 

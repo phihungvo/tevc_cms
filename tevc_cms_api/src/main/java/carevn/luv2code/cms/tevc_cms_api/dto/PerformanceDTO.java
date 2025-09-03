@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
-import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -10,9 +9,9 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PerformanceDTO {
-    UUID id;
+    Integer id;
 
-    UUID employeeId;
+    Integer employeeId;
 
     String employeeName;
 
@@ -28,7 +27,7 @@ public class PerformanceDTO {
 
     String improvements;
 
-    UUID reviewerId;
+    Integer reviewerId;
 
     String reviewerName;
 }

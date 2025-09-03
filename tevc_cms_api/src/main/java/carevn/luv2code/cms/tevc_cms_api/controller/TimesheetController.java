@@ -1,7 +1,5 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
-import java.util.UUID;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,20 +22,21 @@ public class TimesheetController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('TIMESHEET:UPDATE')")
-    public ResponseEntity<TimesheetDTO> updateTimesheet(@PathVariable UUID id, @RequestBody TimesheetDTO timesheetDTO) {
+    public ResponseEntity<TimesheetDTO> updateTimesheet(
+            @PathVariable Integer id, @RequestBody TimesheetDTO timesheetDTO) {
         return ResponseEntity.ok(timesheetService.updateTimesheet(id, timesheetDTO));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('TIMESHEET:READ')")
-    public ResponseEntity<TimesheetDTO> getTimesheet(@PathVariable UUID id) {
+    public ResponseEntity<TimesheetDTO> getTimesheet(@PathVariable Integer id) {
         return ResponseEntity.ok(timesheetService.getTimesheet(id));
     }
 
     @PatchMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('TIMESHEET:APPROVE')")
     public ResponseEntity<TimesheetDTO> approveTimesheet(
-            @PathVariable UUID id, @RequestParam UUID approverId, @RequestParam String comments) {
+            @PathVariable Integer id, @RequestParam Integer approverId, @RequestParam String comments) {
         return ResponseEntity.ok(timesheetService.approveTimesheet(id, approverId, comments));
     }
 

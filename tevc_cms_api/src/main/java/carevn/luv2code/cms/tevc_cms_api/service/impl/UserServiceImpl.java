@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UUID userId, UserUpdateRequest request) {
+    public void updateUser(Integer userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         userMapper.updateUserFromDto(request, user);
@@ -102,14 +102,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(UUID userId) {
+    public void deleteUser(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         userRepository.delete(user);
     }
 
     @Override
     @Transactional
-    public void assignPermissions(UUID userId, List<String> permissionNames) {
+    public void assignPermissions(Integer userId, List<String> permissionNames) {
         //        User user = userRepository.findById(userId)
         //                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         //
@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void removePermission(UUID userId, String resource, String action) {
+    public void removePermission(Integer userId, String resource, String action) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Khóa người dùng bằng Pessimistic Locking
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //    @Override
-    //    public List<String> getUserPermissions(UUID userId) {
+    //    public List<String> getUserPermissions(Integer userId) {
     //        User user = userRepository.findById(userId)
     //                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     //
@@ -146,21 +146,21 @@ public class UserServiceImpl implements UserService {
     ////        Set<Permission> allPermissions = new HashSet<>(user.getPermissions());
     //
     //        // Add permissions from roles
-    ////        user.getRoles().forEach(role -> {
-    ////            allPermissions.addAll(role.getPermissions());
-    ////        });
-    ////
-    ////        return allPermissions.stream()
-    ////                .map(p -> p.getResource() + ":" + p.getAction())
-    ////                .collect(Collectors.toList());
-    //    }
 
+    /// /        user.getRoles().forEach(role -> {
+    /// /            allPermissions.addAll(role.getPermissions());
+    /// /        });
+    /// /
+    /// /        return allPermissions.stream()
+    /// /                .map(p -> p.getResource() + ":" + p.getAction())
+    /// /                .collect(Collectors.toList());
+    //    }
     @Override
     public List<Permission> getAllPermissions() {
         return permissionRepository.findAll();
     }
 
-    private Set<Role> convertToRoleSet(List<UUID> roleIds) {
+    private Set<Role> convertToRoleSet(List<Integer> roleIds) {
         if (roleIds == null) return Collections.emptySet();
 
         return roleIds.stream()
@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toSet());
     }
 
-    private Set<Permission> convertToPermissionSet(List<UUID> permissionIds) {
+    private Set<Permission> convertToPermissionSet(List<Integer> permissionIds) {
         if (permissionIds == null) return Collections.emptySet();
 
         return permissionIds.stream()
@@ -193,7 +193,7 @@ public class UserServiceImpl implements UserService {
         dto.setProfilePicture(user.getProfilePicture());
 
         if (user.getRoles() != null) {
-            List<UUID> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toList());
+            List<Integer> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toList());
             dto.setRoles(roleIds);
 
             dto.setRoleNames(user.getRoles().stream()
@@ -203,7 +203,7 @@ public class UserServiceImpl implements UserService {
         }
 
         //        if (user.getPermissions() != null) {
-        //            List<UUID> permissions =
+        //            List<Integer> permissions =
         //                    user.getPermissions().stream().map(Permission::getId).collect(Collectors.toList());
         //            dto.setPermissions(permissions);
         //        }

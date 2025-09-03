@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -32,7 +31,7 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public void applyForJob(UUID candidateId, UUID jobPostingId) {
+    public void applyForJob(Integer candidateId, Integer jobPostingId) {
         Candidate candidate = candidateRepository
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));
@@ -51,7 +50,7 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public void updateStatus(UUID candidateId, CandidateStatus status) {
+    public void updateStatus(Integer candidateId, CandidateStatus status) {
         Candidate candidate = candidateRepository
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));
@@ -73,7 +72,7 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public void scheduleInterview(UUID candidateId, LocalDateTime interviewDate) {
+    public void scheduleInterview(Integer candidateId, LocalDateTime interviewDate) {
         Candidate candidate = candidateRepository
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));
@@ -82,7 +81,7 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public void rejectCandidate(UUID candidateId, String reason) {
+    public void rejectCandidate(Integer candidateId, String reason) {
         Candidate candidate = candidateRepository
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));
@@ -92,7 +91,7 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public void hireCandidate(UUID candidateId) {
+    public void hireCandidate(Integer candidateId) {
         Candidate candidate = candidateRepository
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));
@@ -103,7 +102,7 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public CandidateDTO getCandidate(UUID candidateId) {
+    public CandidateDTO getCandidate(Integer candidateId) {
         Candidate candidate = candidateRepository
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));
@@ -119,7 +118,7 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public void updateCandidate(UUID candidateId, CandidateDTO candidateDTO) {
+    public void updateCandidate(Integer candidateId, CandidateDTO candidateDTO) {
         Candidate candidate = candidateRepository
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));
@@ -129,7 +128,7 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public void deleteCandidate(UUID candidateId) {
+    public void deleteCandidate(Integer candidateId) {
         Candidate candidate = candidateRepository
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));

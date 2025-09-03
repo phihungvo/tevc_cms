@@ -46,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO updateRole(UUID id, RoleDTO roleDTO) {
+    public RoleDTO updateRole(Integer id, RoleDTO roleDTO) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
         // Check if new name already exists for different role
@@ -65,7 +65,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void deleteRole(UUID id) {
+    public void deleteRole(Integer id) {
         //        Role role = roleRepository.findById(id)
         //                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         //
@@ -92,7 +92,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO getRole(UUID id) {
+    public RoleDTO getRole(Integer id) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         return convertToDTO(role);
     }
@@ -109,7 +109,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void assignPermissionsToRole(UUID roleId, List<UUID> permissionIds) {
+    public void assignPermissionsToRole(Integer roleId, List<Integer> permissionIds) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
         Set<Permission> permissions = permissionIds.stream()
@@ -123,7 +123,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void removePermissionFromRole(UUID roleId, UUID permissionId) {
+    public void removePermissionFromRole(Integer roleId, Integer permissionId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
         Permission permission = permissionRepository
@@ -134,7 +134,7 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.save(role);
     }
 
-    private Set<Permission> convertToPermissionSet(Set<UUID> permissionIds) {
+    private Set<Permission> convertToPermissionSet(Set<Integer> permissionIds) {
         if (permissionIds == null) return Collections.emptySet();
 
         return permissionIds.stream()
@@ -151,7 +151,7 @@ public class RoleServiceImpl implements RoleService {
         dto.setDescription(role.getDescription());
 
         if (role.getPermissions() != null) {
-            Set<UUID> permissions =
+            Set<Integer> permissions =
                     role.getPermissions().stream().map(Permission::getId).collect(Collectors.toSet());
             dto.setPermissions(permissions);
         }

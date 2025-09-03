@@ -14,9 +14,6 @@ import carevn.luv2code.cms.tevc_cms_api.service.LoginService;
 import carevn.luv2code.cms.tevc_cms_api.service.TokenService;
 import lombok.RequiredArgsConstructor;
 
-/**
- * Service implementation named {@link LoginServiceImpl} for handling user login operations.
- */
 @Service
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {

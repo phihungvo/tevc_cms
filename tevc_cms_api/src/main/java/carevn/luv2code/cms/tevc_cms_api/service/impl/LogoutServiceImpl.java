@@ -10,9 +10,6 @@ import carevn.luv2code.cms.tevc_cms_api.service.LogoutService;
 import carevn.luv2code.cms.tevc_cms_api.service.TokenService;
 import lombok.RequiredArgsConstructor;
 
-/**
- * Service implementation named {@link LogoutServiceImpl} for handling user logout operations.
- */
 @Service
 @RequiredArgsConstructor
 public class LogoutServiceImpl implements LogoutService {
