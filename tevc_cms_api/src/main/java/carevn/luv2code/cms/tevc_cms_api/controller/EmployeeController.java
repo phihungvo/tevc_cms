@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
@@ -20,7 +21,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping
-    //    @PreAuthorize("hasAuthority('EMPLOYEE:CREATE')")
+    @PreAuthorize("@securityService.hasPermission('EMPLOYEE', 'CREATE')")
     public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
         return ResponseEntity.ok(employeeService.createEmployee(employeeDTO));
     }
@@ -38,14 +39,14 @@ public class EmployeeController {
     }
 
     @GetMapping
-    //    @PreAuthorize("hasAuthority('EMPLOYEE:READ')")
+    @PreAuthorize("@securityService.hasPermissionForRequest()")
     public ResponseEntity<Page<EmployeeDTO>> getAllEmployees(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(employeeService.getAllEmployees(page, size));
     }
 
     @GetMapping("/no-paging")
-    //    @PreAuthorize("hasAuthority('EMPLOYEE:READ')")
+    @PreAuthorize("@securityService.hasPermissionForRequest()")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployeesNoPaging() {
         return ResponseEntity.ok(employeeService.getAllEmployeesNoPaging());
     }

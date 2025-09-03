@@ -4,10 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -19,17 +17,18 @@ import lombok.experimental.SuperBuilder;
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class BaseDomainModel {
 
     @Column(name = "CREATED_AT")
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt;
 
     @Column(name = "CREATED_BY")
-    private String createdBy;
+    String createdBy;
 
     @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedAt;
+    LocalDateTime updatedAt;
 
     @Column(name = "UPDATED_BY")
-    private String updatedBy;
+    String updatedBy;
 }

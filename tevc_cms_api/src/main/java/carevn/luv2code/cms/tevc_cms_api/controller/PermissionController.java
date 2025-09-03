@@ -8,8 +8,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.PermissionDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.PermissionCreateRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.CustomResponse;
+import carevn.luv2code.cms.tevc_cms_api.entity.Permission;
+import carevn.luv2code.cms.tevc_cms_api.repository.PermissionRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.PermissionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -17,15 +22,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PermissionController {
     private final PermissionService permissionService;
+    private final PermissionRepository permissionRepository;
 
     @PostMapping
-    //    @PreAuthorize("hasAuthority('PERMISSION:CREATE')")
-    public ResponseEntity<ApiResponse<PermissionDTO>> createPermission(@RequestBody PermissionDTO permissionDTO) {
-        return ResponseEntity.ok(ApiResponse.<PermissionDTO>builder()
-                .code(200)
-                .message("Permission created successfully")
-                .result(permissionService.createPermission(permissionDTO))
-                .build());
+    @PreAuthorize("@securityService.hasPermission('PERMISSION', 'CREATE')")
+    public CustomResponse<UUID> createPermission(@RequestBody @Valid PermissionCreateRequest request) {
+        Permission permission = Permission.builder()
+                .name(request.getResource() + ":" + request.getAction())
+                .build();
+        permission = permissionRepository.save(permission);
+        return CustomResponse.successOf(permission.getId());
     }
 
     @PutMapping("/{id}")

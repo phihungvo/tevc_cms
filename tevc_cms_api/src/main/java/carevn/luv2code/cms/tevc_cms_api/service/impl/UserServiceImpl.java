@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toEntity(userDTO);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setCreateAt(new Date());
+        //        user.setCreateAt(new Date());
         user.setRoles(convertToRoleSet(userDTO.getRoles()));
         //        user.setPermissions(convertToPermissionSet(userDTO.getPermissions()));
 
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         userMapper.updateUserFromDto(request, user);
-        user.setUpdateAt(new Date());
+        //        user.setUpdateAt(new Date());
 
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));

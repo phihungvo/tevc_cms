@@ -1,6 +1,5 @@
 package carevn.luv2code.cms.tevc_cms_api.configuration;
 
-import java.util.Date;
 import java.util.Set;
 
 import org.springframework.boot.ApplicationRunner;
@@ -43,9 +42,10 @@ public class ApplicationInitConfig {
             if (userRepository.findByEmail(adminEmail).isEmpty()) {
                 User user = User.builder()
                         .userName("admin1")
+                        .firstName("Admin")
+                        .lastName("Admin")
                         .email(adminEmail)
                         .password(passwordEncoder.encode("admin_example"))
-                        .createAt(new Date())
                         .roles(Set.of(adminRole))
                         .enabled(true)
                         .accountNonExpired(true)

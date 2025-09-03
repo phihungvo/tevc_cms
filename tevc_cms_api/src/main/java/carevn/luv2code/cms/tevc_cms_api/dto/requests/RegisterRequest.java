@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.dto.requests;
 
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -34,9 +35,6 @@ public class RegisterRequest {
     @Size(min = 11, max = 20)
     private String phoneNumber;
 
-    @NotEmpty(message = "Role name can't be empty.")
-    private List<String> role;
-
-    @NotEmpty(message = "Permission can't be empty.")
-    private List<String> permissions;
+    @NotEmpty(message = "Role can't be empty.")
+    private List<UUID> roleIds;
 }

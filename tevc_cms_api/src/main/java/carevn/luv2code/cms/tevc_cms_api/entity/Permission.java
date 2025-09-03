@@ -1,5 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
+import java.text.Normalizer;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -20,20 +21,33 @@ public class Permission {
     @GeneratedValue
     UUID id;
 
+    @Column(nullable = false)
     String name;
 
-    //    @Column(nullable = false)
-    //    String resource;
-    //
-    //    @Column(unique = false)
-    //    String action;
-    //
-    //    @Column(nullable = true)
-    //    String description;
-    //
-    //    @ManyToMany(mappedBy = "permissions")
-    //    Set<Role> roles;
-    //
-    //    @ManyToMany(mappedBy = "permissions")
-    //    Set<User> users;
+    @Column(nullable = false)
+    String resource;
+
+    @Column(unique = false)
+    String action;
+
+    @Column(nullable = true)
+    String description;
+
+    @PrePersist
+    @PreUpdate
+    private void setName() {
+        this.resource = normalizeString(this.resource);
+        this.action = normalizeString(this.action);
+        this.name = this.resource + ":" + this.action;
+    }
+
+    private String normalizeString(String input) {
+        if (input == null) {
+            return "";
+        }
+        return Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "")
+                .replaceAll("[^a-zA-Z0-9]", "")
+                .toUpperCase();
+    }
 }

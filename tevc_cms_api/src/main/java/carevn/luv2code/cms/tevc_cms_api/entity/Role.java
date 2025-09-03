@@ -32,10 +32,4 @@ public class Role {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
     List<Permission> permissions;
-
-    // User
-    //    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    //    @ToString.Exclude
-    //    @EqualsAndHashCode.Exclude
-    //    Set<User> users;
 }
