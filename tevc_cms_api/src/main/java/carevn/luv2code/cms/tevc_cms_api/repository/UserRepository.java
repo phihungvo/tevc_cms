@@ -13,6 +13,8 @@ import carevn.luv2code.cms.tevc_cms_api.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
+    boolean existsUserEntityByEmail(final String email);
+
     Optional<User> findByUserName(String userName);
 
     Optional<User> findByEmail(String email);

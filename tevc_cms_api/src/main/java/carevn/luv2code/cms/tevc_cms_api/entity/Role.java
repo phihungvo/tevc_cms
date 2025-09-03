@@ -1,6 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -26,16 +26,16 @@ public class Role {
     @Column(nullable = true)
     String description;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "role_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    Set<Permission> permissions;
+    List<Permission> permissions;
 
     // User
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    Set<User> users;
+    //    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    //    @ToString.Exclude
+    //    @EqualsAndHashCode.Exclude
+    //    Set<User> users;
 }

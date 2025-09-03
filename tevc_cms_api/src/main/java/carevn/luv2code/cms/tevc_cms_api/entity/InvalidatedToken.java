@@ -1,12 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import java.util.Date;
-import java.util.UUID;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,10 +15,9 @@ import lombok.experimental.FieldDefaults;
 public class InvalidatedToken {
 
     @Id
-    @GeneratedValue
-    UUID id;
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
 
-    String token;
-
-    Date expiryTime;
+    String tokenId;
 }

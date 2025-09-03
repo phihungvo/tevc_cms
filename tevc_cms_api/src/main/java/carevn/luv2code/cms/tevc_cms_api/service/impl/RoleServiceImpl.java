@@ -21,13 +21,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RoleServiceImpl implements RoleService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
 
     @Override
-    @Transactional
     public RoleDTO createRole(RoleDTO roleDTO) {
         if (roleRepository.existsByName(roleDTO.getName())) {
             throw new AppException(ErrorCode.ROLE_ALREADY_EXISTS);
@@ -37,16 +37,15 @@ public class RoleServiceImpl implements RoleService {
         role.setName(roleDTO.getName());
         role.setDescription(roleDTO.getDescription());
 
-        if (roleDTO.getPermissions() != null) {
-            role.setPermissions(convertToPermissionSet(roleDTO.getPermissions()));
-        }
+        //        if (roleDTO.getPermissions() != null) {
+        //            role.setPermissions(convertToPermissionSet(roleDTO.getPermissions()));
+        //        }
 
         Role savedRole = roleRepository.save(role);
         return convertToDTO(savedRole);
     }
 
     @Override
-    @Transactional
     public RoleDTO updateRole(UUID id, RoleDTO roleDTO) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
@@ -57,16 +56,15 @@ public class RoleServiceImpl implements RoleService {
 
         role.setName(roleDTO.getName());
         role.setDescription(roleDTO.getDescription());
-        if (roleDTO.getPermissions() != null) {
-            role.setPermissions(convertToPermissionSet(roleDTO.getPermissions()));
-        }
+        //        if (roleDTO.getPermissions() != null) {
+        //            role.setPermissions(convertToPermissionSet(roleDTO.getPermissions()));
+        //        }
 
         Role updatedRole = roleRepository.save(role);
         return convertToDTO(updatedRole);
     }
 
     @Override
-    @Transactional
     public void deleteRole(UUID id) {
         //        Role role = roleRepository.findById(id)
         //                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
@@ -111,7 +109,6 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional
     public void assignPermissionsToRole(UUID roleId, List<UUID> permissionIds) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
@@ -126,7 +123,6 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional
     public void removePermissionFromRole(UUID roleId, UUID permissionId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 

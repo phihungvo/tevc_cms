@@ -1,120 +1,100 @@
 package carevn.luv2code.cms.tevc_cms_api.security;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Security configuration class named {@link SecurityConfig} for setting up authentication and authorization in the application.
+ */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserDetailsServiceImpl userDetailsService;
-
+    /**
+     * Defines the session authentication strategy to be used.
+     *
+     * @return a {@link SessionAuthenticationStrategy} for registering session authentication.
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF for REST APIs
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(
-                                "/api/auth/**",
-                                "/api/roles/**",
-                                "/api/permissions/**",
-                                "/api/employees/**",
-                                "/api/positions/**",
-                                "/api/employees/position-type",
-                                "/api/departments/**",
-                                "/api/leaves/**",
-                                "/api/payrolls/**",
-                                "/api/export/excel/**",
-                                "/api/attendances/**",
-                                "/api/candidates/**",
-                                "/api/interviews/**",
-                                "/api/payrolls/process/**")
+    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+    }
+
+    /**
+     * Configures the security filter chain for the application.
+     *
+     * @param httpSecurity the {@link HttpSecurity} object to configure.
+     * @param customBearerTokenAuthenticationFilter the custom filter for bearer token authentication.
+     * @param customAuthenticationEntryPoint the custom authentication entry point.
+     * @return a {@link SecurityFilterChain} defining the security configuration.
+     * @throws Exception if an error occurs while configuring security.
+     */
+    @Bean
+    public SecurityFilterChain filterChain(
+            final HttpSecurity httpSecurity,
+            final CustomBearerTokenAuthenticationFilter customBearerTokenAuthenticationFilter,
+            final CustomAuthenticationEntryPoint customAuthenticationEntryPoint)
+            throws Exception {
+
+        httpSecurity
+                .exceptionHandling(customizer -> customizer.authenticationEntryPoint(customAuthenticationEntryPoint))
+                .cors(customizer -> customizer.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(customizer -> customizer
+                        .requestMatchers(HttpMethod.POST, "/api/auth/**")
                         .permitAll()
-                        .requestMatchers("/api/user/createUser")
-                        .hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers("/api/user/getAll")
-                        .hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers(HttpMethod.PUT, "/api/user/{id}/update")
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v2/api-docs/**", "/v3/api-docs/**")
                         .permitAll()
-                        .requestMatchers("/api/user/**")
-                        .hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers("/api/admin/**")
-                        .hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers("/api/moderator/**")
-                        .hasAnyAuthority("COMMENT:MODERATE", "ADMIN:MANAGE")
-                        .requestMatchers("/api/storage/**")
-                        .hasAnyAuthority("STORAGE:READ", "STORAGE:WRITE")
-                        .requestMatchers("/admin/**")
-                        .hasRole("ADMIN") // Protect admin endpoints
                         .anyRequest()
                         .authenticated())
-                .cors(cors -> cors.configurationSource(request -> {
-                    CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(
-                            List.of("http://localhost:3000", "https://", "https://2946f7d48d6d.ngrok-free.app"));
-                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                    configuration.setAllowedHeaders(List.of("*"));
-                    configuration.setAllowCredentials(true);
-                    return configuration;
-                }))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(customBearerTokenAuthenticationFilter, BearerTokenAuthenticationFilter.class);
 
-        return http.build();
+        return httpSecurity.build();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return new ProviderManager(authProvider);
+    /**
+     * Configures CORS settings for the application.
+     *
+     * @return a {@link CorsConfigurationSource} defining the CORS configuration.
+     */
+    private CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "https://", "https://2946f7d48d6d.ngrok-free.app")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
-            }
-        };
-    }
-
+    /**
+     * Defines the password encoder to be used for encoding passwords.
+     *
+     * @return a {@link PasswordEncoder} using BCrypt hashing algorithm.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

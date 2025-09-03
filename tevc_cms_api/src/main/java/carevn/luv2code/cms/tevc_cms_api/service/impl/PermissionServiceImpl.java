@@ -25,15 +25,15 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Transactional
     public PermissionDTO createPermission(PermissionDTO permissionDTO) {
-        if (permissionRepository
-                .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
-                .isPresent()) {
-            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
-        }
+        //        if (permissionRepository
+        //                .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
+        //                .isPresent()) {
+        //            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
+        //        }
 
         Permission permission = new Permission();
-        permission.setResource(permissionDTO.getResource());
-        permission.setAction(permissionDTO.getAction());
+        //        permission.setResource(permissionDTO.getResource());
+        //        permission.setAction(permissionDTO.getAction());
 
         Permission savedPermission = permissionRepository.save(permission);
         return convertToDTO(savedPermission);
@@ -46,16 +46,16 @@ public class PermissionServiceImpl implements PermissionService {
                 permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
 
         // Check if new resource:action combination exists
-        if ((!permission.getResource().equals(permissionDTO.getResource())
-                        || !permission.getAction().equals(permissionDTO.getAction()))
-                && permissionRepository
-                        .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
-                        .isPresent()) {
-            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
-        }
-
-        permission.setResource(permissionDTO.getResource());
-        permission.setAction(permissionDTO.getAction());
+        //        if ((!permission.getResource().equals(permissionDTO.getResource())
+        //                        || !permission.getAction().equals(permissionDTO.getAction()))
+        //                && permissionRepository
+        //                        .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
+        //                        .isPresent()) {
+        //            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
+        //        }
+        //
+        //        permission.setResource(permissionDTO.getResource());
+        //        permission.setAction(permissionDTO.getAction());
 
         Permission updatedPermission = permissionRepository.save(permission);
         return convertToDTO(updatedPermission);
@@ -68,9 +68,9 @@ public class PermissionServiceImpl implements PermissionService {
                 permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
 
         // Remove permission from all roles first
-        permission.getRoles().forEach(role -> {
-            role.getPermissions().remove(permission);
-        });
+        //        permission.getRoles().forEach(role -> {
+        //            role.getPermissions().remove(permission);
+        //        });
 
         // Remove permission from all users that have it directly
         //        permission.getUsers().forEach(user -> {
@@ -101,9 +101,9 @@ public class PermissionServiceImpl implements PermissionService {
     private PermissionDTO convertToDTO(Permission permission) {
         PermissionDTO dto = new PermissionDTO();
         dto.setId(permission.getId());
-        dto.setResource(permission.getResource());
-        dto.setAction(permission.getAction());
-        dto.setDescription(permission.getDescription());
+        //        dto.setResource(permission.getResource());
+        //        dto.setAction(permission.getAction());
+        //        dto.setDescription(permission.getDescription());
 
         return dto;
     }

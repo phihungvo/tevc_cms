@@ -1,6 +1,5 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import java.util.Set;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -21,18 +20,20 @@ public class Permission {
     @GeneratedValue
     UUID id;
 
-    @Column(nullable = false)
-    String resource;
+    String name;
 
-    @Column(unique = false)
-    String action;
-
-    @Column(nullable = true)
-    String description;
-
-    @ManyToMany(mappedBy = "permissions")
-    Set<Role> roles;
-
-    @ManyToMany(mappedBy = "permissions")
-    Set<User> users;
+    //    @Column(nullable = false)
+    //    String resource;
+    //
+    //    @Column(unique = false)
+    //    String action;
+    //
+    //    @Column(nullable = true)
+    //    String description;
+    //
+    //    @ManyToMany(mappedBy = "permissions")
+    //    Set<Role> roles;
+    //
+    //    @ManyToMany(mappedBy = "permissions")
+    //    Set<User> users;
 }

@@ -10,5 +10,7 @@ import carevn.luv2code.cms.tevc_cms_api.entity.Permission;
 
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, UUID> {
-    Optional<Permission> findByResourceAndAction(String resource, String action);
+    //    Optional<Permission> findByResourceAndAction(String resource, String action);
+
+    Optional<Permission> findByName(String name);
 }

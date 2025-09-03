@@ -1,50 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Permission/Permission.module.scss';
-import { useState, useEffect } from 'react';
-import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
-import {
-    SearchOutlined,
-    PlusOutlined,
-    FilterOutlined,
-    CloudUploadOutlined,
-    EditOutlined,
-    DeleteOutlined,
-} from '@ant-design/icons';
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag } from 'antd';
-import { getAllPermissions, createPermission } from '~/service/admin/permission';
+import { Form, message } from 'antd';
+import { getAllRoles, createRole, assignPermissionsToRole, getAllPermissions } from '~/service/admin/permission';
 
 const cx = classNames.bind(styles);
 
-function User() {
-    const [permissionSource, setPermissionSource] = useState([]);
+function PermissionPage() {
+    const [roles, setRoles] = useState([]);
+    const [permissions, setPermissions] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [pagination, setPagination] = useState({
-        current: 1,
-        pageSize: 5,
-        total: 0,
-    });
-    const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRole, setselectedRole] = useState(null);
     const [form] = Form.useForm();
 
     const columns = [
         {
-            title: 'Permission Action',
-            dataIndex: 'action',
-            key: 'action',
-            width: 150,
-            fixed: 'left',
-        },
-        {
-            title: 'Permission Resource',
-            dataIndex: 'resource',
-            key: 'resource',
+            title: 'Role Name',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Description',
@@ -53,167 +30,105 @@ function User() {
         },
         {
             title: 'Actions',
-            fixed: 'right',
-            width: 180,
+            key: 'actions',
             render: (_, record) => (
-                <>
-                    <SmartButton
-                        title="Edit"
-                        type="primary"
-                        icon={<EditOutlined />}
-                        buttonWidth={80}
-                        onClick={() => handleEditRole(record)}
-                    />
-                    <SmartButton
-                        title="Delete"
-                        type="danger"
-                        icon={<DeleteOutlined />}
-                        buttonWidth={80}
-                        // onClick={() => handleDeleteTrailer(record)}
-                        style={{ marginLeft: '8px' }}
-                    />
-                </>
+                <SmartButton
+                    title="Assign Permissions"
+                    type="primary"
+                    onClick={() => handleAssignPermissions(record)}
+                />
             ),
         },
     ];
 
-    const userModalFields = [
-        {
-            label: 'Permission Action',
-            name: 'action',
-            type: 'text',
-            rules: [{ required: true, message: 'Permission Action is required!' }],
-        },
-        {
-            label: 'Permission Resource',
-            name: 'resource',
-            type: 'text',
-            rules: [{ required: true, message: 'Permission Resource is required!' }],
-        },
-        {
-            label: 'Description',
-            name: 'description',
-            type: 'text',
-        },
-    ];
-
-    const handleGetAllPermissions = async (page = 1, pageSize = 10) => {
+    const fetchRoles = async () => {
         setLoading(true);
         try {
-            const response = await getAllPermissions({ page: page - 1, pageSize });
-            if (response && response.content) {
-                setPermissionSource(response.content);
-                setPagination({
-                    current: page,
-                    pageSize: pageSize,
-                    total: response.totalElements,
-                });
+            const response = await getAllRoles();
+            if (Array.isArray(response)) {
+                setRoles(response);
             } else {
-                console.error('Invalid data format:', response);
-                setPermissionSource([]);
+                console.error('Invalid data format for roles:', response);
+                setRoles([]);
             }
         } catch (error) {
-            console.error('Error fetching roles:', error);
-            setPermissionSource([]);
+            message.error('Failed to fetch roles');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleAddRole = () => {
-        setModalMode('create');
-        setselectedRole(null);
-        form.resetFields();
+    const fetchPermissions = async () => {
+        try {
+            const response = await getAllPermissions();
+            if (Array.isArray(response)) {
+                setPermissions(response);
+            } else {
+                console.error('Invalid data format for permissions:', response);
+                setPermissions([]);
+            }
+        } catch (error) {
+            message.error('Failed to fetch permissions');
+        }
+    };
+
+    const handleCreateRole = async (formData) => {
+        try {
+            await createRole(formData);
+            message.success('Role created successfully');
+            fetchRoles();
+        } catch (error) {
+            message.error('Failed to create role');
+        }
+    };
+
+    const handleAssignPermissions = (role) => {
+        form.setFieldsValue({ roleId: role.id, permissions: [] });
         setIsModalOpen(true);
     };
 
-    const handleCallCreatePermission = async (formData) => {
-        await createPermission(formData);
-        handleGetAllPermissions();
+    const handleFormSubmit = async (formData) => {
+        try {
+            await assignPermissionsToRole(formData.roleId, formData.permissions);
+            message.success('Permissions assigned successfully');
+            setIsModalOpen(false);
+            fetchRoles();
+        } catch (error) {
+            message.error('Failed to assign permissions');
+        }
     };
-
-    const handleEditRole = (record) => {
-        setselectedRole(record);
-        setModalMode('edit');
-
-        form.setFieldsValue(record);
-        setIsModalOpen(true);
-    };
-
-    // const handleCallUpdateRole = async (formData) => {
-    //     await updateRole(selectedRole.id, formData);
-    //     handleGetAllPermissions();
-    //     setIsModalOpen(false);
-    // };
 
     useEffect(() => {
-        handleGetAllPermissions();
+        fetchRoles();
+        fetchPermissions();
     }, []);
 
-    const handleFormSubmit = (formData) => {
-        if (modalMode === 'create') {
-            handleCallCreatePermission(formData);
-        } else if (modalMode === 'edit') {
-        }
-    };
-
-    const handleTableChange = (pagination) => {
-        handleGetAllPermissions(pagination.current, pagination.pageSize);
-    };
-    const getModalTitle = () => {
-        switch (modalMode) {
-            case 'create':
-                return 'Add New Permission';
-            case 'edit':
-                return 'Edit Permission';
-            case 'delete':
-                return 'Delete Permission';
-            default:
-                return 'Permission Details';
-        }
-    };
-
     return (
-        <div className={cx('trailer-wrapper')}>
-            <div className={cx('sub_header')}>
-                <SmartInput
-                    size="large"
-                    placeholder="Search"
-                    icon={<SearchOutlined />}
-                />
-                <div className={cx('features')}>
-                    <SmartButton
-                        title="Add new"
-                        icon={<PlusOutlined />}
-                        type="primary"
-                        onClick={handleAddRole}
-                    />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined />} />
-                </div>
+        <div className={cx('permission-wrapper')}>
+            <div className={cx('header')}>
+                <SmartInput placeholder="Search Roles" />
+                <SmartButton title="Create Role" type="primary" onClick={() => setIsModalOpen(true)} />
             </div>
-            <div className={cx('trailer-container')}>
-                <SmartTable
-                    columns={columns}
-                    dataSources={permissionSource}
-                    loading={loading}
-                    pagination={pagination}
-                    onTableChange={handleTableChange}
-                />
-            </div>
-
+            <SmartTable columns={columns} dataSources={roles} loading={loading} />
             <PopupModal
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
-                title={getModalTitle()}
-                fields={modalMode === 'delete' ? [] : userModalFields}
+                title="Assign Permissions to Role"
+                fields={[
+                    {
+                        label: 'Permissions',
+                        name: 'permissions',
+                        type: 'select',
+                        options: permissions.map((perm) => ({ label: `${perm.resource}:${perm.action}`, value: perm.id })),
+                        mode: 'multiple',
+                        rules: [{ required: true, message: 'Please select permissions' }],
+                    },
+                ]}
                 onSubmit={handleFormSubmit}
-                initialValues={selectedRole}
-                isDeleteMode={modalMode === 'delete'}
                 formInstance={form}
             />
         </div>
     );
 }
 
-export default User;
+export default PermissionPage;
