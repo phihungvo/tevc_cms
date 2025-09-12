@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
-import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -11,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JobPostingDTO {
 
-    UUID id;
+    Integer id;
 
     String title;
 
@@ -29,9 +28,9 @@ public class JobPostingDTO {
 
     String jobPostingStatus;
 
-    UUID department;
+    Integer department;
 
-    UUID position;
+    Integer position;
 
-    UUID recruiter; // employee id
+    Integer recruiter; // employee id
 }

@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -12,11 +11,11 @@ public interface PositionService {
 
     PositionDTO createPosition(PositionDTO positionDTO);
 
-    PositionDTO updatePosition(UUID id, PositionDTO positionDTO);
+    PositionDTO updatePosition(Integer id, PositionDTO positionDTO);
 
-    void deletePosition(UUID id);
+    void deletePosition(Integer id);
 
-    PositionDTO getPosition(UUID id);
+    PositionDTO getPosition(Integer id);
 
     Page<PositionDTO> getAllPositions(int page, int size);
 

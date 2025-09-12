@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -42,16 +41,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO updateProject(UUID id, ProjectDTO projectDTO) {
+    public ProjectDTO updateProject(Integer id, ProjectDTO projectDTO) {
         return null;
     }
 
     @Override
-    public void deleteProject(UUID id) {}
+    public void deleteProject(Integer id) {}
 
     @Override
     @Transactional
-    public ProjectDTO addMembers(UUID id, List<UUID> memberIds) {
+    public ProjectDTO addMembers(Integer id, List<Integer> memberIds) {
         Project project =
                 projectRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
@@ -66,7 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public ProjectDTO removeMember(UUID projectId, UUID memberId) {
+    public ProjectDTO removeMember(Integer projectId, Integer memberId) {
         Project project =
                 projectRepository.findById(projectId).orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
@@ -79,7 +78,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public ProjectDTO assignManager(UUID id, UUID managerId) {
+    public ProjectDTO assignManager(Integer id, Integer managerId) {
         Project project =
                 projectRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
@@ -92,7 +91,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO getProject(UUID id) {
+    public ProjectDTO getProject(Integer id) {
         Project project =
                 projectRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
         return projectMapper.toDTO(project);

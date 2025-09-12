@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -60,7 +59,7 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public void updateInterview(UUID interviewId, LocalDateTime newDate, String newInterviewer) {
+    public void updateInterview(Integer interviewId, LocalDateTime newDate, String newInterviewer) {
         //        Interview interview = interviewRepository
         //                .findById(interviewId)
         //                .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
@@ -70,7 +69,7 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public void cancelInterview(UUID interviewId) {
+    public void cancelInterview(Integer interviewId) {
         Interview interview = interviewRepository
                 .findById(interviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
@@ -79,7 +78,7 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public InterviewDTO getInterview(UUID interviewId) {
+    public InterviewDTO getInterview(Integer interviewId) {
         Interview interview = interviewRepository
                 .findById(interviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
@@ -94,7 +93,7 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public List<InterviewDTO> getInterviewsByCandidate(UUID candidateId) {
+    public List<InterviewDTO> getInterviewsByCandidate(Integer candidateId) {
         return interviewRepository.findByCandidateId(candidateId).stream()
                 .map(interviewMapper::toDTO)
                 .toList();

@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.CandidateStatus;
 import jakarta.persistence.*;
@@ -18,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Candidate {
     @Id
-    @GeneratedValue
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Column(name = "first_name", nullable = false)
     String firstName;

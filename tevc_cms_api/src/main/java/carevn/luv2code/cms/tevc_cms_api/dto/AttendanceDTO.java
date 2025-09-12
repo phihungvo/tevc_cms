@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
-import java.util.UUID;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.AttendanceStatus;
 import lombok.AccessLevel;
@@ -11,9 +10,9 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AttendanceDTO {
-    UUID id;
+    Integer id;
 
-    UUID employeeId;
+    Integer employeeId;
 
     String employeeName;
 
