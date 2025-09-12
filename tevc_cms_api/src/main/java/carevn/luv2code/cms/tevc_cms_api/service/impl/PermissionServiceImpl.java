@@ -1,108 +1,179 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.PermissionDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreatePermissionRequest;
 import carevn.luv2code.cms.tevc_cms_api.entity.Permission;
-import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
-import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
+import carevn.luv2code.cms.tevc_cms_api.enums.HttpMethod;
+import carevn.luv2code.cms.tevc_cms_api.mapper.PermissionMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.PermissionRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.PermissionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PermissionServiceImpl implements PermissionService {
     private final PermissionRepository permissionRepository;
+    private final PermissionMapper permissionMapper;
 
-    @Override
-    @Transactional
-    public PermissionDTO createPermission(PermissionDTO permissionDTO) {
-        if (permissionRepository
-                .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
-                .isPresent()) {
-            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
-        }
+    //    @Override
+    //    @Transactional
+    //    public PermissionDTO createPermission(PermissionDTO permissionDTO) {
+    //        if (permissionRepository
+    //                .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
+    //                .isPresent()) {
+    //            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
+    //        }
+    //
+    //        Permission permission = new Permission();
 
+    /// /        permission.setResource(permissionDTO.getResource());
+    /// /        permission.setAction(permissionDTO.getAction());
+    //
+    //        Permission savedPermission = permissionRepository.save(permission);
+    //        return convertToDTO(savedPermission);
+    //    }
+    public Permission createPermission(String name, String description, String apiEndpoint, HttpMethod httpMethod) {
         Permission permission = new Permission();
-        permission.setResource(permissionDTO.getResource());
-        permission.setAction(permissionDTO.getAction());
-
-        Permission savedPermission = permissionRepository.save(permission);
-        return convertToDTO(savedPermission);
+        permission.setName(name);
+        permission.setDescription(description);
+        permission.setApiEndpoint(apiEndpoint);
+        permission.setHttpMethod(httpMethod);
+        return permissionRepository.save(permission);
     }
 
-    @Override
-    @Transactional
-    public PermissionDTO updatePermission(UUID id, PermissionDTO permissionDTO) {
-        Permission permission =
-                permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
+    //    @Override
+    //    @Transactional
+    //    public PermissionDTO updatePermission(UUID id, PermissionDTO permissionDTO) {
+    ////        Permission permission =
+    ////                permissionRepository.findById(id).orElseThrow(() -> new
+    // AppException(ErrorCode.PERMISSION_NOT_FOUND));
+    //
+    //        // Check if new resource:action combination exists
+    ////        if ((!permission.getResource().equals(permissionDTO.getResource())
+    ////                        || !permission.getAction().equals(permissionDTO.getAction()))
+    ////                && permissionRepository
+    ////                        .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
+    ////                        .isPresent()) {
+    ////            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
+    ////        }
+    ////
+    ////        permission.setResource(permissionDTO.getResource());
+    ////        permission.setAction(permissionDTO.getAction());
+    //
 
-        // Check if new resource:action combination exists
-        if ((!permission.getResource().equals(permissionDTO.getResource())
-                        || !permission.getAction().equals(permissionDTO.getAction()))
-                && permissionRepository
-                        .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
-                        .isPresent()) {
-            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
-        }
+    /// /        Permission updatedPermission = permissionRepository.save(permission);
+    /// /        return convertToDTO(updatedPermission);
+    //    }
 
-        permission.setResource(permissionDTO.getResource());
-        permission.setAction(permissionDTO.getAction());
+    //    @Override
+    //    @Transactional
+    //    public void deletePermission(UUID id) {
+    //        Permission permission =
+    //                permissionRepository.findById(id).orElseThrow(() -> new
+    // AppException(ErrorCode.PERMISSION_NOT_FOUND));
+    //
+    //        // Remove permission from all roles first
+    //        permission.getRoles().forEach(role -> {
+    //            role.getPermissions().remove(permission);
+    //        });
+    //
+    //        // Remove permission from all users that have it directly
+    //        //        permission.getUsers().forEach(user -> {
+    //        //            user.getPermissions().remove(permission);
+    //        //        });
+    //
+    //        permissionRepository.delete(permission);
+    //    }
 
-        Permission updatedPermission = permissionRepository.save(permission);
-        return convertToDTO(updatedPermission);
-    }
-
-    @Override
-    @Transactional
-    public void deletePermission(UUID id) {
-        Permission permission =
-                permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
-
-        // Remove permission from all roles first
-        permission.getRoles().forEach(role -> {
-            role.getPermissions().remove(permission);
-        });
-
-        // Remove permission from all users that have it directly
-        //        permission.getUsers().forEach(user -> {
-        //            user.getPermissions().remove(permission);
-        //        });
-
-        permissionRepository.delete(permission);
-    }
-
-    @Override
-    public PermissionDTO getPermission(UUID id) {
-        Permission permission =
-                permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
-        return convertToDTO(permission);
-    }
-
-    @Override
-    public Page<PermissionDTO> getAllPermissions(int page, int size) {
-        return permissionRepository.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
-    }
-
+    //    @Override
+    //    public PermissionDTO getPermission(UUID id) {
+    //        Permission permission =
+    //                permissionRepository.findById(id).orElseThrow(() -> new
+    // AppException(ErrorCode.PERMISSION_NOT_FOUND));
+    //        return convertToDTO(permission);
+    //    }
+    //    @Override
+    //    public Page<PermissionDTO> getAllPermissions(int page, int size) {
+    //        return permissionRepository.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
+    //    }
+    //
+    //        @Override
+    //        public List<Permission> getAllPermissions() {
+    //            return permissionRepository.findAll();
+    //        }
+    //
+    //    @Override
+    //    public Permission getPermissionById(Integer id) {
+    //        return permissionRepository.findById(id)
+    //                .orElseThrow(() -> new RuntimeException("Permission not found"));
+    //    }
+    //
+    //    @Override
+    //    public void deletePermission(Integer id) {
+    //        permissionRepository.deleteById(id);
+    //    }
+    //
     @Override
     public List<PermissionDTO> getAllPermissionsNoPaging() {
         List<Permission> permissions = permissionRepository.findAll();
         return permissions.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @CacheEvict(
+            value = {"userPermissions", "rolePermissions"},
+            allEntries = true)
+    public PermissionDTO createPermission(CreatePermissionRequest request) {
+        if (permissionRepository.existsByName(request.getName())) {
+            throw new RuntimeException("Permission name already exists");
+        }
+
+        Permission permission = new Permission();
+        permission.setName(request.getName());
+        permission.setDescription(request.getDescription());
+        permission.setApiEndpoint(request.getApiEndpoint());
+        permission.setHttpMethod(request.getHttpMethod());
+        permission.setResourcePattern(request.getResourcePattern());
+
+        Permission savedPermission = permissionRepository.save(permission);
+        return permissionMapper.toDTO(savedPermission);
+    }
+
+    @Override
+    @Cacheable(value = "userPermissions", key = "#username")
+    public List<Permission> getUserPermissions(String username) {
+        Set<Permission> permissions = permissionRepository.findPermissionsByUsername(username);
+        return permissions.stream().toList();
+    }
+
+    @Override
+    public boolean hasPermissionForEndpoint(String username, String endpoint, String method) {
+        try {
+            HttpMethod httpMethod = HttpMethod.valueOf(method.toUpperCase());
+            List<Permission> permissions =
+                    permissionRepository.findUserPermissionsForEndpoint(username, endpoint, endpoint, httpMethod);
+            return !permissions.isEmpty();
+        } catch (Exception e) {
+            log.error("Error checking permission for user {} on {} {}", username, method, endpoint, e);
+            return false;
+        }
+    }
+
     private PermissionDTO convertToDTO(Permission permission) {
         PermissionDTO dto = new PermissionDTO();
-        dto.setId(permission.getId());
-        dto.setResource(permission.getResource());
-        dto.setAction(permission.getAction());
+        dto.setName(permission.getName());
+        // dto.setId(permission.getId());
+        //        dto.setResource(permission.getResource());
+        //        dto.setAction(permission.getAction());
         dto.setDescription(permission.getDescription());
 
         return dto;

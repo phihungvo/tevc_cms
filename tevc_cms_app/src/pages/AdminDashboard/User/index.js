@@ -35,11 +35,11 @@ function User() {
     const baseColumns = [
         {
             title: 'User Name',
-            dataIndex: 'userName',
-            key: 'userName',
+            dataIndex: 'username',
+            key: 'username',
             width: 150,
             fixed: 'left',
-            onFilter: (value, record) => record.userName.toLowerCase().startsWith(value.toLowerCase()),
+            onFilter: (value, record) => record.username.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
             title: 'Email',
@@ -146,7 +146,7 @@ function User() {
     const userModalFields = [
         {
             label: 'User Name',
-            name: 'userName',
+            name: 'username',
             type: 'text',
             rules: [{ required: true, message: 'User Name is required!' }],
         },
@@ -259,7 +259,7 @@ function User() {
             console.log('per Response: ', perResponse);
             if (perResponse && Array.isArray(perResponse)) {
                 const permissions = perResponse.map((per) => ({
-                    label: per.resource + ' - ' + per.action,
+                    label: per.name,
                     value: per.id,
                 }));
                 setPermissionOptions(permissions);

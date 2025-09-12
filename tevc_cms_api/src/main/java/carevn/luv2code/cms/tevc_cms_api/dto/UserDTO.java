@@ -1,49 +1,27 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.Set;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Data
 public class UserDTO {
+    private Long id;
 
-    UUID id;
+    private String username;
 
-    String userName;
+    private String email;
 
-    String firstName;
+    private String fullName;
 
-    String lastName;
+    private String phoneNumber;
 
-    String email;
+    private Boolean enabled;
 
-    String password;
+    private LocalDateTime createdAt;
 
-    String address;
+    private LocalDateTime updatedAt;
 
-    String phoneNumber;
-
-    String profilePicture;
-
-    String bio;
-
-    boolean enabled;
-
-    List<UUID> roles;
-
-    List<String> roleNames;
-
-    List<UUID> permissions;
-
-    Date createAt;
-
-    Date updateAt;
+    private Set<RoleDTO> roles;
 }
