@@ -1,5 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.RoleDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignPermissionRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateRoleRequest;
@@ -20,10 +24,10 @@ public interface RoleService {
     //
     //    RoleDTO getRole(UUID id);
     //
-    //    Page<RoleDTO> getAllRoles(int page, int size);
-    //
-    //    List<RoleDTO> getAllRolesNoPaging();
-    //
+    Page<RoleDTO> getAllRoles(int page, int size);
+
+    List<RoleDTO> getAllRolesNoPaging();
+
     //    void assignPermissionsToRole(UUID roleId, List<UUID> permissionIds);
     //
     //    void removePermissionFromRole(UUID roleId, UUID permissionId);

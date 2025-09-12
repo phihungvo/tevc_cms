@@ -1,5 +1,8 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import carevn.luv2code.cms.tevc_cms_api.dto.RoleDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignPermissionRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateRoleRequest;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 import carevn.luv2code.cms.tevc_cms_api.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +33,15 @@ public class RoleController {
         return ResponseEntity.ok(role);
     }
 
-    //    @PostMapping
-    //    //    @PreAuthorize("hasAuthority('ROLE:CREATE')")
-    //    public ResponseEntity<ApiResponse<RoleDTO>> createRole(@RequestBody RoleDTO roleDTO) {
-    //        RoleDTO created = roleService.createRole(roleDTO);
-    //        return ResponseEntity.ok(ApiResponse.<RoleDTO>builder()
-    //                .code(200)
-    //                .message("Role created successfully")
-    //                .result(created)
-    //                .build());
-    //    }
+    //        @PostMapping
+    //        public ResponseEntity<ApiResponse<RoleDTO>> createRole(@RequestBody CreateRoleRequest request) {
+    //            RoleDTO created = roleService.createRole(roleDTO);
+    //            return ResponseEntity.ok(ApiResponse.<RoleDTO>builder()
+    //                    .code(200)
+    //                    .message("Role created successfully")
+    //                    .result(created)
+    //                    .build());
+    //        }
     //
     //    @PatchMapping("/{id}")
     //    //    @PreAuthorize("hasAuthority('ROLE:UPDATE')")
@@ -60,23 +63,22 @@ public class RoleController {
     //                .build());
     //    }
     //
-    //    @GetMapping
-    //    //    @PreAuthorize("hasAuthority('ROLE:READ')")
-    //    public ResponseEntity<ApiResponse<Page<RoleDTO>>> getAllRoles(
-    //            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-    //        return ResponseEntity.ok(ApiResponse.<Page<RoleDTO>>builder()
-    //                .code(200)
-    //                .result(roleService.getAllRoles(page, size))
-    //                .build());
-    //    }
-    //
-    //    @GetMapping("/noPaging")
-    //    public ResponseEntity<ApiResponse<List<RoleDTO>>> getAllRolesNoPaging() {
-    //        return ResponseEntity.ok(ApiResponse.<List<RoleDTO>>builder()
-    //                .code(200)
-    //                .result(roleService.getAllRolesNoPaging())
-    //                .build());
-    //    }
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<RoleDTO>>> getAllRoles(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(ApiResponse.<Page<RoleDTO>>builder()
+                .code(200)
+                .result(roleService.getAllRoles(page, size))
+                .build());
+    }
+
+    @GetMapping("/noPaging")
+    public ResponseEntity<ApiResponse<List<RoleDTO>>> getAllRolesNoPaging() {
+        return ResponseEntity.ok(ApiResponse.<List<RoleDTO>>builder()
+                .code(200)
+                .result(roleService.getAllRolesNoPaging())
+                .build());
+    }
     //
     //    @PostMapping("/{roleId}/permissions")
     //    @PreAuthorize("hasAuthority('ROLE:UPDATE')")

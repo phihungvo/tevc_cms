@@ -171,7 +171,7 @@ public class PermissionServiceImpl implements PermissionService {
     private PermissionDTO convertToDTO(Permission permission) {
         PermissionDTO dto = new PermissionDTO();
         dto.setName(permission.getName());
-        // dto.setId(permission.getId());
+        dto.setId(permission.getId());
         //        dto.setResource(permission.getResource());
         //        dto.setAction(permission.getAction());
         dto.setDescription(permission.getDescription());

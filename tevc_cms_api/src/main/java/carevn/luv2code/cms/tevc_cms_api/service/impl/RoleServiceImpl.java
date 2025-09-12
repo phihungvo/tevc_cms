@@ -1,8 +1,11 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.RoleDTO;
@@ -173,16 +176,16 @@ public class RoleServiceImpl implements RoleService {
     //        return convertToDTO(role);
     //    }
     //
-    //    @Override
-    //    public Page<RoleDTO> getAllRoles(int page, int size) {
-    //        return roleRepository.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
-    //    }
-    //
-    //    @Override
-    //    public List<RoleDTO> getAllRolesNoPaging() {
-    //        List<Role> roles = roleRepository.findAll();
-    //        return roles.stream().map(this::convertToDTO).collect(Collectors.toList());
-    //    }
+    @Override
+    public Page<RoleDTO> getAllRoles(int page, int size) {
+        return roleRepository.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
+    }
+
+    @Override
+    public List<RoleDTO> getAllRolesNoPaging() {
+        List<Role> roles = roleRepository.findAll();
+        return roles.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
     //
     //    @Override
     //    @Transactional
@@ -222,18 +225,18 @@ public class RoleServiceImpl implements RoleService {
     //                .collect(Collectors.toSet());
     //    }
     //
-    //    private RoleDTO convertToDTO(Role role) {
-    //        RoleDTO dto = new RoleDTO();
-    //        dto.setId(role.getId());
-    //        dto.setName(role.getName());
-    //        dto.setDescription(role.getDescription());
-    //
-    //        //        if (role.getPermissions() != null) {
-    //        //            Set<UUID> permissions =
-    //        //                    role.getPermissions().stream().map(Permission::getId).collect(Collectors.toSet());
-    //        //            dto.setPermissions(permissions);
-    //        //        }
-    //
-    //        return dto;
-    //    }
+    private RoleDTO convertToDTO(Role role) {
+        RoleDTO dto = new RoleDTO();
+        dto.setId(role.getId());
+        dto.setName(role.getName());
+        dto.setDescription(role.getDescription());
+
+        //        if (role.getPermissions() != null) {
+        //            Set<UUID> permissions =
+        //                    role.getPermissions().stream().map(Permission::getId).collect(Collectors.toSet());
+        //            dto.setPermissions(permissions);
+        //        }
+
+        return dto;
+    }
 }

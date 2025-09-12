@@ -59,12 +59,12 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_permissions",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    Set<Permission> permissions;
+    //    @ManyToMany(fetch = FetchType.EAGER)
+    //    @JoinTable(
+    //            name = "user_permissions",
+    //            joinColumns = @JoinColumn(name = "user_id"),
+    //            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    //    Set<Permission> permissions;
 
     boolean enabled = true;
 
@@ -87,11 +87,11 @@ public class User implements UserDetails {
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
             });
         }
-        if (permissions != null) {
-            permissions.forEach(permission -> {
-                authorities.add(new SimpleGrantedAuthority(permission.getName()));
-            });
-        }
+        //        if (permissions != null) {
+        //            permissions.forEach(permission -> {
+        //                authorities.add(new SimpleGrantedAuthority(permission.getName()));
+        //            });
+        //        }
         return authorities;
     }
 
