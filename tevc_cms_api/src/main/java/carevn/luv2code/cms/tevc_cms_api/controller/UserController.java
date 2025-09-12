@@ -1,5 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,13 +56,13 @@ public class UserController {
     //                .build();
     //    }
     //
-    //    @GetMapping("/getAll")
-    //    //    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
-    //    public ResponseEntity<Page<UserDTO>> findAll(
-    //            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-    //        Page<UserDTO> users = userService.findAll(page, size);
-    //        return ResponseEntity.ok(users);
-    //    }
+    @GetMapping("/getAll")
+    //    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
+    public ResponseEntity<Page<UserDTO>> findAll(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Page<UserDTO> users = userService.findAll(page, size);
+        return ResponseEntity.ok(users);
+    }
     //
     //    @PostMapping("/createUser")
     //    //    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")

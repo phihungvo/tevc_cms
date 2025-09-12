@@ -26,7 +26,7 @@ public interface PermissionService {
     //
     //    Page<PermissionDTO> getAllPermissions(int page, int size);
     //
-    //    List<PermissionDTO> getAllPermissionsNoPaging();
+    List<PermissionDTO> getAllPermissionsNoPaging();
 
     PermissionDTO createPermission(CreatePermissionRequest request);
 

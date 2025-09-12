@@ -1,7 +1,12 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import carevn.luv2code.cms.tevc_cms_api.dto.PermissionDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 import carevn.luv2code.cms.tevc_cms_api.service.PermissionService;
 import lombok.RequiredArgsConstructor;
 
@@ -51,14 +56,14 @@ public class PermissionController {
     //                .build());
     //    }
 
-    //    @GetMapping("/noPaging")
-    //    //    @PreAuthorize("hasAuthority('PERMISSION:READ')")
-    //    public ResponseEntity<ApiResponse<java.util.List<PermissionDTO>>> getAllPermissionsNoPaging() {
-    //        return ResponseEntity.ok(ApiResponse.<java.util.List<PermissionDTO>>builder()
-    //                .code(200)
-    //                .result(permissionService.getAllPermissionsNoPaging())
-    //                .build());
-    //    }
+    @GetMapping("/noPaging")
+    //    @PreAuthorize("hasAuthority('PERMISSION:READ')")
+    public ResponseEntity<ApiResponse<List<PermissionDTO>>> getAllPermissionsNoPaging() {
+        return ResponseEntity.ok(ApiResponse.<java.util.List<PermissionDTO>>builder()
+                .code(200)
+                .result(permissionService.getAllPermissionsNoPaging())
+                .build());
+    }
 
     //    @DeleteMapping("/{id}")
     //    @PreAuthorize("hasAuthority('PERMISSION:DELETE')")

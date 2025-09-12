@@ -8,7 +8,7 @@ const cx = classNames.bind(styles);
 function Avatar() {
     const navigate = useNavigate();
     const { user } = useAuth();
-    console.log('user: ', user)
+    // console.log('user: ', user)
 
     const handleLogin = () => {
         navigate('/login');

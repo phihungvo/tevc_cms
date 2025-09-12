@@ -55,7 +55,6 @@ public class DynamicAuthorizationFilter extends OncePerRequestFilter {
         String requestPath = request.getRequestURI();
         String requestMethod = request.getMethod();
 
-
         // Bỏ qua các endpoint công khai
         if (isPublicEndpoint(requestPath)) {
             filterChain.doFilter(request, response);

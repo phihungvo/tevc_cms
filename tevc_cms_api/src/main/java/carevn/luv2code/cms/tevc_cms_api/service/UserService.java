@@ -1,5 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
+import org.springframework.data.domain.Page;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.UserDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignRoleRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateUserRequest;
@@ -19,7 +21,7 @@ public interface UserService {
 
     //    void updateUser(UUID userId, UserUpdateRequest request);
 
-    //    Page<UserDTO> findAll(int page, int size);
+    Page<UserDTO> findAll(int page, int size);
 
     //    void deleteUser(UUID userId);
 

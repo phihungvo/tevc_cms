@@ -5,6 +5,9 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -168,11 +171,11 @@ public class UserServiceImpl implements UserService {
     //        userRepository.save(user);
     //    }
 
-    //    @Override
-    //    public Page<UserDTO> findAll(int page, int size) {
-    //        Pageable pageable = PageRequest.of(page, size);
-    //        return userRepository.findAll(pageable).map(this::convertToDTO);
-    //    }
+    @Override
+    public Page<UserDTO> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable).map(this::convertToDTO);
+    }
 
     //    @Override
     //    public void deleteUser(UUID userId) {
@@ -252,36 +255,36 @@ public class UserServiceImpl implements UserService {
     //                .collect(Collectors.toSet());
     //    }
     //
-    //    private UserDTO convertToDTO(User user) {
-    //        UserDTO dto = new UserDTO();
-    //        dto.setId(user.getId());
-    //        dto.setUserName(user.getUserName());
-    //        dto.setFirstName(user.getFirstName());
-    //        dto.setLastName(user.getLastName());
-    //        dto.setPassword(user.getPassword());
-    //        dto.setEmail(user.getEmail());
-    //        dto.setBio(user.getBio());
-    //        dto.setAddress(user.getAddress());
-    //        dto.setPhoneNumber(user.getPhoneNumber());
-    //        dto.setEnabled(user.isEnabled());
-    //        dto.setProfilePicture(user.getProfilePicture());
-    //
-    //        //        if (user.getRoles() != null) {
-    //        //            List<UUID> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toList());
-    //        //            dto.setRoles(roleIds);
-    //        //
-    //        //            dto.setRoleNames(user.getRoles().stream()
-    //        //                    .map(Role::getName)
-    //        //                    .filter(Objects::nonNull)
-    //        //                    .collect(Collectors.toList()));
-    //        //        }
-    //        //
-    //        //        if (user.getPermissions() != null) {
-    //        //            List<UUID> permissions =
-    //        //                    user.getPermissions().stream().map(Permission::getId).collect(Collectors.toList());
-    //        //            dto.setPermissions(permissions);
-    //        //        }
-    //
-    //        return dto;
-    //    }
+    private UserDTO convertToDTO(User user) {
+        UserDTO dto = new UserDTO();
+        //            dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        //            dto.setFirstName(user.getFirstName());
+        //            dto.setLastName(user.getLastName());
+        //            dto.setPassword(user.getPassword());
+        dto.setEmail(user.getEmail());
+        //            dto.setBio(user.getBio());
+        //            dto.setAddress(user.getAddress());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setEnabled(user.isEnabled());
+        //            dto.setProfilePicture(user.getProfilePicture());
+
+        //        if (user.getRoles() != null) {
+        //            List<UUID> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toList());
+        //            dto.setRoles(roleIds);
+        //
+        //            dto.setRoleNames(user.getRoles().stream()
+        //                    .map(Role::getName)
+        //                    .filter(Objects::nonNull)
+        //                    .collect(Collectors.toList()));
+        //        }
+        //
+        //        if (user.getPermissions() != null) {
+        //            List<UUID> permissions =
+        //                    user.getPermissions().stream().map(Permission::getId).collect(Collectors.toList());
+        //            dto.setPermissions(permissions);
+        //        }
+
+        return dto;
+    }
 }

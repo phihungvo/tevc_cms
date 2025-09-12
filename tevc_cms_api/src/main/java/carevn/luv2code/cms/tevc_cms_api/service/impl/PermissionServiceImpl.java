@@ -2,6 +2,7 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -106,10 +107,10 @@ public class PermissionServiceImpl implements PermissionService {
     //        return permissionRepository.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
     //    }
     //
-    //    @Override
-    //    public List<Permission> getAllPermissions() {
-    //        return permissionRepository.findAll();
-    //    }
+    //        @Override
+    //        public List<Permission> getAllPermissions() {
+    //            return permissionRepository.findAll();
+    //        }
     //
     //    @Override
     //    public Permission getPermissionById(Integer id) {
@@ -122,11 +123,11 @@ public class PermissionServiceImpl implements PermissionService {
     //        permissionRepository.deleteById(id);
     //    }
     //
-    //    @Override
-    //    public List<PermissionDTO> getAllPermissionsNoPaging() {
-    //        List<Permission> permissions = permissionRepository.findAll();
-    //        return permissions.stream().map(this::convertToDTO).collect(Collectors.toList());
-    //    }
+    @Override
+    public List<PermissionDTO> getAllPermissionsNoPaging() {
+        List<Permission> permissions = permissionRepository.findAll();
+        return permissions.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
 
     @CacheEvict(
             value = {"userPermissions", "rolePermissions"},
@@ -167,13 +168,14 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
-    //    private PermissionDTO convertToDTO(Permission permission) {
-    //        PermissionDTO dto = new PermissionDTO();
-    //        dto.setId(permission.getId());
-    ////        dto.setResource(permission.getResource());
-    ////        dto.setAction(permission.getAction());
-    //        dto.setDescription(permission.getDescription());
-    //
-    //        return dto;
-    //    }
+    private PermissionDTO convertToDTO(Permission permission) {
+        PermissionDTO dto = new PermissionDTO();
+        dto.setName(permission.getName());
+        // dto.setId(permission.getId());
+        //        dto.setResource(permission.getResource());
+        //        dto.setAction(permission.getAction());
+        dto.setDescription(permission.getDescription());
+
+        return dto;
+    }
 }

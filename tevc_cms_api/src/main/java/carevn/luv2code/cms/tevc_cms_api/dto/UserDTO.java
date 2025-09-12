@@ -8,11 +8,20 @@ import lombok.Data;
 @Data
 public class UserDTO {
     private Long id;
+
     private String username;
+
     private String email;
+
     private String fullName;
+
+    private String phoneNumber;
+
     private Boolean enabled;
+
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
+
     private Set<RoleDTO> roles;
 }

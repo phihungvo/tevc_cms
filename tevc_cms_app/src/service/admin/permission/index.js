@@ -1,17 +1,15 @@
 import axios from 'axios';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
+import {getToken, setToken} from '~/constants/token';
+import apiClient from "~/service/api/api";
+import axiosInstance from '~/utils/axiosInstance';
 import { message } from 'antd';
 
 
 export const getAllPermissions = async ({ page = 0, pageSize = 5 }) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.PERMISSION.GET_ALL, {
+        const response = await axiosInstance.get(API_ENDPOINTS.PERMISSION.GET_ALL, {
             params: { page, pageSize },
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
         });
         
         return response.data.result; 
@@ -24,12 +22,7 @@ export const getAllPermissions = async ({ page = 0, pageSize = 5 }) => {
 
 export const getAllPermissionsNoPaging = async () => {
     try {
-        const response = await axios.get(API_ENDPOINTS.PERMISSION.GET_ALL_NO_PAGING, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await axiosInstance.get(API_ENDPOINTS.PERMISSION.GET_ALL_NO_PAGING);
         
         return response.data.result; 
     } catch (error) {
