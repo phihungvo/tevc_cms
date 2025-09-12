@@ -1,7 +1,11 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,11 +18,12 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @Entity
 @Table(name = "roles")
+@ToString(exclude = {"users", "permissions"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role {
     @Id
     @GeneratedValue
-    UUID id;
+    Integer id;
 
     @Column(unique = true, nullable = false)
     String name;
@@ -31,11 +36,23 @@ public class Role {
             name = "role_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    Set<Permission> permissions;
+    Set<Permission> permissions = new HashSet<>();
 
     // User
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    Set<User> users;
+    Set<User> users = new HashSet<>();
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + name));
+        for (Permission permission : permissions) {
+            authorities.add(new SimpleGrantedAuthority(permission.getName()));
+        }
+        return authorities;
+    }
+
+    //    @PreUpdate
+    //    public void preUpdate() {
+    //        this.updatedAt = LocalDateTime.now();
+    //    }
 }

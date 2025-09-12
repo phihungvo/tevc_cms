@@ -1,15 +1,18 @@
 package carevn.luv2code.cms.tevc_cms_api.security;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.AuthRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.RegisterRequest;
-import carevn.luv2code.cms.tevc_cms_api.entity.Permission;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.AuthResponse;
 import carevn.luv2code.cms.tevc_cms_api.entity.Role;
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
@@ -27,38 +30,47 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public String register(RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
+    public AuthResponse login(AuthRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        User user = (User) authentication.getPrincipal();
+        String jwt = jwtService.generateToken(user);
+
+        return AuthResponse.builder()
+                .token(jwt)
+                .username(user.getUsername())
+                .roles(user.getRoles().stream().map(Role::getName).toList())
+                .build();
+    }
+
+    public AuthResponse register(RegisterRequest request) {
+        if (userRepository.existsByUserName(request.getUsername())) {
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         User user = new User();
         user.setUserName(request.getUsername());
-        user.setCreateAt(new Date());
-        user.setEmail(request.getEmail());
+        user.setFullName(request.getFullName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setEmail(request.getEmail());
+        user.setCreateAt(new Date());
+        user.setEnabled(true);
 
         // Gán vai trò mặc định
-        Set<Role> roles = request.getRoles() != null && !request.getRoles().isEmpty()
-                ? request.getRoles().stream()
-                        .map(name -> roleRepository
-                                .findByName(String.valueOf(name))
-                                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
-                        .collect(Collectors.toSet())
-                : Collections.singleton(roleRepository
-                        .findByName("USER")
-                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)));
-        user.setRoles(roles);
+        Role userRole = roleRepository.findByName("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        user.setRoles(Set.of(userRole));
 
-        // Gán quyền mặc định cho USER
-        Permission readPermission = permissionRepository
-                .findByResourceAndAction("USER", "READ")
-                .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
-        user.setPermissions(Collections.singleton(readPermission));
+        User savedUser = userRepository.save(user);
+        String jwt = jwtService.generateToken(savedUser);
 
-        userRepository.save(user);
-
-        return jwtService.generateToken(user);
+        return AuthResponse.builder()
+                .token(jwt)
+                .username(savedUser.getUsername())
+                .roles(savedUser.getRoles().stream().map(Role::getName).toList())
+                .build();
     }
 }

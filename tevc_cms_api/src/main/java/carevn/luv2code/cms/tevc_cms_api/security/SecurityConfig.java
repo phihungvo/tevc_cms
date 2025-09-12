@@ -1,11 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.security;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -34,53 +32,29 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF for REST APIs
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
-                                "/api/auth/**",
-                                "/api/roles/**",
-                                "/api/permissions/**",
-                                "/api/employees/**",
-                                "/api/positions/**",
-                                "/api/employees/position-type",
-                                "/api/departments/**",
-                                "/api/leaves/**",
-                                "/api/payrolls/**",
-                                "/api/export/excel/**",
-                                "/api/attendances/**",
-                                "/api/candidates/**",
-                                "/api/interviews/**",
-                                "/api/payrolls/process/**")
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/public/**",
+                                "/actuator/health",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**")
                         .permitAll()
-                        .requestMatchers("/api/user/createUser")
-                        .hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers("/api/user/getAll")
-                        .hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers(HttpMethod.PUT, "/api/user/{id}/update")
-                        .permitAll()
-                        .requestMatchers("/api/user/**")
-                        .hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers("/api/admin/**")
-                        .hasAnyAuthority("USER:READ", "ADMIN:MANAGE")
-                        .requestMatchers("/api/moderator/**")
-                        .hasAnyAuthority("COMMENT:MODERATE", "ADMIN:MANAGE")
-                        .requestMatchers("/api/storage/**")
-                        .hasAnyAuthority("STORAGE:READ", "STORAGE:WRITE")
-                        .requestMatchers("/admin/**")
-                        .hasRole("ADMIN") // Protect admin endpoints
                         .anyRequest()
                         .authenticated())
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.setAllowedOrigins(
                             List.of("http://localhost:3000", "https://", "https://2946f7d48d6d.ngrok-free.app"));
-                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                    configuration.setAllowedHeaders(List.of("*"));
-                    configuration.setAllowCredentials(true);
                     return configuration;
                 }))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

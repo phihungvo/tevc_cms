@@ -14,11 +14,11 @@ import carevn.luv2code.cms.tevc_cms_api.entity.User;
 public interface UserMapper {
 
     @Mapping(target = "roles", ignore = true)
-    @Mapping(target = "permissions", ignore = true)
+    //    @Mapping(target = "permissions", ignore = true)
     UserDTO toDTO(User user);
 
     @Mapping(target = "roles", ignore = true)
-    @Mapping(target = "permissions", ignore = true)
+    //    @Mapping(target = "permissions", ignore = true)
     User toEntity(UserDTO userDTO);
 
     @Mapping(target = "roles", ignore = true)
