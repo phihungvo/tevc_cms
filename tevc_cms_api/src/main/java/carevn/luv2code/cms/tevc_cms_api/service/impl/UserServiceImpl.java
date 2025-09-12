@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import carevn.luv2code.cms.tevc_cms_api.dto.UserDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignRoleRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateUserRequest;
-import carevn.luv2code.cms.tevc_cms_api.dto.requests.UpdateUserRequest;
 import carevn.luv2code.cms.tevc_cms_api.entity.Role;
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import carevn.luv2code.cms.tevc_cms_api.mapper.UserMapper;
@@ -38,7 +37,6 @@ public class UserServiceImpl implements UserService {
     private EntityManager entityManager;
 
     private final UserRepository userRepository;
-    private final PermissionRepository permissionRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
 
@@ -50,7 +48,6 @@ public class UserServiceImpl implements UserService {
             UserMapper userMapper) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
-        this.permissionRepository = permissionRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
     }
@@ -124,15 +121,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @CacheEvict(value = "userPermissions", allEntries = true)
-    public UserDTO updateUser(Integer id, UpdateUserRequest request) {
+    public UserDTO updateUser(Integer id, UserDTO request) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
         if (request.getEmail() != null) {
             user.setEmail(request.getEmail());
         }
-        if (request.getFullName() != null) {
-            user.setFullName(request.getFullName());
-        }
+
         if (request.getEnabled() != null) {
             user.setEnabled(request.getEnabled());
         }
@@ -222,13 +217,14 @@ public class UserServiceImpl implements UserService {
     ////        Set<Permission> allPermissions = new HashSet<>(user.getPermissions());
     //
     //        // Add permissions from roles
-    ////        user.getRoles().forEach(role -> {
-    ////            allPermissions.addAll(role.getPermissions());
-    ////        });
-    ////
-    ////        return allPermissions.stream()
-    ////                .map(p -> p.getResource() + ":" + p.getAction())
-    ////                .collect(Collectors.toList());
+
+    /// /        user.getRoles().forEach(role -> {
+    /// /            allPermissions.addAll(role.getPermissions());
+    /// /        });
+    /// /
+    /// /        return allPermissions.stream()
+    /// /                .map(p -> p.getResource() + ":" + p.getAction())
+    /// /                .collect(Collectors.toList());
     //    }
 
     //    @Override
@@ -257,20 +253,18 @@ public class UserServiceImpl implements UserService {
     //
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
-        //            dto.setId(user.getId());
+        dto.setId(user.getId());
         dto.setUsername(user.getUsername());
-        //            dto.setFirstName(user.getFirstName());
-        //            dto.setLastName(user.getLastName());
-        //            dto.setPassword(user.getPassword());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
-        //            dto.setBio(user.getBio());
-        //            dto.setAddress(user.getAddress());
+        dto.setAddress(user.getAddress());
         dto.setPhoneNumber(user.getPhoneNumber());
         dto.setEnabled(user.isEnabled());
-        //            dto.setProfilePicture(user.getProfilePicture());
+        dto.setProfilePicture(user.getProfilePicture());
 
         //        if (user.getRoles() != null) {
-        //            List<UUID> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toList());
+        //            Set<Integer> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toSet());
         //            dto.setRoles(roleIds);
         //
         //            dto.setRoleNames(user.getRoles().stream()

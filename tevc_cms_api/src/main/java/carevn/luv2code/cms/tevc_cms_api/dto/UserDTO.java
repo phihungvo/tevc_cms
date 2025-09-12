@@ -3,25 +3,34 @@ package carevn.luv2code.cms.tevc_cms_api.dto;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
-    private Integer id;
+    Integer id;
 
-    private String username;
+    String username;
 
-    private String email;
+    String firstName;
 
-    private String fullName;
+    String lastName;
 
-    private String phoneNumber;
+    String email;
 
-    private Boolean enabled;
+    String address;
 
-    private LocalDateTime createdAt;
+    String phoneNumber;
 
-    private LocalDateTime updatedAt;
+    String profilePicture;
 
-    private Set<RoleDTO> roles;
+    Boolean enabled;
+
+    LocalDateTime createdAt;
+
+    LocalDateTime updatedAt;
+
+    Set<Integer> roleIds;
 }

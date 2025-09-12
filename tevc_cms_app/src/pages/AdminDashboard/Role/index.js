@@ -89,7 +89,7 @@ function Role() {
         },
         {
             label: 'Permission',
-            name: 'permissions',
+            name: 'permissionIds',
             type: 'select',
             multiple: true,
             options: permissionOptions,
@@ -122,7 +122,6 @@ function Role() {
     const fetchPermissionOptions = async () => {
         try {
             const perResponse = await getAllPermissionsNoPaging();
-            console.log('Permission Response:', perResponse);
             if (perResponse && Array.isArray(perResponse)) {
                 const permissions = perResponse.map((per) => ({
                     label: per.name + ' ' + '(' + per.description + ')',
@@ -130,7 +129,7 @@ function Role() {
                 }));
                 setPermissionOptions(permissions);
             } else {
-                setPermissionOptions([]); // Đặt rỗng nếu dữ liệu không hợp lệ
+                setPermissionOptions([]);
                 console.error('Invalid permission response:', perResponse);
             }
         } catch (error) {
@@ -163,6 +162,7 @@ function Role() {
     };
 
     const handleCallUpdateRole = async (formData) => {
+        console.log(formData);
         await updateRole(selectedRole.id, formData);
         handleGetAllRoles();
         setIsModalOpen(false);

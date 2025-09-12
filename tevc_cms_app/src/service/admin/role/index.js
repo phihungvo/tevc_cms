@@ -1,17 +1,14 @@
-import axios from 'axios';
+import apiClient from '~/service/api/api';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
-import axiosInstance from '~/utils/axiosInstance';
-import { message } from 'antd';
+import {message} from 'antd';
 
-
-export const getAllRoles = async ({ page = 0, pageSize = 5 }) => {
+export const getAllRoles = async ({page = 0, pageSize = 5}) => {
     try {
-        const response = await axiosInstance.get(API_ENDPOINTS.ROLE.GET_ALL, {
-            params: { page, pageSize },
+        const response = await apiClient.get(API_ENDPOINTS.ROLE.GET_ALL, {
+            params: {page, pageSize},
         });
-        
-        return response.data.result; 
+
+        return response.data.result;
     } catch (error) {
         console.log('Error when fetching all role ! Error: ', error);
         message.error('Error get all role: ');
@@ -21,9 +18,9 @@ export const getAllRoles = async ({ page = 0, pageSize = 5 }) => {
 
 export const getAllRolesNoPaging = async () => {
     try {
-        const response = await axiosInstance.get(API_ENDPOINTS.ROLE.GET_ALL_NO_PAGING);
-        
-        return response.data.result; 
+        const response = await apiClient.get(API_ENDPOINTS.ROLE.GET_ALL_NO_PAGING);
+
+        return response.data.result;
     } catch (error) {
         message.error('Error get all role: ');
         return null;
@@ -32,50 +29,36 @@ export const getAllRolesNoPaging = async () => {
 
 export const createRole = async (formData) => {
     try {
-        const response = await axios.post(
-            API_ENDPOINTS.ROLE.CREATE,   
-            formData, 
+        const response = await apiClient.post(
+            API_ENDPOINTS.ROLE.CREATE,
+            formData,
         );
         message.success('Role created successfully');
         return response.data;
     } catch (error) {
-        console.error('Error when creating role: ', error); 
+        console.error('Error when creating role: ', error);
     }
 };
 
 export const updateRole = async (roleId, formData) => {
-    console.log('roleId:', roleId, 'formData:', formData);
-  
     try {
-      const response = await axios.patch(
-        API_ENDPOINTS.ROLE.UPDATE(roleId),
-        formData,                        
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-          }
-        }
-      );
-  
-      message.success('Role updated successfully');
-      return response.data;
+        console.log('role id: ',roleId);
+        console.log('form data: ',formData);
+        const response = await apiClient.patch(API_ENDPOINTS.ROLE.UPDATE(roleId), formData);
+
+        message.success('Role updated successfully');
+        return response.data;
     } catch (error) {
-      console.error('Error when updating role:', error);
-      message.error('Failed to update role');
-      throw error;
+        console.error('Error when updating role:', error);
+        message.error('Failed to update role');
+        throw error;
     }
-  };
-  
-  export const deleteRole = async (roleId) => {
+};
+
+export const deleteRole = async (roleId) => {
     try {
-        const response = await axios.delete(API_ENDPOINTS.ROLE.DELETE(roleId), {
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-              'Content-Type': 'application/json',
-            },
-          });
-         
+        const response = await apiClient.delete(API_ENDPOINTS.ROLE.DELETE(roleId));
+
         if (response.data) {
             message.success("Role deleted successfully!");
             return response.data.result;
@@ -86,5 +69,5 @@ export const updateRole = async (roleId, formData) => {
         console.log('Error when deleting Role! Error: ', errorMessage);
         message.error(errorMessage);
         throw error;
-    }            
+    }
 }

@@ -58,7 +58,6 @@ public class PermissionController {
     //    }
 
     @GetMapping("/noPaging")
-    //    @PreAuthorize("hasAuthority('PERMISSION:READ')")
     public ResponseEntity<ApiResponse<List<PermissionDTO>>> getAllPermissionsNoPaging() {
         return ResponseEntity.ok(ApiResponse.<java.util.List<PermissionDTO>>builder()
                 .code(200)

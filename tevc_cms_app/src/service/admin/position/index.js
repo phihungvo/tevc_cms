@@ -1,16 +1,10 @@
-import axios from 'axios';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
 import { message } from 'antd';
+import apiClient from '~/service/api/api';
 
 export const getAllPositions = async () => {
     try {
-        const response = await axios.get(API_ENDPOINTS.POSITION.GET_ALL, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await apiClient.get(API_ENDPOINTS.POSITION.GET_ALL);
         
         return response.data; 
     } catch (error) {
@@ -21,12 +15,7 @@ export const getAllPositions = async () => {
 
 export const getAllPositionsNoPaging = async () => {
     try {
-        const response = await axios.get(API_ENDPOINTS.POSITION.GET_ALL_NO_PAGING, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await apiClient.get(API_ENDPOINTS.POSITION.GET_ALL_NO_PAGING);
         
         return response.data; 
     } catch (error) {
@@ -35,10 +24,9 @@ export const getAllPositionsNoPaging = async () => {
     }
 };
 
-
 export const createPosition = async (formData) => {
     try {
-        const response = await axios.post(
+        const response = await apiClient.post(
             API_ENDPOINTS.POSITION.CREATE,   
             formData, 
         );
@@ -51,25 +39,21 @@ export const createPosition = async (formData) => {
 
 export const getAllByTitle = async (type) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.GET_EMPLOYEE_BY_POSITION_TYPE, {
-            params: { type },
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
+        const response = await apiClient.get(API_ENDPOINTS.EMPLOYEE.GET_EMPLOYEE_BY_POSITION_TYPE, {
+            params: { type }
         });
         console.log('employee data:', response.data);
-        return response.data; // Trả về danh sách PositionDTO
+        return response.data;
     } catch (error) {
         console.error('Failed to fetch positions:', error);
         message.error('Không thể tải danh sách vị trí');
-        return []; // Trả về mảng rỗng nếu có lỗi
+        return [];
     }
 };
 
 export const updatePosition = async (positionId, formData) => {
     try {
-        const response = await axios.patch(
+        const response = await apiClient.patch(
             API_ENDPOINTS.POSITION.UPDATE(positionId),   
             formData, 
         );
@@ -82,7 +66,7 @@ export const updatePosition = async (positionId, formData) => {
 
 export const deletePosition = async (positionId) => {
     try {
-        const response = await axios.delete(
+        const response = await apiClient.delete(
             API_ENDPOINTS.POSITION.DELETE(positionId),   
         );
         message.success('Position deleted successfully');

@@ -191,26 +191,15 @@ function User() {
         },
         {
             label: 'Role',
-            name: 'roles',
+            name: 'roleIds',
             type: 'select',
             multiple: true,
             options: roleOptions,
         },
-        // {
-        //     label: 'Permission',
-        //     name: 'permissions',
-        //     type: 'select',
-        //     options: permissionOptions,
-        // },
         {
             label: 'Enable',
             name: 'enabled',
             type: 'yesno',
-        },
-        {
-            label: 'Bio',
-            name: 'bio',
-            type: 'textarea',
         },
     ];
 
