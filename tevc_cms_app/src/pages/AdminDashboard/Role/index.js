@@ -16,12 +16,14 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
+import { getAllPermissionsNoPaging } from '~/service/admin/permission';
 import { getAllRoles, createRole, updateRole, deleteRole} from '~/service/admin/role';
 
 const cx = classNames.bind(styles);
 
 function Role() {
     const [userSource, setUserSource] = useState([]);
+     const [permissionOptions, setPermissionOptions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
@@ -85,6 +87,13 @@ function Role() {
             name: 'description',
             type: 'text',
         },
+        {
+            label: 'Permission',
+            name: 'permissions',
+            type: 'select',
+            multiple: true,
+            options: permissionOptions,
+        },
     ];
 
     const handleGetAllRoles = async (page = 1, pageSize = 5) => {
@@ -110,6 +119,26 @@ function Role() {
         }
     };
 
+    const fetchPermissionOptions = async () => {
+        try {
+            const perResponse = await getAllPermissionsNoPaging();
+            console.log('Permission Response:', perResponse);
+            if (perResponse && Array.isArray(perResponse)) {
+                const permissions = perResponse.map((per) => ({
+                    label: per.name + ' ' + '(' + per.description + ')',
+                    value: per.id,
+                }));
+                setPermissionOptions(permissions);
+            } else {
+                setPermissionOptions([]); // Đặt rỗng nếu dữ liệu không hợp lệ
+                console.error('Invalid permission response:', perResponse);
+            }
+        } catch (error) {
+            console.error('Error fetching permissions:', error);
+            setPermissionOptions([]);
+        }
+    };
+
     const handleAddRole = () => {
         setModalMode('create');
         setSelectedRole(null);
@@ -126,7 +155,10 @@ function Role() {
         setSelectedRole(record);
         setModalMode('edit');
 
-        form.setFieldsValue(record);
+        form.setFieldsValue({
+            ...record,
+            permissions: record.permissions ? record.permissions.map(p => p.id) : [],
+        });
         setIsModalOpen(true);
     };
 
@@ -161,6 +193,7 @@ function Role() {
     };
 
     useEffect(() => {
+        fetchPermissionOptions();
         handleGetAllRoles();
     }, []);
 
