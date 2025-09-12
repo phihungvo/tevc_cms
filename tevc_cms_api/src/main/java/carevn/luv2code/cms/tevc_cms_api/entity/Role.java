@@ -50,9 +50,4 @@ public class Role {
         }
         return authorities;
     }
-
-    //    @PreUpdate
-    //    public void preUpdate() {
-    //        this.updatedAt = LocalDateTime.now();
-    //    }
 }

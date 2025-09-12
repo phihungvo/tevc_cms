@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -34,17 +33,17 @@ public class AttendanceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AttendanceDTO> getById(@PathVariable UUID id) {
+    public ResponseEntity<AttendanceDTO> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(attendanceService.getAttendance(id));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<AttendanceDTO> update(@PathVariable UUID id, @RequestBody AttendanceDTO attendanceDTO) {
+    public ResponseEntity<AttendanceDTO> update(@PathVariable Integer id, @RequestBody AttendanceDTO attendanceDTO) {
         return ResponseEntity.ok(attendanceService.updateAttendance(id, attendanceDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         attendanceService.deleteAttendance(id);
         return ResponseEntity.noContent().build();
     }

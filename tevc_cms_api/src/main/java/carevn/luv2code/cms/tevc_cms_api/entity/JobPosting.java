@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.JobPostingStatus;
 import jakarta.persistence.*;
@@ -19,8 +18,8 @@ import lombok.experimental.FieldDefaults;
 public class JobPosting {
 
     @Id
-    @GeneratedValue
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Column(nullable = false)
     String title;

@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.util.Date;
-import java.util.UUID;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.InterviewStatus;
 import carevn.luv2code.cms.tevc_cms_api.enums.InterviewType;
@@ -19,8 +18,8 @@ import lombok.experimental.FieldDefaults;
 public class Interview {
 
     @Id
-    @GeneratedValue
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Column(name = "interview_date")
     Date interviewDate;

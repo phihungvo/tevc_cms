@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -50,15 +49,15 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public ContractDTO updateContract(UUID id, ContractDTO contractDTO) {
+    public ContractDTO updateContract(Integer id, ContractDTO contractDTO) {
         return null;
     }
 
     @Override
-    public void deleteContract(UUID id) {}
+    public void deleteContract(Integer id) {}
 
     @Override
-    public ContractDTO getContract(UUID id) {
+    public ContractDTO getContract(Integer id) {
         return null;
     }
 
@@ -69,7 +68,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public ContractDTO terminateContract(UUID id, String reason) {
+    public ContractDTO terminateContract(Integer id, String reason) {
         Contract contract =
                 contractRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CONTRACT_NOT_FOUND));
 
@@ -85,7 +84,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public List<ContractDTO> getEmployeeContracts(UUID employeeId) {
+    public List<ContractDTO> getEmployeeContracts(Integer employeeId) {
         return contractRepository.findByEmployeeId(employeeId).stream()
                 .map(contractMapper::toDTO)
                 .collect(Collectors.toList());

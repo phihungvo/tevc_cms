@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -11,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProjectDTO {
-    UUID id;
+    Integer id;
 
     String name;
 
@@ -25,11 +24,11 @@ public class ProjectDTO {
 
     Double budget;
 
-    UUID projectManagerId;
+    Integer projectManagerId;
 
     String projectManagerName;
 
-    List<UUID> memberIds;
+    List<Integer> memberIds;
 
     int memberCount;
 }
