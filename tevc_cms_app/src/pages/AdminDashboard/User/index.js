@@ -20,7 +20,7 @@ const cx = classNames.bind(styles);
 function User() {
     const [userSource, setUserSource] = useState([]);
     const [roleOptions, setRoleOptions] = useState([]);
-    const [permissionOptions, setPermissionOptions] = useState([]);
+    // const [permissionOptions, setPermissionOptions] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -35,11 +35,11 @@ function User() {
     const baseColumns = [
         {
             title: 'User Name',
-            dataIndex: 'userName',
-            key: 'userName',
+            dataIndex: 'username',
+            key: 'username',
             width: 150,
             fixed: 'left',
-            onFilter: (value, record) => record.userName.toLowerCase().startsWith(value.toLowerCase()),
+            onFilter: (value, record) => record.username.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
             title: 'Email',
@@ -146,7 +146,7 @@ function User() {
     const userModalFields = [
         {
             label: 'User Name',
-            name: 'userName',
+            name: 'username',
             type: 'text',
             rules: [{ required: true, message: 'User Name is required!' }],
         },
@@ -191,26 +191,15 @@ function User() {
         },
         {
             label: 'Role',
-            name: 'roles',
+            name: 'roleIds',
             type: 'select',
             multiple: true,
             options: roleOptions,
         },
         {
-            label: 'Permission',
-            name: 'permissions',
-            type: 'select',
-            options: permissionOptions,
-        },
-        {
             label: 'Enable',
             name: 'enabled',
             type: 'yesno',
-        },
-        {
-            label: 'Bio',
-            name: 'bio',
-            type: 'textarea',
         },
     ];
 
@@ -255,15 +244,15 @@ function User() {
                 }));
                 setRoleOptions(roles);
             }
-            const perResponse = await getAllPermissionsNoPaging();
-            console.log('per Response: ', perResponse);
-            if (perResponse && Array.isArray(perResponse)) {
-                const permissions = perResponse.map((per) => ({
-                    label: per.resource + ' - ' + per.action,
-                    value: per.id,
-                }));
-                setPermissionOptions(permissions);
-            }
+            // const perResponse = await getAllPermissionsNoPaging();
+            // console.log('per Response: ', perResponse);
+            // if (perResponse && Array.isArray(perResponse)) {
+            //     const permissions = perResponse.map((per) => ({
+            //         label: per.name,
+            //         value: per.id,
+            //     }));
+            //     setPermissionOptions(permissions);
+            // }
         } catch (error) {
             console.error('Error fetching options:', error);
         }

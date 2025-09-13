@@ -16,7 +16,7 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllPermissions, createPermission } from '~/service/admin/permission';
+import { getAllPermissions, createPermission, updatePermission } from '~/service/admin/permission';
 
 const cx = classNames.bind(styles);
 
@@ -30,26 +30,50 @@ function User() {
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRole, setselectedRole] = useState(null);
+    const [selectedPermission, setSelectedPermission] = useState(null);
     const [form] = Form.useForm();
+
+    const httpMethod = {
+        GET: 'green',
+        POST: 'blue',
+        PUT: 'orange',
+        DELETE: 'red',
+        HEAD: 'gray',
+        OPTIONS: 'gray',
+        PATCH: 'gray',
+        TRACE: 'gray',
+    };
 
     const columns = [
         {
-            title: 'Permission Action',
-            dataIndex: 'action',
-            key: 'action',
-            width: 150,
+            title: 'Name',
+            dataIndex: 'name',
+            width: 300,
             fixed: 'left',
         },
         {
-            title: 'Permission Resource',
-            dataIndex: 'resource',
-            key: 'resource',
+            title: 'Http Method',
+            dataIndex: 'httpMethod',
+            render: (method) => (
+                <Tag color={httpMethod[method] || 'default'}>
+                    {method}
+                </Tag>
+            ),
+        },
+        {
+            title: 'Api Endpoint',
+            dataIndex: 'apiEndpoint',
+            width: 350,
+        },
+        {
+            title: 'Resource Pattern',
+            dataIndex: 'resourcePattern',
+            width: 350,
         },
         {
             title: 'Description',
             dataIndex: 'description',
-            key: 'description',
+            width: 500,
         },
         {
             title: 'Actions',
@@ -69,7 +93,7 @@ function User() {
                         type="danger"
                         icon={<DeleteOutlined />}
                         buttonWidth={80}
-                        // onClick={() => handleDeleteTrailer(record)}
+                        // onClick={() => handleDeleteRole(record)}
                         style={{ marginLeft: '8px' }}
                     />
                 </>
@@ -79,21 +103,31 @@ function User() {
 
     const userModalFields = [
         {
-            label: 'Permission Action',
-            name: 'action',
+            label: 'Permission Name',
+            name: 'name',
             type: 'text',
-            rules: [{ required: true, message: 'Permission Action is required!' }],
-        },
-        {
-            label: 'Permission Resource',
-            name: 'resource',
-            type: 'text',
-            rules: [{ required: true, message: 'Permission Resource is required!' }],
+            rules: [{ required: true, message: 'Permission Name is required!' }],
         },
         {
             label: 'Description',
             name: 'description',
             type: 'text',
+        },
+        {
+            label: 'Api Endpoint',
+            name: 'apiEndpoint',
+            type: 'text',
+        },
+        {
+            label: 'Resource Pattern',
+            name: 'resourcePattern',
+            type: 'text',
+        },
+        {
+            label: 'Http Method',
+            name: 'httpMethod',
+            type: 'select',
+            options: ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'],
         },
     ];
 
@@ -122,7 +156,7 @@ function User() {
 
     const handleAddRole = () => {
         setModalMode('create');
-        setselectedRole(null);
+        setSelectedPermission(null);
         form.resetFields();
         setIsModalOpen(true);
     };
@@ -133,18 +167,18 @@ function User() {
     };
 
     const handleEditRole = (record) => {
-        setselectedRole(record);
+        setSelectedPermission(record);
         setModalMode('edit');
 
         form.setFieldsValue(record);
         setIsModalOpen(true);
     };
 
-    // const handleCallUpdateRole = async (formData) => {
-    //     await updateRole(selectedRole.id, formData);
-    //     handleGetAllPermissions();
-    //     setIsModalOpen(false);
-    // };
+    const handleCallUpdatePermission = async (formData) => {
+        await updatePermission(selectedPermission.id, formData);
+        handleGetAllPermissions();
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         handleGetAllPermissions();
@@ -154,6 +188,7 @@ function User() {
         if (modalMode === 'create') {
             handleCallCreatePermission(formData);
         } else if (modalMode === 'edit') {
+            handleCallUpdatePermission(formData);
         }
     };
 
@@ -208,7 +243,7 @@ function User() {
                 title={getModalTitle()}
                 fields={modalMode === 'delete' ? [] : userModalFields}
                 onSubmit={handleFormSubmit}
-                initialValues={selectedRole}
+                initialValues={selectedPermission}
                 isDeleteMode={modalMode === 'delete'}
                 formInstance={form}
             />

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from '~/service/api/api';
 import API_ENDPOINTS from '../../../constants/endpoints';
 import { getToken } from '~/constants/token';
 
@@ -11,7 +11,7 @@ export const uploadFile = async (file) => {
     const TOKEN = localStorage.getItem('token');
 
     try {
-        const checkResponse = await axios.get(
+        const checkResponse = await apiClient.get(
             API_ENDPOINTS.FILE.CHECK_EXISTED(file),
             {
                 headers: {
@@ -31,7 +31,7 @@ export const uploadFile = async (file) => {
             };
         }
 
-        const response = await axios.post(API_ENDPOINTS.FILE.UPLOAD, formData, {
+        const response = await apiClient.post(API_ENDPOINTS.FILE.UPLOAD, formData, {
             headers: {
                 Authorization: `Bearer ${TOKEN}`,
                 'Content-Type': 'multipart/form-data',
@@ -46,14 +46,8 @@ export const uploadFile = async (file) => {
 
 // Get all file infor
 export const getFileInfo = async () => {
-    const TOKEN = localStorage.getItem('token');
-
     try {
-        const response = await axios.get(API_ENDPOINTS.FILE.GET_INFO, {
-            headers: {
-                Authorization: `Bearer ${TOKEN}`,
-            },
-        });
+        const response = await apiClient.get(API_ENDPOINTS.FILE.GET_INFO);
         return response.data;
     } catch (error) {
         throw error;
@@ -72,7 +66,7 @@ export const getMovieImage = async (imagePath) => {
             return imagePath;
         }
 
-        const response = await axios.get(API_ENDPOINTS.FILE.GET_FILE, {
+        const response = await apiClient.get(API_ENDPOINTS.FILE.GET_FILE, {
             headers: {
                 Authorization: `Bearer ${TOKEN}`,
             },

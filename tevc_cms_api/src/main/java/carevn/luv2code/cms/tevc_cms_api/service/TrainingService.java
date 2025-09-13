@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -11,15 +10,15 @@ public interface TrainingService {
 
     TrainingDTO createTraining(TrainingDTO trainingDTO);
 
-    TrainingDTO updateTraining(UUID id, TrainingDTO trainingDTO);
+    TrainingDTO updateTraining(Integer id, TrainingDTO trainingDTO);
 
-    void deleteTraining(UUID id);
+    void deleteTraining(Integer id);
 
-    TrainingDTO getTraining(UUID id);
+    TrainingDTO getTraining(Integer id);
 
     Page<TrainingDTO> getAllTrainings(int page, int size);
 
-    TrainingDTO addParticipants(UUID trainingId, List<UUID> employeeIds);
+    TrainingDTO addParticipants(Integer trainingId, List<Integer> employeeIds);
 
-    TrainingDTO removeParticipant(UUID trainingId, UUID employeeId);
+    TrainingDTO removeParticipant(Integer trainingId, Integer employeeId);
 }

@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,7 +45,7 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public SalaryDTO updateSalary(UUID id, SalaryDTO salaryDTO) {
+    public SalaryDTO updateSalary(Integer id, SalaryDTO salaryDTO) {
         Salary existingSalary =
                 salaryRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.SALARY_NOT_FOUND));
 
@@ -61,20 +60,20 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public SalaryDTO getSalary(UUID id) {
+    public SalaryDTO getSalary(Integer id) {
         return null;
     }
 
     @Override
-    public List<SalaryDTO> getEmployeeSalaries(UUID employeeId) {
+    public List<SalaryDTO> getEmployeeSalaries(Integer employeeId) {
         return List.of();
     }
 
     @Override
-    public SalaryDTO calculateSalary(UUID employeeId, String period) {
+    public SalaryDTO calculateSalary(Integer employeeId, String period) {
         return null;
     }
 
     @Override
-    public void deleteSalary(UUID id) {}
+    public void deleteSalary(Integer id) {}
 }

@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,19 +25,21 @@ public class InterviewController {
 
     @PutMapping("/{interviewId}")
     public ResponseEntity<String> updateInterview(
-            @PathVariable UUID interviewId, @RequestParam LocalDateTime newDate, @RequestParam String newInterviewer) {
+            @PathVariable Integer interviewId,
+            @RequestParam LocalDateTime newDate,
+            @RequestParam String newInterviewer) {
         interviewService.updateInterview(interviewId, newDate, newInterviewer);
         return ResponseEntity.ok("Interview updated successfully.");
     }
 
     @DeleteMapping("/{interviewId}")
-    public ResponseEntity<String> cancelInterview(@PathVariable UUID interviewId) {
+    public ResponseEntity<String> cancelInterview(@PathVariable Integer interviewId) {
         interviewService.cancelInterview(interviewId);
         return ResponseEntity.ok("Interview canceled successfully.");
     }
 
     @GetMapping("/{interviewId}")
-    public ResponseEntity<InterviewDTO> getInterview(@PathVariable UUID interviewId) {
+    public ResponseEntity<InterviewDTO> getInterview(@PathVariable Integer interviewId) {
         return ResponseEntity.ok(interviewService.getInterview(interviewId));
     }
 
@@ -48,7 +49,7 @@ public class InterviewController {
     }
 
     @GetMapping("/candidate/{candidateId}")
-    public ResponseEntity<List<InterviewDTO>> getInterviewsByCandidate(@PathVariable UUID candidateId) {
+    public ResponseEntity<List<InterviewDTO>> getInterviewsByCandidate(@PathVariable Integer candidateId) {
         return ResponseEntity.ok(interviewService.getInterviewsByCandidate(candidateId));
     }
 

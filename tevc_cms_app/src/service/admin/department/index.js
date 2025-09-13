@@ -1,17 +1,11 @@
-import axios from 'axios';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
 import { message } from 'antd';
-
+import apiClient from '~/service/api/api';
 
 export const getAllDepartments = async ({ page = 0, pageSize = 5 }) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.DEPARTMENT.GET_ALL, {
+        const response = await apiClient.get(API_ENDPOINTS.DEPARTMENT.GET_ALL, {
             params: { page, pageSize },
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
         });
         
         return response.data; 
@@ -23,12 +17,7 @@ export const getAllDepartments = async ({ page = 0, pageSize = 5 }) => {
 
 export const getAllDepartmentsNoPaging = async () => {
     try {
-        const response = await axios.get(API_ENDPOINTS.DEPARTMENT.NO_PAGING, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await apiClient.get(API_ENDPOINTS.DEPARTMENT.NO_PAGING);
         
         return response.data; 
     } catch (error) {
@@ -39,7 +28,7 @@ export const getAllDepartmentsNoPaging = async () => {
 
 export const createDepartment = async (formData) => {
     try {
-        const response = await axios.post(
+        const response = await apiClient.post(
             API_ENDPOINTS.DEPARTMENT.CREATE,   
             formData, 
         );
@@ -52,7 +41,7 @@ export const createDepartment = async (formData) => {
 
 export const updateDepartment = async (departmentId, formData) => {
     try {
-        const response = await axios.patch(
+        const response = await apiClient.patch(
             API_ENDPOINTS.DEPARTMENT.UPDATE(departmentId),   
             formData, 
         );
@@ -65,7 +54,7 @@ export const updateDepartment = async (departmentId, formData) => {
 
 export const deleteDepartment = async (departmentId) => {
     try {
-        const response = await axios.delete(
+        const response = await apiClient.delete(
             API_ENDPOINTS.DEPARTMENT.DELETE(departmentId),
         );
         message.success('Departments deleted successfully');

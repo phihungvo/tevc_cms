@@ -1,11 +1,10 @@
-import axios from 'axios';
 import API_ENDPOINTS from '../../../constants/endpoints';
 import {getToken} from '~/constants/token';
-import {message} from 'antd';
+import apiClient from '~/service/api/api';
 
 export const exportExcelFile = async (entityType) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.SERVICE.EXPORT_EXCEL, {
+        const response = await apiClient.get(API_ENDPOINTS.SERVICE.EXPORT_EXCEL, {
             params: {entityType},
             headers: {
                 Authorization: `Bearer ${getToken()}`,

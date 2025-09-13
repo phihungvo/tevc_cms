@@ -1,17 +1,11 @@
-import axios from 'axios';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
 import { message } from 'antd';
-
+import apiClient from '~/service/api/api';
 
 export const getAllPermissions = async ({ page = 0, pageSize = 5 }) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.PERMISSION.GET_ALL, {
+        const response = await apiClient.get(API_ENDPOINTS.PERMISSION.GET_ALL, {
             params: { page, pageSize },
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
         });
         
         return response.data.result; 
@@ -24,13 +18,8 @@ export const getAllPermissions = async ({ page = 0, pageSize = 5 }) => {
 
 export const getAllPermissionsNoPaging = async () => {
     try {
-        const response = await axios.get(API_ENDPOINTS.PERMISSION.GET_ALL_NO_PAGING, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        
+        const response = await apiClient.get(API_ENDPOINTS.PERMISSION.GET_ALL_NO_PAGING);
+
         return response.data.result; 
     } catch (error) {
         message.error('Error get all permission: ');
@@ -40,7 +29,7 @@ export const getAllPermissionsNoPaging = async () => {
 
 export const createPermission = async (formData) => {
     try {
-        const response = await axios.post(
+        const response = await apiClient.post(
             API_ENDPOINTS.PERMISSION.CREATE,   
             formData, 
         );
@@ -48,5 +37,19 @@ export const createPermission = async (formData) => {
         return response.data;
     } catch (error) {
         console.error('Error when creating permission: ', error); 
+    }
+};
+
+
+export const updatePermission = async (permissionId, formData) => {
+    try {
+        const response = await apiClient.put(
+            API_ENDPOINTS.PERMISSION.UPDATE(permissionId),
+            formData,
+        );
+        message.success('Permission updated successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when creating permission: ', error);
     }
 };

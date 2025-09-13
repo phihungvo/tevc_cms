@@ -1,7 +1,5 @@
 package carevn.luv2code.cms.tevc_cms_api.mapper;
 
-import java.util.UUID;
-
 import org.mapstruct.*;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.SalaryDTO;
@@ -23,7 +21,7 @@ public interface SalaryMapper {
     @Mapping(target = "employee", expression = "java(mapEmployee(dto.getEmployeeId()))")
     void updateSalaryFromDto(SalaryDTO dto, @MappingTarget Salary entity);
 
-    default Employee mapEmployee(UUID employeeId) {
+    default Employee mapEmployee(Integer employeeId) {
         if (employeeId == null) {
             return null;
         }

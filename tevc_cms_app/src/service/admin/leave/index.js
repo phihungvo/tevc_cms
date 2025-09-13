@@ -1,17 +1,12 @@
-import axios from 'axios';
+import apiClient from '~/service/api/api';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
 import { message } from 'antd';
-
+import axiosInstance from '~/utils/axiosInstance';
 
 export const getAllLeaves = async ({ page = 0, pageSize = 10 }) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.LEAVE.GET_ALL, {
+        const response = await apiClient.get(API_ENDPOINTS.LEAVE.GET_ALL, {
             params: { page, pageSize },
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
         });
         
         return response.data; 
@@ -23,7 +18,7 @@ export const getAllLeaves = async ({ page = 0, pageSize = 10 }) => {
 
 export const createLeave = async (formData) => {
     try {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             API_ENDPOINTS.LEAVE.CREATE,   
             formData, 
         );
@@ -36,7 +31,7 @@ export const createLeave = async (formData) => {
 
 export const updateLeave = async (formData) => {
     try {
-        const response = await axios.patch(API_ENDPOINTS.LEAVE.UPDATE, formData);
+        const response = await apiClient.patch(API_ENDPOINTS.LEAVE.UPDATE, formData);
         message.success('Leave updated successfully');
         return response.data;
     } catch (error) {
@@ -46,7 +41,7 @@ export const updateLeave = async (formData) => {
 
 export const deleteLeave = async (leaveId) => {
     try {
-        const response = await axios.delete(API_ENDPOINTS.LEAVE.DELETE(leaveId));
+        const response = await apiClient.delete(API_ENDPOINTS.LEAVE.DELETE(leaveId));
         message.success('Leave deleted successfully');
         return response.data;
     } catch (error) {

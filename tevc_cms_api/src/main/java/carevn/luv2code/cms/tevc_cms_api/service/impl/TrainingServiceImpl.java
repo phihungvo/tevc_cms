@@ -37,7 +37,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional
-    public TrainingDTO updateTraining(UUID id, TrainingDTO trainingDTO) {
+    public TrainingDTO updateTraining(Integer id, TrainingDTO trainingDTO) {
         Training training =
                 trainingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
 
@@ -47,7 +47,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public TrainingDTO getTraining(UUID id) {
+    public TrainingDTO getTraining(Integer id) {
         Training training =
                 trainingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
         return trainingMapper.toDTO(training);
@@ -61,7 +61,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional
-    public TrainingDTO addParticipants(UUID trainingId, List<UUID> employeeIds) {
+    public TrainingDTO addParticipants(Integer trainingId, List<Integer> employeeIds) {
         Training training = trainingRepository
                 .findById(trainingId)
                 .orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
@@ -75,7 +75,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional
-    public TrainingDTO removeParticipant(UUID trainingId, UUID employeeId) {
+    public TrainingDTO removeParticipant(Integer trainingId, Integer employeeId) {
         Training training = trainingRepository
                 .findById(trainingId)
                 .orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
@@ -91,7 +91,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional
-    public void deleteTraining(UUID id) {
+    public void deleteTraining(Integer id) {
         Training training =
                 trainingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TRAINING_NOT_FOUND));
         trainingRepository.delete(training);

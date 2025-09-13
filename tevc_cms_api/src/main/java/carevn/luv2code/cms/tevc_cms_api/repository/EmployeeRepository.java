@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.repository;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,19 +13,19 @@ import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     boolean existsByEmail(String email);
 
     boolean existsByEmployeeCode(String employeeCode);
 
     @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
-    Page<Employee> findByDepartmentId(@Param("departmentId") UUID departmentId, Pageable pageable);
+    Page<Employee> findByDepartmentId(@Param("departmentId") Integer departmentId, Pageable pageable);
 
     @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
-    List<Employee> findByDepartmentId(@Param("departmentId") UUID departmentId);
+    List<Employee> findByDepartmentId(@Param("departmentId") Integer departmentId);
 
     @Query("SELECT e FROM Employee e WHERE e.position.id = :positionId")
-    List<Employee> findByPositionId(@Param("positionId") UUID positionId);
+    List<Employee> findByPositionId(@Param("positionId") Integer positionId);
 
     @Query("SELECT e FROM Employee e JOIN e.position p WHERE p.positionType = :type")
     List<Employee> findByPositionType(@Param("type") PositionType type);

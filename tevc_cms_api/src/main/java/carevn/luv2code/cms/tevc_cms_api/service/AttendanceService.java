@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -12,11 +11,11 @@ public interface AttendanceService {
 
     List<AttendanceDTO> getAllAttendances();
 
-    AttendanceDTO getAttendance(UUID id);
+    AttendanceDTO getAttendance(Integer id);
 
-    void deleteAttendance(UUID id);
+    void deleteAttendance(Integer id);
 
-    AttendanceDTO updateAttendance(UUID id, AttendanceDTO attendanceDTO);
+    AttendanceDTO updateAttendance(Integer id, AttendanceDTO attendanceDTO);
 
     Page<AttendanceDTO> getAllAttendancesWithPagination(int page, int size);
 }

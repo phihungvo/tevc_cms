@@ -1,17 +1,12 @@
-import axios from 'axios';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
 import { message } from 'antd';
-
+import apiClient from '~/service/api/api';
+import axiosInstance from '~/utils/axiosInstance';
 
 export const getAllEmployees = async ({ page = 0, pageSize = 10 }) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.GET_ALL, {
+        const response = await apiClient.get(API_ENDPOINTS.EMPLOYEE.GET_ALL, {
             params: { page, pageSize },
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
         });
         
         return response.data;
@@ -23,12 +18,7 @@ export const getAllEmployees = async ({ page = 0, pageSize = 10 }) => {
 
 export const getAllEmployeesNoPaging = async () => {
     try {
-        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.NO_PAGING, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await apiClient.get(API_ENDPOINTS.EMPLOYEE.NO_PAGING);
         
         return response.data;
     } catch (error) {
@@ -39,7 +29,7 @@ export const getAllEmployeesNoPaging = async () => {
 
 export const createEmployee = async (formData) => {
     try {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             API_ENDPOINTS.EMPLOYEE.CREATE,   
             formData, 
         );
@@ -52,12 +42,8 @@ export const createEmployee = async (formData) => {
 
 export const getEmployeeByPositionType = async (positionType) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.GET_EMPLOYEE_BY_POSITION_TYPE, {
+        const response = await apiClient.get(API_ENDPOINTS.EMPLOYEE.GET_EMPLOYEE_BY_POSITION_TYPE, {
             params: { positionType },
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
         });
         return response.data;
     } catch (error) {
@@ -67,7 +53,7 @@ export const getEmployeeByPositionType = async (positionType) => {
 
 export const updateEmployee = async (employeeId, formData) => {
     try {
-        const response = await axios.patch(
+        const response = await apiClient.patch(
             API_ENDPOINTS.EMPLOYEE.UPDATE(employeeId),   
             formData, 
         );
@@ -80,7 +66,7 @@ export const updateEmployee = async (employeeId, formData) => {
 
 export const deleteEmployee = async (employeeId) => {
     try {
-        const response = await axios.delete(
+        const response = await apiClient.delete(
             API_ENDPOINTS.EMPLOYEE.DELETE(employeeId),  
         );
         message.success('Employee created successfully');

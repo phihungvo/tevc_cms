@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,25 +17,21 @@ public class PositionController {
     private final PositionService positionService;
 
     @PostMapping
-    //    @PreAuthorize("hasAuthority('POSITION:CREATE')")
     public ResponseEntity<PositionDTO> createPosition(@RequestBody PositionDTO positionDTO) {
         return ResponseEntity.ok(positionService.createPosition(positionDTO));
     }
 
     @PatchMapping("/{id}")
-    //    @PreAuthorize("hasAuthority('POSITION:UPDATE')")
-    public ResponseEntity<PositionDTO> updatePosition(@PathVariable UUID id, @RequestBody PositionDTO positionDTO) {
+    public ResponseEntity<PositionDTO> updatePosition(@PathVariable Integer id, @RequestBody PositionDTO positionDTO) {
         return ResponseEntity.ok(positionService.updatePosition(id, positionDTO));
     }
 
     @GetMapping("/{id}")
-    //    @PreAuthorize("hasAuthority('POSITION:READ')")
-    public ResponseEntity<PositionDTO> getPosition(@PathVariable UUID id) {
+    public ResponseEntity<PositionDTO> getPosition(@PathVariable Integer id) {
         return ResponseEntity.ok(positionService.getPosition(id));
     }
 
     @GetMapping
-    //    @PreAuthorize("hasAuthority('POSITION:READ')")
     public ResponseEntity<Page<PositionDTO>> getAllPositions(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(positionService.getAllPositions(page, size));
@@ -48,14 +43,12 @@ public class PositionController {
     }
 
     @DeleteMapping("/{id}")
-    //    @PreAuthorize("hasAuthority('POSITION:DELETE')")
-    public ResponseEntity<Void> deletePosition(@PathVariable UUID id) {
+    public ResponseEntity<Void> deletePosition(@PathVariable Integer id) {
         positionService.deletePosition(id);
         return ResponseEntity.ok().build();
     }
 
     //    @GetMapping("/getPositionsByTitle")
-    ////    @PreAuthorize("hasAuthority('POSITION:READ')")
     //    public ResponseEntity<List<PositionDTO>> getPositionByTitle(@RequestParam("title") String title) {
     //        return ResponseEntity.ok(positionService.getPositionByTitle(title));
     //    }

@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,17 +35,17 @@ public class LeaveServiceImpl implements LeaveService {
                 .findById(leaveDTO.getEmployeeId())
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
         leave.setEmployee(employee);
-        leave.setStatus(LeaveStatus.PENDING);
+        leave.setLeaveStatus(LeaveStatus.PENDING);
 
         return leaveMapper.toDTO(leaveRepository.save(leave));
     }
 
     @Override
     @Transactional
-    public LeaveDTO updateLeave(UUID id, LeaveDTO leaveDTO) {
+    public LeaveDTO updateLeave(Integer id, LeaveDTO leaveDTO) {
         Leave leave = leaveRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
-        if (leave.getStatus() != LeaveStatus.PENDING) {
+        if (leave.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
         }
 
@@ -55,10 +54,10 @@ public class LeaveServiceImpl implements LeaveService {
     }
 
     @Override
-    public void deleteLeave(UUID id) {
+    public void deleteLeave(Integer id) {
         Leave leave = leaveRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
-        if (leave.getStatus() != LeaveStatus.PENDING) {
+        if (leave.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
         }
 
@@ -66,7 +65,7 @@ public class LeaveServiceImpl implements LeaveService {
     }
 
     @Override
-    public LeaveDTO getLeave(UUID id) {
+    public LeaveDTO getLeave(Integer id) {
         return null;
     }
 
@@ -78,34 +77,34 @@ public class LeaveServiceImpl implements LeaveService {
 
     @Override
     @Transactional
-    public LeaveDTO approveLeave(UUID id, String comments) {
+    public LeaveDTO approveLeave(Integer id, String comments) {
         Leave leave = leaveRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
-        if (leave.getStatus() != LeaveStatus.PENDING) {
+        if (leave.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
         }
 
-        leave.setStatus(LeaveStatus.APPROVED);
+        leave.setLeaveStatus(LeaveStatus.APPROVED);
         leave.setApproverComments(comments);
         return leaveMapper.toDTO(leaveRepository.save(leave));
     }
 
     @Override
     @Transactional
-    public LeaveDTO rejectLeave(UUID id, String comments) {
+    public LeaveDTO rejectLeave(Integer id, String comments) {
         Leave leave = leaveRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
-        if (leave.getStatus() != LeaveStatus.PENDING) {
+        if (leave.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
         }
 
-        leave.setStatus(LeaveStatus.REJECTED);
+        leave.setLeaveStatus(LeaveStatus.REJECTED);
         leave.setApproverComments(comments);
         return leaveMapper.toDTO(leaveRepository.save(leave));
     }
 
     @Override
-    public List<LeaveDTO> getEmployeeLeaves(UUID employeeId) {
+    public List<LeaveDTO> getEmployeeLeaves(Integer employeeId) {
         return List.of();
     }
 

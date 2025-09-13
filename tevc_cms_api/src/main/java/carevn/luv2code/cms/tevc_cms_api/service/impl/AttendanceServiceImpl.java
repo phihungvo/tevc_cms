@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -45,14 +44,14 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public AttendanceDTO getAttendance(UUID id) {
+    public AttendanceDTO getAttendance(Integer id) {
         Attendance attendance =
                 attendanceRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ATTENDANCE_NOT_FOUND));
         return attendanceMapper.toDTO(attendance);
     }
 
     @Override
-    public AttendanceDTO updateAttendance(UUID attendanceId, AttendanceDTO attendanceDTO) {
+    public AttendanceDTO updateAttendance(Integer attendanceId, AttendanceDTO attendanceDTO) {
         Attendance existingAttendance = attendanceRepository
                 .findById(attendanceId)
                 .orElseThrow(() -> new AppException(ErrorCode.ATTENDANCE_NOT_FOUND));
@@ -72,7 +71,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public void deleteAttendance(UUID id) {
+    public void deleteAttendance(Integer id) {
         if (!attendanceRepository.existsById(id)) {
             throw new AppException(ErrorCode.ATTENDANCE_NOT_FOUND);
         }

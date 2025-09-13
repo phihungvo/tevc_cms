@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -39,7 +38,7 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     @Transactional
-    public PositionDTO updatePosition(UUID id, PositionDTO positionDTO) {
+    public PositionDTO updatePosition(Integer id, PositionDTO positionDTO) {
         Position position =
                 positionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
 
@@ -49,7 +48,7 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public PositionDTO getPosition(UUID id) {
+    public PositionDTO getPosition(Integer id) {
         Position position =
                 positionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
         return positionMapper.toDTO(position);
@@ -75,7 +74,7 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     @Transactional
-    public void deletePosition(UUID id) {
+    public void deletePosition(Integer id) {
         Position position =
                 positionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND));
         //        if (!position.getEmployees().isEmpty()) {

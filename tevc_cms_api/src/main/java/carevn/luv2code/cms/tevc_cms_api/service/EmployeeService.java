@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -12,19 +11,19 @@ public interface EmployeeService {
 
     EmployeeDTO createEmployee(EmployeeDTO employeeDTO);
 
-    EmployeeDTO updateEmployee(UUID id, EmployeeDTO employeeDTO);
+    EmployeeDTO updateEmployee(Integer id, EmployeeDTO employeeDTO);
 
-    void deleteEmployee(UUID id);
+    void deleteEmployee(Integer id);
 
-    EmployeeDTO getEmployee(UUID id);
+    EmployeeDTO getEmployee(Integer id);
 
     Page<EmployeeDTO> getAllEmployees(int page, int size);
 
     List<EmployeeDTO> getAllEmployeesNoPaging();
 
-    Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size);
+    Page<EmployeeDTO> findByDepartment(Integer departmentId, int page, int size);
 
-    boolean toggleEmployeeStatus(UUID id);
+    boolean toggleEmployeeStatus(Integer id);
 
     List<EmployeeDTO> getEmployeesByPositionType(PositionType positionType);
 

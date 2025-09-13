@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +28,17 @@ public class SalaryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SalaryDTO> getSalary(@PathVariable UUID id) {
+    public ResponseEntity<SalaryDTO> getSalary(@PathVariable Integer id) {
         return ResponseEntity.ok(salaryService.getSalary(id));
     }
 
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<SalaryDTO>> getEmployeeSalaries(@PathVariable UUID employeeId) {
+    public ResponseEntity<List<SalaryDTO>> getEmployeeSalaries(@PathVariable Integer employeeId) {
         return ResponseEntity.ok(salaryService.getEmployeeSalaries(employeeId));
     }
 
     @PostMapping("/calculate/{employeeId}")
-    public ResponseEntity<SalaryDTO> calculateSalary(@PathVariable UUID employeeId, @RequestParam String period) {
+    public ResponseEntity<SalaryDTO> calculateSalary(@PathVariable Integer employeeId, @RequestParam String period) {
         return ResponseEntity.ok(salaryService.calculateSalary(employeeId, period));
     }
 }

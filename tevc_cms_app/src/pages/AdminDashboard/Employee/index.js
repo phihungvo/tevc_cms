@@ -55,15 +55,15 @@ function Employee() {
             fixed: 'left',
         },
         {
-            title: 'First Name',
-            dataIndex: 'firstName',
-            key: 'firstName',
-            width: 150,
-        },
-        {
             title: 'Last Name',
             dataIndex: 'lastName',
             key: 'lastName',
+            width: 150,
+        },
+        {
+            title: 'First Name',
+            dataIndex: 'firstName',
+            key: 'firstName',
             width: 150,
         },
         {
@@ -215,14 +215,12 @@ function Employee() {
             name: 'departmentId',
             type: 'select',
             options: departmentOptions,
-            rules: [{required: true, message: 'Phòng ban là bắt buộc!'}],
         },
         {
             label: 'Position',
             name: 'positionId',
             type: 'select',
             options: positionOptions,
-            rules: [{required: true, message: 'Vị trí là bắt buộc!'}],
         },
         {
             label: 'Active',

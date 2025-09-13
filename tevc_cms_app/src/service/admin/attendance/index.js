@@ -1,16 +1,12 @@
-import axios from 'axios';
+import apiClient from '~/service/api/api';
 import API_ENDPOINTS from '../../../constants/endpoints';
 import { getToken } from '~/constants/token';
 import { message } from 'antd';
 
 export const getAllAttendancesWithPagination = async ({page, pageSize}) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.ATTENDANCE.GET_ALL, {
-            params: { page, pageSize },
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                'Content-Type': 'application/json',
-            },
+        const response = await apiClient.get(API_ENDPOINTS.ATTENDANCE.GET_ALL, {
+            params: { page, pageSize }
         });
         
         return response.data; 
@@ -21,12 +17,12 @@ export const getAllAttendancesWithPagination = async ({page, pageSize}) => {
 };
 
 export const deleteAttendance = (id) => {
-    return axios.delete(`/api/attendances/${id}`);
+    return apiClient.delete(`/api/attendances/${id}`);
 };
 
 export const createAttandance = async (formData) => {
     try {
-        const response = await axios.post(
+        const response = await apiClient.post(
             API_ENDPOINTS.ATTENDANCE.CREATE,   
             formData, 
         );
@@ -40,7 +36,7 @@ export const createAttandance = async (formData) => {
 
 export const updateAttandance = async (attandanceId, formData) => {
     try {
-        const response = await axios.patch(
+        const response = await apiClient.patch(
             API_ENDPOINTS.ATTENDANCE.UPDATE(attandanceId),
             formData,
         );
