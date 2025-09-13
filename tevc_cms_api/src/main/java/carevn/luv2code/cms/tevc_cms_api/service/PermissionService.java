@@ -2,15 +2,17 @@ package carevn.luv2code.cms.tevc_cms_api.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import carevn.luv2code.cms.tevc_cms_api.dto.PermissionDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreatePermissionRequest;
 import carevn.luv2code.cms.tevc_cms_api.entity.Permission;
 
 public interface PermissionService {
 
-    //    PermissionDTO createPermission(PermissionDTO permissionDTO);
+    PermissionDTO createPermission(PermissionDTO permissionDTO);
 
-    //    PermissionDTO updatePermission(UUID id, PermissionDTO permissionDTO);
+    PermissionDTO updatePermission(Integer id, PermissionDTO permissionDTO);
 
     //    void deletePermission(UUID id);
 
@@ -24,8 +26,8 @@ public interface PermissionService {
     //
     //    Permission createPermission(String name, String description, String apiEndpoint, HttpMethod httpMethod);
     //
-    //    Page<PermissionDTO> getAllPermissions(int page, int size);
-    //
+    Page<PermissionDTO> getAllPermissions(int page, int size);
+
     List<PermissionDTO> getAllPermissionsNoPaging();
 
     PermissionDTO createPermission(CreatePermissionRequest request);

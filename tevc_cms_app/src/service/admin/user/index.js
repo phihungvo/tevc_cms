@@ -8,7 +8,7 @@ import axiosInstance from '~/utils/axiosInstance';
 
 export const login = async (username, password) => {
     try {
-        const response = await apiClient.post('/auth/login', {
+        const response = await axiosInstance.post('/auth/login', {
             username,
             password,
         });

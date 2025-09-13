@@ -35,7 +35,7 @@ public class LeaveServiceImpl implements LeaveService {
                 .findById(leaveDTO.getEmployeeId())
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
         leave.setEmployee(employee);
-        leave.setStatus(LeaveStatus.PENDING);
+        leave.setLeaveStatus(LeaveStatus.PENDING);
 
         return leaveMapper.toDTO(leaveRepository.save(leave));
     }
@@ -45,7 +45,7 @@ public class LeaveServiceImpl implements LeaveService {
     public LeaveDTO updateLeave(Integer id, LeaveDTO leaveDTO) {
         Leave leave = leaveRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
-        if (leave.getStatus() != LeaveStatus.PENDING) {
+        if (leave.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
         }
 
@@ -57,7 +57,7 @@ public class LeaveServiceImpl implements LeaveService {
     public void deleteLeave(Integer id) {
         Leave leave = leaveRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
-        if (leave.getStatus() != LeaveStatus.PENDING) {
+        if (leave.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
         }
 
@@ -80,11 +80,11 @@ public class LeaveServiceImpl implements LeaveService {
     public LeaveDTO approveLeave(Integer id, String comments) {
         Leave leave = leaveRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
-        if (leave.getStatus() != LeaveStatus.PENDING) {
+        if (leave.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
         }
 
-        leave.setStatus(LeaveStatus.APPROVED);
+        leave.setLeaveStatus(LeaveStatus.APPROVED);
         leave.setApproverComments(comments);
         return leaveMapper.toDTO(leaveRepository.save(leave));
     }
@@ -94,11 +94,11 @@ public class LeaveServiceImpl implements LeaveService {
     public LeaveDTO rejectLeave(Integer id, String comments) {
         Leave leave = leaveRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_FOUND));
 
-        if (leave.getStatus() != LeaveStatus.PENDING) {
+        if (leave.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new AppException(ErrorCode.LEAVE_ALREADY_PROCESSED);
         }
 
-        leave.setStatus(LeaveStatus.REJECTED);
+        leave.setLeaveStatus(LeaveStatus.REJECTED);
         leave.setApproverComments(comments);
         return leaveMapper.toDTO(leaveRepository.save(leave));
     }

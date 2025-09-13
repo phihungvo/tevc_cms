@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="tevc_cms@localhost" uuid="179ff2d1-121e-4288-92e5-cefd851b36b9">
+    <data-source source="LOCAL" name="tevc_cms_2" uuid="4aee01d2-ff50-400b-b293-9c660d2d443a">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/tevc_cms</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/tevc_cms_2</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
@@ -13,11 +13,11 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="tevc_cms_2" uuid="4aee01d2-ff50-400b-b293-9c660d2d443a">
+    <data-source source="LOCAL" name="dev" uuid="f0021754-63f9-4c3f-903b-f7300b50abb3">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/tevc_cms_2</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/tevc_cms_dev</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />

@@ -14,7 +14,7 @@ import carevn.luv2code.cms.tevc_cms_api.enums.LeaveType;
 public interface LeaveRepository extends JpaRepository<Leave, Integer> {
     List<Leave> findByEmployeeId(Integer employeeId);
 
-    List<Leave> findByStatus(LeaveStatus status);
+    List<Leave> findByLeaveStatus(LeaveStatus status);
 
     List<Leave> findByStartDateBetween(Date startDate, Date endDate);
 

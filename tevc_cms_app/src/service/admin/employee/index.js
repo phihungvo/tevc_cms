@@ -1,6 +1,7 @@
 import API_ENDPOINTS from '../../../constants/endpoints';
 import { message } from 'antd';
 import apiClient from '~/service/api/api';
+import axiosInstance from '~/utils/axiosInstance';
 
 export const getAllEmployees = async ({ page = 0, pageSize = 10 }) => {
     try {
@@ -28,7 +29,7 @@ export const getAllEmployeesNoPaging = async () => {
 
 export const createEmployee = async (formData) => {
     try {
-        const response = await apiClient.post(
+        const response = await axiosInstance.post(
             API_ENDPOINTS.EMPLOYEE.CREATE,   
             formData, 
         );

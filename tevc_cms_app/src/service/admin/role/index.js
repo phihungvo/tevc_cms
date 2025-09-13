@@ -42,8 +42,6 @@ export const createRole = async (formData) => {
 
 export const updateRole = async (roleId, formData) => {
     try {
-        console.log('role id: ',roleId);
-        console.log('form data: ',formData);
         const response = await apiClient.patch(API_ENDPOINTS.ROLE.UPDATE(roleId), formData);
 
         message.success('Role updated successfully');

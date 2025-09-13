@@ -1,7 +1,7 @@
 import apiClient from '~/service/api/api';
 import API_ENDPOINTS from '../../../constants/endpoints';
 import { message } from 'antd';
-
+import axiosInstance from '~/utils/axiosInstance';
 
 export const getAllLeaves = async ({ page = 0, pageSize = 10 }) => {
     try {
@@ -18,7 +18,7 @@ export const getAllLeaves = async ({ page = 0, pageSize = 10 }) => {
 
 export const createLeave = async (formData) => {
     try {
-        const response = await apiClient.post(
+        const response = await axiosInstance.post(
             API_ENDPOINTS.LEAVE.CREATE,   
             formData, 
         );

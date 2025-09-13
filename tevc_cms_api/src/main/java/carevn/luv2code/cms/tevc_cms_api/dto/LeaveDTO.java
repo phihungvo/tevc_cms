@@ -25,7 +25,7 @@ public class LeaveDTO {
 
     String reason;
 
-    LeaveStatus status;
+    LeaveStatus leaveStatus;
 
     String approverComments;
 }

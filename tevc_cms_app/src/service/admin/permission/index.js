@@ -39,3 +39,17 @@ export const createPermission = async (formData) => {
         console.error('Error when creating permission: ', error); 
     }
 };
+
+
+export const updatePermission = async (permissionId, formData) => {
+    try {
+        const response = await apiClient.put(
+            API_ENDPOINTS.PERMISSION.UPDATE(permissionId),
+            formData,
+        );
+        message.success('Permission updated successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error when creating permission: ', error);
+    }
+};

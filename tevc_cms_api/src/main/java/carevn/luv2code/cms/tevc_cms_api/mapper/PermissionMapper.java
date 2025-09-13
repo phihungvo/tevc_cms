@@ -10,10 +10,9 @@ import carevn.luv2code.cms.tevc_cms_api.entity.Role;
 @Mapper(componentModel = "spring")
 public interface PermissionMapper {
 
-    //    @Mapping(target = "permissions", ignore = true)
     PermissionDTO toDTO(Permission entity);
 
-    //    Role toEntity(RoleDTO dto);
+    Permission toEntity(PermissionDTO dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)

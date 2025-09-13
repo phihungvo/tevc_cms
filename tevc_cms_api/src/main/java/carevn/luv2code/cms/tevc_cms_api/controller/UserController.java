@@ -56,7 +56,6 @@ public class UserController {
     //    }
     //
     @GetMapping("/getAll")
-    //    @PreAuthorize("hasAnyAuthority('ADMIN:MANAGE', 'USER:READ')")
     public ResponseEntity<Page<UserDTO>> findAll(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<UserDTO> users = userService.findAll(page, size);
