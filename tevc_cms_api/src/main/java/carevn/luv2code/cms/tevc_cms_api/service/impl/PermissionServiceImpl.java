@@ -6,15 +6,20 @@ import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.PermissionDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreatePermissionRequest;
 import carevn.luv2code.cms.tevc_cms_api.entity.Permission;
 import carevn.luv2code.cms.tevc_cms_api.enums.HttpMethod;
+import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
+import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.PermissionMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.PermissionRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.PermissionService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,55 +30,49 @@ public class PermissionServiceImpl implements PermissionService {
     private final PermissionRepository permissionRepository;
     private final PermissionMapper permissionMapper;
 
-    //    @Override
-    //    @Transactional
-    //    public PermissionDTO createPermission(PermissionDTO permissionDTO) {
-    //        if (permissionRepository
-    //                .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
-    //                .isPresent()) {
-    //            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
-    //        }
-    //
-    //        Permission permission = new Permission();
+    @Override
+    @Transactional
+    public PermissionDTO createPermission(PermissionDTO permissionDTO) {
+        if (permissionRepository.existsByName(permissionDTO.getName())) {
+            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
+        }
+        Permission permission = permissionMapper.toEntity(permissionDTO);
 
-    /// /        permission.setResource(permissionDTO.getResource());
-    /// /        permission.setAction(permissionDTO.getAction());
-    //
-    //        Permission savedPermission = permissionRepository.save(permission);
-    //        return convertToDTO(savedPermission);
-    //    }
-    public Permission createPermission(String name, String description, String apiEndpoint, HttpMethod httpMethod) {
-        Permission permission = new Permission();
-        permission.setName(name);
-        permission.setDescription(description);
-        permission.setApiEndpoint(apiEndpoint);
-        permission.setHttpMethod(httpMethod);
-        return permissionRepository.save(permission);
+        Permission savedPermission = permissionRepository.save(permission);
+        return permissionMapper.toDTO(savedPermission);
     }
 
     //    @Override
-    //    @Transactional
-    //    public PermissionDTO updatePermission(UUID id, PermissionDTO permissionDTO) {
-    ////        Permission permission =
-    ////                permissionRepository.findById(id).orElseThrow(() -> new
-    // AppException(ErrorCode.PERMISSION_NOT_FOUND));
-    //
-    //        // Check if new resource:action combination exists
-    ////        if ((!permission.getResource().equals(permissionDTO.getResource())
-    ////                        || !permission.getAction().equals(permissionDTO.getAction()))
-    ////                && permissionRepository
-    ////                        .findByResourceAndAction(permissionDTO.getResource(), permissionDTO.getAction())
-    ////                        .isPresent()) {
-    ////            throw new AppException(ErrorCode.PERMISSION_ALREADY_EXISTS);
-    ////        }
-    ////
-    ////        permission.setResource(permissionDTO.getResource());
-    ////        permission.setAction(permissionDTO.getAction());
-    //
-
-    /// /        Permission updatedPermission = permissionRepository.save(permission);
-    /// /        return convertToDTO(updatedPermission);
+    //    public Permission createPermission(String name, String description, String apiEndpoint, HttpMethod httpMethod)
+    // {
+    //        Permission permission = new Permission();
+    //        permission.setName(name);
+    //        permission.setDescription(description);
+    //        permission.setApiEndpoint(apiEndpoint);
+    //        permission.setHttpMethod(httpMethod);
+    //        return permissionRepository.save(permission);
     //    }
+
+    @Override
+    @Transactional
+    public PermissionDTO updatePermission(Integer id, PermissionDTO permissionDTO) {
+        Permission permission =
+                permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
+
+        //        permissionRepository
+        //                .findByApiEndpointAndHttpMethod(permissionDTO.getApiEndpoint(),
+        // permissionDTO.getHttpMethod());
+
+        permission.setName(permissionDTO.getName());
+        permission.setDescription(permissionDTO.getDescription());
+        permission.setApiEndpoint(permissionDTO.getApiEndpoint());
+        permission.setHttpMethod(permissionDTO.getHttpMethod());
+        permission.setResourcePattern(permissionDTO.getResourcePattern());
+
+        Permission updatedPermission = permissionRepository.save(permission);
+
+        return permissionMapper.toDTO(updatedPermission);
+    }
 
     //    @Override
     //    @Transactional
@@ -102,10 +101,11 @@ public class PermissionServiceImpl implements PermissionService {
     // AppException(ErrorCode.PERMISSION_NOT_FOUND));
     //        return convertToDTO(permission);
     //    }
-    //    @Override
-    //    public Page<PermissionDTO> getAllPermissions(int page, int size) {
-    //        return permissionRepository.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
-    //    }
+    @Override
+    public Page<PermissionDTO> getAllPermissions(int page, int size) {
+        return permissionRepository.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
+    }
+
     //
     //        @Override
     //        public List<Permission> getAllPermissions() {
@@ -172,8 +172,9 @@ public class PermissionServiceImpl implements PermissionService {
         PermissionDTO dto = new PermissionDTO();
         dto.setName(permission.getName());
         dto.setId(permission.getId());
-        //        dto.setResource(permission.getResource());
-        //        dto.setAction(permission.getAction());
+        dto.setApiEndpoint(permission.getApiEndpoint());
+        dto.setResourcePattern(permission.getResourcePattern());
+        dto.setHttpMethod(permission.getHttpMethod());
         dto.setDescription(permission.getDescription());
 
         return dto;

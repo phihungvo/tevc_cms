@@ -18,7 +18,7 @@ const API_ENDPOINTS = {
     USER: {
         GET_ALL: `${BASE_URL}/user/getAll`,
         CREATE: `${BASE_URL}/user/createUser`,
-        UPDATE: (userId) => `${BASE_URL}/user/${userId}/update`,
+        UPDATE: (userId) => `${BASE_URL}/user/${userId}`,
         DELETE: `${BASE_URL}/user`,    
     },
     ROLE: {
@@ -32,6 +32,7 @@ const API_ENDPOINTS = {
         GET_ALL: `${BASE_URL}/permissions`,
         GET_ALL_NO_PAGING: `${BASE_URL}/permissions/noPaging`,
         CREATE: `${BASE_URL}/permissions`,
+        UPDATE: (permissionId) => `${BASE_URL}/permissions/${permissionId}`,
     },
     EMPLOYEE: {
         GET_ALL: `${BASE_URL}/employees`,

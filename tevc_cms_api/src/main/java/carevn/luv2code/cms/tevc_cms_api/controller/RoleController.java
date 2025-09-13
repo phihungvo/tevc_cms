@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import carevn.luv2code.cms.tevc_cms_api.dto.RoleDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignPermissionRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateRoleRequest;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.UpdateRoleRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 import carevn.luv2code.cms.tevc_cms_api.service.RoleService;
 import jakarta.validation.Valid;
@@ -43,16 +44,17 @@ public class RoleController {
     //                    .build());
     //        }
     //
-    //    @PatchMapping("/{id}")
-    //    //    @PreAuthorize("hasAuthority('ROLE:UPDATE')")
-    //    public ResponseEntity<ApiResponse<RoleDTO>> updateRole(@PathVariable UUID id, @RequestBody RoleDTO roleDTO) {
-    //        RoleDTO updated = roleService.updateRole(id, roleDTO);
-    //        return ResponseEntity.ok(ApiResponse.<RoleDTO>builder()
-    //                .code(200)
-    //                .message("Role updated successfully")
-    //                .result(updated)
-    //                .build());
-    //    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<RoleDTO>> updateRole(
+            @PathVariable Integer id, @RequestBody UpdateRoleRequest request) {
+        RoleDTO updated = roleService.updateRole(id, request);
+        return ResponseEntity.ok(ApiResponse.<RoleDTO>builder()
+                .code(200)
+                .message("Role updated successfully")
+                .result(updated)
+                .build());
+    }
+
     //
     //    @GetMapping("/{id}")
     //    @PreAuthorize("hasAuthority('ROLE:READ')")

@@ -83,6 +83,8 @@ public class RoleServiceImpl implements RoleService {
     public RoleDTO updateRole(Integer id, UpdateRoleRequest request) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Role not found"));
 
+        role.setName(request.getName().toUpperCase());
+
         if (request.getDescription() != null) {
             role.setDescription(request.getDescription());
         }

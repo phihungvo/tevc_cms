@@ -46,8 +46,6 @@ public class User implements UserDetails {
 
     String profilePicture;
 
-    String bio;
-
     Date createAt;
 
     Date updateAt;

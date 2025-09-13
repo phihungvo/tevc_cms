@@ -34,7 +34,7 @@ public class Leave {
     String reason;
 
     @Enumerated(EnumType.STRING)
-    LeaveStatus status;
+    LeaveStatus leaveStatus;
 
     String approverComments;
 }
