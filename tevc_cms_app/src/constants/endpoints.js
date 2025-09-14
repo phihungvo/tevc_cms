@@ -37,6 +37,7 @@ const API_ENDPOINTS = {
     EMPLOYEE: {
         GET_ALL: `${BASE_URL}/employees`,
         NO_PAGING:  `${BASE_URL}/employees/no-paging`,
+        DETAIL: (employeeId) => `${BASE_URL}/employees/${employeeId}`,
         CREATE: `${BASE_URL}/employees`,
         GET_EMPLOYEE_BY_POSITION_TYPE: `${BASE_URL}/employees/by-position-type`,
         UPDATE: (employeeId) => `${BASE_URL}/employees/${employeeId}`,
