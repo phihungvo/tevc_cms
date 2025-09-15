@@ -20,6 +20,7 @@ public class InvalidatedToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
+    @Column(columnDefinition = "TEXT")
     String token;
 
     Date expiryTime;
