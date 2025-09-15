@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.TeamDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Department;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.entity.Team;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
@@ -31,19 +32,90 @@ public class TeamServiceImpl implements TeamService {
     private final EmployeeRepository employeeRepository;
     private final TeamMapper teamMapper;
 
+    //    @Override
+    //    public TeamDTO createTeam(TeamDTO teamDTO) {
+    //        Team team = teamMapper.toEntity(teamDTO);
+    //
+    //        team.setDepartment(departmentRepository
+    //                .findById(teamDTO.getDepartmentId())
+    //                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)));
+    //
+    //        Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(teamDTO.getEmployeeIds()));
+    //        team.setEmployees(employees);
+    //
+    //        return teamMapper.toDTO(teamRepository.save(team));
+    //    }
+
     @Override
+    @Transactional
     public TeamDTO createTeam(TeamDTO teamDTO) {
-        Team team = teamMapper.toEntity(teamDTO);
-
-        team.setDepartment(departmentRepository
+        Department department = departmentRepository
                 .findById(teamDTO.getDepartmentId())
-                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)));
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
 
-        Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(teamDTO.getEmployeeIds()));
-        team.setEmployees(employees);
+        Team team = teamMapper.toEntity(teamDTO);
+        team.setDepartment(department);
 
-        return teamMapper.toDTO(teamRepository.save(team));
+        if (teamDTO.getEmployeeIds() != null && !teamDTO.getEmployeeIds().isEmpty()) {
+            Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(teamDTO.getEmployeeIds()));
+
+            if (employees.size() != teamDTO.getEmployeeIds().size()) {
+                throw new AppException(ErrorCode.EMPLOYEE_NOT_FOUND);
+            }
+
+            team.setEmployees(employees);
+        }
+
+        Team saved = teamRepository.save(team);
+
+        return teamMapper.toDTO(saved);
     }
+
+    //    @Override
+    //    @Transactional
+    //    public TeamDTO createTeam(TeamDTO teamDTO) {
+    //        // Explicit check dù có validation (best practice cho defense in depth)
+    //        //        if (teamDTO.getDepartmentId() == null) {
+    //        //            throw new AppException(ErrorCode.DEPARTMENT_ID_REQUIRED);
+    //        //        }
+    //        //        if (teamDTO.getName() == null || teamDTO.getName().isBlank()) {
+    //        //            throw new AppException(ErrorCode.TEAM_NAME_REQUIRED);
+    //        //        }
+    //
+    //        Department department = departmentRepository
+    //                .findById(teamDTO.getDepartmentId())
+    //                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+    //
+    //        Team team = teamMapper.toEntity(teamDTO);
+    //        team.setDepartment(department);
+    //
+    //        //        if (teamDTO.getEmployeeIds() != null && !teamDTO.getEmployeeIds().isEmpty()) {
+    //        //            Set<Employee> employees = new
+    // HashSet<>(employeeRepository.findAllById(teamDTO.getEmployeeIds()));
+    //        //            if (employees.size() != teamDTO.getEmployeeIds().size()) {
+    //        //                throw new AppException(ErrorCode.EMPLOYEE_NOT_FOUND);
+    //        //            }
+    //        //            team.addEmployees(employees);
+    //        //            //            for (Employee employee : employees) {
+    //        //            //                team.addEmployee(employee);
+    //        //            //            }
+    //        //        }
+    //
+    //        //        @Mapping(
+    //        ////            target = "employeeIds",
+    //        ////            expression =
+    //        ////                    "java(team.getEmployees().stream().map(e ->
+    //        // e.getId()).collect(java.util.stream.Collectors.toSet()))")
+    //
+    //        //        Team saved = teamRepository.save(team);
+    //        //        return teamMapper.toDTO(saved);
+    //
+    //        Team saved = teamRepository.save(team);
+    //        // Map employeeIds vào DTO
+    //        TeamDTO dto = teamMapper.toDTO(saved);
+    //        dto.setEmployeeIds(saved.getEmployees().stream().map(Employee::getId).collect(Collectors.toSet()));
+    //        return dto;
+    //    }
 
     @Override
     public TeamDTO updateTeam(Integer id, TeamDTO teamDTO) {
@@ -73,8 +145,8 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Page<TeamDTO> getAllTeams(int page, int size) {
-        Page<Team> salaryPage = teamRepository.findAll(PageRequest.of(page, size));
-        return salaryPage.map(teamMapper::toDTO);
+        Page<Team> teamPage = teamRepository.findAll(PageRequest.of(page, size));
+        return teamPage.map(teamMapper::toDTO);
     }
 
     @Override

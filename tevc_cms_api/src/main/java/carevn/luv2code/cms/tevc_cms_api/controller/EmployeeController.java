@@ -3,11 +3,14 @@ package carevn.luv2code.cms.tevc_cms_api.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
+import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 
@@ -77,8 +80,23 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.findByDepartment(departmentId, page, size));
     }
 
+    @GetMapping("/by-department/no-paging")
+    public ResponseEntity<List<EmployeeDTO>> getEmployeesByDepartmentId(@RequestParam Integer departmentId) {
+        return ResponseEntity.ok(employeeService.getEmployeesByDepartmentId(departmentId));
+    }
+
     @GetMapping("/stats/by-status")
     public ResponseEntity<Long> countEmployeesByStatus(@RequestParam boolean isActive) {
         return ResponseEntity.ok(employeeService.countEmployeesByStatus(isActive));
+    }
+
+    @GetMapping("/by-department/basic")
+    public ApiResponse<List<EmployeeRepository.EmployeeBasicProjection>> getBasicEmployeesByDepartmentId(
+            @RequestParam Integer departmentId) {
+        return ApiResponse.<List<EmployeeRepository.EmployeeBasicProjection>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get basic employees by department ID successful")
+                .result(employeeService.getBasicEmployeesByDepartmentId(departmentId))
+                .build();
     }
 }

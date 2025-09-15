@@ -120,6 +120,16 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
+        title: 'Team',
+        color: '#0baedb',
+        icon: <TeamOutlined />,
+        url: '/admin/team',
+        role: 'ADMIN',
+        permissions: ['ADMIN:MANAGE'],
+        roleIcon: <SafetyOutlined />,
+        permissionIcon: <LockOutlined />,
+    },
+    {
         title: 'Attendance',
         color: '#26a69a',
         icon: <ClockCircleOutlined />, 

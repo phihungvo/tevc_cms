@@ -34,4 +34,17 @@ public class Team {
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "employee_id"))
     Set<Employee> employees = new HashSet<>();
+
+    // Best practice: Helper methods để quản lý ManyToMany
+    public void addEmployee(Employee employee) {
+        this.employees.add(employee);
+    }
+
+    public void removeEmployee(Employee employee) {
+        this.employees.remove(employee);
+    }
+
+    public void addEmployees(Set<Employee> newEmployees) {
+        this.employees.addAll(newEmployees);
+    }
 }
