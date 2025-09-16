@@ -4,7 +4,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +26,7 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String employeeCode;
 
     String firstName;
@@ -44,34 +48,30 @@ public class Employee {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
-    @JsonIgnore
+    @JsonBackReference
     Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position_id")
-    @JsonIgnore
+    @JsonBackReference
     Position position;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<Attendance> attendances = new HashSet<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<Leave> leaves = new HashSet<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<Salary> salaries = new HashSet<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<Performance> performances = new HashSet<>();
@@ -80,14 +80,16 @@ public class Employee {
             mappedBy = "manager",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.LAZY)
-    @JsonIgnore
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @JsonManagedReference
     Set<Department> managedDepartments = new HashSet<>();
 
     boolean isActive;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     Date createdAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     Date updatedAt;
 }

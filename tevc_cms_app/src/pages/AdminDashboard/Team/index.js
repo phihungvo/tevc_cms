@@ -81,7 +81,6 @@ function Team() {
             name: 'employeeIds',
             type: 'select',
             options: employeeOptions,
-            rules: [{required: true, message: 'Chọn employee!'}],
             multiple: true,
         }];
 

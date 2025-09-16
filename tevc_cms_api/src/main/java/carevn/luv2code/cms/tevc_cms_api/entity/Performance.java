@@ -18,7 +18,7 @@ public class Performance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     Employee employee;
 
@@ -34,7 +34,7 @@ public class Performance {
 
     String improvements;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewer_id")
     Employee reviewer;
 }

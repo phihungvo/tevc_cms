@@ -32,29 +32,20 @@ public class TeamServiceImpl implements TeamService {
     private final EmployeeRepository employeeRepository;
     private final TeamMapper teamMapper;
 
-    //    @Override
-    //    public TeamDTO createTeam(TeamDTO teamDTO) {
-    //        Team team = teamMapper.toEntity(teamDTO);
-    //
-    //        team.setDepartment(departmentRepository
-    //                .findById(teamDTO.getDepartmentId())
-    //                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)));
-    //
-    //        Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(teamDTO.getEmployeeIds()));
-    //        team.setEmployees(employees);
-    //
-    //        return teamMapper.toDTO(teamRepository.save(team));
-    //    }
-
     @Override
     @Transactional
     public TeamDTO createTeam(TeamDTO teamDTO) {
-        Department department = departmentRepository
-                .findById(teamDTO.getDepartmentId())
-                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+        //        Team team = teamMapper.toEntity(teamDTO);
+        Team team = new Team();
+        team.setName(teamDTO.getName());
+        team.setDescription(teamDTO.getDescription());
 
-        Team team = teamMapper.toEntity(teamDTO);
-        team.setDepartment(department);
+        if (teamDTO.getDepartmentId() != null) {
+            Department department = departmentRepository
+                    .findById(teamDTO.getDepartmentId())
+                    .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+            team.setDepartment(department);
+        }
 
         if (teamDTO.getEmployeeIds() != null && !teamDTO.getEmployeeIds().isEmpty()) {
             Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(teamDTO.getEmployeeIds()));
@@ -71,63 +62,17 @@ public class TeamServiceImpl implements TeamService {
         return teamMapper.toDTO(saved);
     }
 
-    //    @Override
-    //    @Transactional
-    //    public TeamDTO createTeam(TeamDTO teamDTO) {
-    //        // Explicit check dù có validation (best practice cho defense in depth)
-    //        //        if (teamDTO.getDepartmentId() == null) {
-    //        //            throw new AppException(ErrorCode.DEPARTMENT_ID_REQUIRED);
-    //        //        }
-    //        //        if (teamDTO.getName() == null || teamDTO.getName().isBlank()) {
-    //        //            throw new AppException(ErrorCode.TEAM_NAME_REQUIRED);
-    //        //        }
-    //
-    //        Department department = departmentRepository
-    //                .findById(teamDTO.getDepartmentId())
-    //                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
-    //
-    //        Team team = teamMapper.toEntity(teamDTO);
-    //        team.setDepartment(department);
-    //
-    //        //        if (teamDTO.getEmployeeIds() != null && !teamDTO.getEmployeeIds().isEmpty()) {
-    //        //            Set<Employee> employees = new
-    // HashSet<>(employeeRepository.findAllById(teamDTO.getEmployeeIds()));
-    //        //            if (employees.size() != teamDTO.getEmployeeIds().size()) {
-    //        //                throw new AppException(ErrorCode.EMPLOYEE_NOT_FOUND);
-    //        //            }
-    //        //            team.addEmployees(employees);
-    //        //            //            for (Employee employee : employees) {
-    //        //            //                team.addEmployee(employee);
-    //        //            //            }
-    //        //        }
-    //
-    //        //        @Mapping(
-    //        ////            target = "employeeIds",
-    //        ////            expression =
-    //        ////                    "java(team.getEmployees().stream().map(e ->
-    //        // e.getId()).collect(java.util.stream.Collectors.toSet()))")
-    //
-    //        //        Team saved = teamRepository.save(team);
-    //        //        return teamMapper.toDTO(saved);
-    //
-    //        Team saved = teamRepository.save(team);
-    //        // Map employeeIds vào DTO
-    //        TeamDTO dto = teamMapper.toDTO(saved);
-    //        dto.setEmployeeIds(saved.getEmployees().stream().map(Employee::getId).collect(Collectors.toSet()));
-    //        return dto;
-    //    }
-
     @Override
     public TeamDTO updateTeam(Integer id, TeamDTO teamDTO) {
         Team existingTeam = teamRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.TEAM_NOT_FOUND));
 
         teamMapper.updateEntityFromDTO(teamDTO, existingTeam);
 
-        if (teamDTO.getDepartmentId() != null) {
-            existingTeam.setDepartment(departmentRepository
-                    .findById(teamDTO.getDepartmentId())
-                    .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)));
-        }
+        //        if (teamDTO.getDepartmentId() != null) {
+        existingTeam.setDepartment(departmentRepository
+                .findById(teamDTO.getDepartmentId())
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)));
+        //        }
 
         if (teamDTO.getEmployeeIds() != null) {
             Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(teamDTO.getEmployeeIds()));
