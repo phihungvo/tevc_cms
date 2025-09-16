@@ -26,6 +26,9 @@ public class MailConfig {
     @Value("${spring.mail.properties.mail.debug}")
     private boolean mailDebug;
 
+    @Value("${MAIL_ENCRYPTION:TLS}")
+    private String mailEncryption;
+
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -37,7 +40,15 @@ public class MailConfig {
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+
+        if ("SSL".equalsIgnoreCase(mailEncryption)) {
+            props.put("mail.smtp.socketFactory.port", mailPort);
+            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            props.put("mail.smtp.socketFactory.fallback", "false");
+        } else {
+            props.put("mail.smtp.starttls.enable", "true");
+        }
+
         props.put("mail.smtp.connectiontimeout", "5000");
         props.put("mail.smtp.timeout", "5000");
         props.put("mail.smtp.writetimeout", "5000");

@@ -10,6 +10,7 @@ import Position from '~/pages/AdminDashboard/Position';
 import Leave from '~/pages/AdminDashboard/Leave';
 import PayRoll from '~/pages/AdminDashboard/PayRoll';
 import RootRedirect from '~/components/RootRedirect';
+import EmployeeDetail from '~/pages/AdminDashboard/Employee/detail';
 import Team from "~/pages/AdminDashboard/Team";
 
 const publicRoutes = [
@@ -48,6 +49,12 @@ const privateRoutes = [
         title: 'Employee Management',
         role: 'admin',
     },
+    {
+        path: '/admin/employee/:id', // Route mới cho chi tiết
+        component: EmployeeDetail,
+        title: 'Employee Detail',
+        role: 'admin',
+      },
     {
         path: '/admin/department',
         component: Department,

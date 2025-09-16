@@ -36,6 +36,7 @@ public class DynamicAuthorizationFilter extends OncePerRequestFilter {
     private final List<String> publicEndpoints = List.of(
             "/api/auth/login",
             "/api/auth/register",
+            "/api/auth/logout",
             "/api/public/**",
             "/actuator/health",
             "/swagger-ui/**",

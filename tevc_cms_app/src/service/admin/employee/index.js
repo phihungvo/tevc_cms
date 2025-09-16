@@ -27,6 +27,19 @@ export const getAllEmployeesNoPaging = async () => {
     }
 };
 
+
+export const employeeDetail = async (employeeId) => {
+    try {
+        const response = await apiClient.get(
+            API_ENDPOINTS.EMPLOYEE.DETAIL(employeeId),  
+        );
+        
+        return response.data;
+    } catch (error) {
+        console.error('Error when creating employee: ', error); 
+    }
+};
+
 export const createEmployee = async (formData) => {
     try {
         const response = await axiosInstance.post(
