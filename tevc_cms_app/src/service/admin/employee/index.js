@@ -64,6 +64,18 @@ export const getEmployeeByPositionType = async (positionType) => {
     }
 };
 
+export const getByDepartmentBasicInfo = async (departmentId) => {
+    try {
+        const response = await apiClient.get(API_ENDPOINTS.EMPLOYEE.BY_DEPARTMENTS_BASIC_RESPONSE, {
+            params: { departmentId },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error when getting employee by position type: ', error);
+    }
+};
+
+
 export const updateEmployee = async (employeeId, formData) => {
     try {
         const response = await apiClient.patch(

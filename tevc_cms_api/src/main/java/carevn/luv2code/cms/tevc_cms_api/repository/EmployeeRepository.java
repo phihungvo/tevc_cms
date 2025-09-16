@@ -14,6 +14,15 @@ import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
+
+    interface EmployeeBasicProjection {
+        Integer getId();
+
+        String getFirstName();
+
+        String getLastName();
+    }
+
     boolean existsByEmail(String email);
 
     boolean existsByEmployeeCode(String employeeCode);
@@ -21,8 +30,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
     Page<Employee> findByDepartmentId(@Param("departmentId") Integer departmentId, Pageable pageable);
 
-    @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
-    List<Employee> findByDepartmentId(@Param("departmentId") Integer departmentId);
+    //    @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
+    //    List<EmployeeDTO> findByDepartmentId(@Param("departmentId") Integer departmentId);
 
     @Query("SELECT e FROM Employee e WHERE e.position.id = :positionId")
     List<Employee> findByPositionId(@Param("positionId") Integer positionId);
@@ -42,4 +51,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Query("SELECT e FROM Employee e LEFT JOIN FETCH e.department LEFT JOIN FETCH e.position")
     Page<Employee> findAllWithDepartmentAndPosition(Pageable pageable);
+
+    //    @Query("SELECT e.id AS id, e.firstName AS firstName, e.lastName AS lastName "
+    //            + "FROM Employee e WHERE e.department.id = :departmentId")
+    //    List<EmployeeBasicProjection> findBasicByDepartmentId(@Param("departmentId") Integer departmentId);
+
+    List<EmployeeBasicProjection> findByDepartmentId(Integer departmentId);
 }

@@ -42,6 +42,7 @@ const API_ENDPOINTS = {
         GET_EMPLOYEE_BY_POSITION_TYPE: `${BASE_URL}/employees/by-position-type`,
         UPDATE: (employeeId) => `${BASE_URL}/employees/${employeeId}`,
         DELETE: (employeeId) => `${BASE_URL}/employees/${employeeId}`,
+        BY_DEPARTMENTS_BASIC_RESPONSE: `${BASE_URL}/employees/by-department/basic`,
     },
     DEPARTMENT: {
         GET_ALL: `${BASE_URL}/departments`,
@@ -77,6 +78,15 @@ const API_ENDPOINTS = {
         GET_ALL: `${BASE_URL}/attendances`,
         CREATE: `${BASE_URL}/attendances`,
         UPDATE: (attendanceId) => `${BASE_URL}/attendances/${attendanceId}`,
+    },
+    TEAM: {
+        GET_ALL: `${BASE_URL}/teams`,
+        NO_PAGING: `${BASE_URL}/teams/no-paging`,
+        CREATE: `${BASE_URL}/teams`,
+        UPDATE: (teamId) => `${BASE_URL}/teams/${teamId}`,
+        DELETE: (teamId) => `${BASE_URL}/teams/${teamId}`,
+        ADD_MEMBER: (teamId, memberId) => `${BASE_URL}/teams/${teamId}/addMember/${memberId}`,
+        REMOVE_MEMBER: (teamId, memberId) => `${BASE_URL}/teams/${teamId}/removeMember/${memberId}`,
     }
 };
 
