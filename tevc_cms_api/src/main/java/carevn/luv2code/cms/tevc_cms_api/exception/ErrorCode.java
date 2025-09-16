@@ -79,7 +79,9 @@ public enum ErrorCode {
     MINIO_MOVE_DELETE_ERROR(1066, "Error moving file: Failed to delete", HttpStatus.INTERNAL_SERVER_ERROR),
     CANDIDATE_NOT_FOUND(1067, "Candidate not found", HttpStatus.NOT_FOUND),
     JOB_POSTING_NOT_FOUND(1068, "Job posting not found", HttpStatus.NOT_FOUND),
-    CANDIDATE_ALREADY_APPLIED(1069, "Candidate has already applied to this job posting", HttpStatus.CONFLICT);
+    CANDIDATE_ALREADY_APPLIED(1069, "Candidate has already applied to this job posting", HttpStatus.CONFLICT),
+    TEAM_NOT_FOUND(1070, "Team not found", HttpStatus.NOT_FOUND),
+    EMPLOYEE_ALREADY_IN_TEAM(1071, "Employee already in team", HttpStatus.CONFLICT);
 
     int code;
     String message;

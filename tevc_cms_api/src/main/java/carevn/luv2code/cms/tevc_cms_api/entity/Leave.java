@@ -22,7 +22,6 @@ public class Leave {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
-    @ToString.Exclude
     Employee employee;
 
     Date startDate;
