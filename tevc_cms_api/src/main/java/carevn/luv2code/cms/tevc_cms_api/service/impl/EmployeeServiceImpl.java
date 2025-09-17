@@ -107,6 +107,26 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public List<EmployeeDTO> getEmployeesByDepartmentId(Integer departmentId) {
+        //        if (!departmentRepository.existsById(departmentId)) {
+        //            throw new AppException(ErrorCode.DEPARTMENT_NOT_FOUND);
+        //        }
+        //
+        //        return employeeRepository.findByDepartmentId(departmentId).stream()
+        //                .map(employeeMapper::toDTO)
+        //                .collect(Collectors.toList());
+        return null;
+    }
+
+    @Override
+    public List<EmployeeRepository.EmployeeBasicProjection> getBasicEmployeesByDepartmentId(Integer departmentId) {
+        if (!departmentRepository.existsById(departmentId)) {
+            throw new AppException(ErrorCode.DEPARTMENT_NOT_FOUND);
+        }
+        return employeeRepository.findByDepartmentId(departmentId);
+    }
+
+    @Override
     @Transactional
     public void deleteEmployee(Integer id) {
         Employee employee =

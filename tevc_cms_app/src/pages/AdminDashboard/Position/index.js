@@ -123,7 +123,7 @@ function Position() {
         handleGetAllPositions();
     }, []);
 
-    const handleGetAllPositions = async (page = 1, pageSize = 5) => {
+    const handleGetAllPositions = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
             const response = await getAllPositions();

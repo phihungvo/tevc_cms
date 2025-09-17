@@ -27,6 +27,19 @@ export const getAllEmployeesNoPaging = async () => {
     }
 };
 
+
+export const employeeDetail = async (employeeId) => {
+    try {
+        const response = await apiClient.get(
+            API_ENDPOINTS.EMPLOYEE.DETAIL(employeeId),  
+        );
+        
+        return response.data;
+    } catch (error) {
+        console.error('Error when creating employee: ', error); 
+    }
+};
+
 export const createEmployee = async (formData) => {
     try {
         const response = await axiosInstance.post(
@@ -50,6 +63,18 @@ export const getEmployeeByPositionType = async (positionType) => {
         console.error('Error when getting employee by position type: ', error); 
     }
 };
+
+export const getByDepartmentBasicInfo = async (departmentId) => {
+    try {
+        const response = await apiClient.get(API_ENDPOINTS.EMPLOYEE.BY_DEPARTMENTS_BASIC_RESPONSE, {
+            params: { departmentId },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error when getting employee by position type: ', error);
+    }
+};
+
 
 export const updateEmployee = async (employeeId, formData) => {
     try {

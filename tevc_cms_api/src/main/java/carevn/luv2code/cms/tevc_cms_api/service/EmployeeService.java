@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.EmployeeDTO;
 import carevn.luv2code.cms.tevc_cms_api.enums.PositionType;
+import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 
 public interface EmployeeService {
 
@@ -22,6 +23,10 @@ public interface EmployeeService {
     List<EmployeeDTO> getAllEmployeesNoPaging();
 
     Page<EmployeeDTO> findByDepartment(Integer departmentId, int page, int size);
+
+    List<EmployeeDTO> getEmployeesByDepartmentId(Integer departmentId);
+
+    List<EmployeeRepository.EmployeeBasicProjection> getBasicEmployeesByDepartmentId(Integer departmentId);
 
     boolean toggleEmployeeStatus(Integer id);
 

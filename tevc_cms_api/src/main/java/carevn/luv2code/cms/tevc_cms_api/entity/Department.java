@@ -3,7 +3,8 @@ package carevn.luv2code.cms.tevc_cms_api.entity;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,15 +27,21 @@ public class Department {
 
     String description;
 
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
+    @OneToMany(
+            mappedBy = "department",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY)
+    @JsonManagedReference
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<Employee> employees = new HashSet<>();
 
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    Set<Team> teams = new HashSet<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
-    @JsonIgnore
-    @ToString.Exclude
+    @JsonBackReference
     Employee manager;
 }
