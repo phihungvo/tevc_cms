@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Avatar, Descriptions, Button, Row, Col, Divider, message } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Card, Avatar, Descriptions, Button, Row, Col, Divider, message, Upload } from 'antd';
+import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { employeeDetail } from '~/service/admin/employee';
+import { uploadFile } from '~/service/admin/uploadFile';
 import { useAuth } from '~/routes/AuthContext';
 import 'moment/locale/vi';
+
 moment.locale('vi');
 
 function EmployeeDetail() {
@@ -14,6 +16,7 @@ function EmployeeDetail() {
   const { user } = useAuth();
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
     if (!user || !user.token) {
@@ -31,6 +34,7 @@ function EmployeeDetail() {
             dateOfBirth: response.dateOfBirth ? moment(response.dateOfBirth).format('YYYY-MM-DD') : null,
             hireDate: response.hireDate ? moment(response.hireDate).format('YYYY-MM-DD') : null,
           });
+          setAvatarUrl(response.profilePicture || '/default-avatar.png'); // Sử dụng ảnh mặc định nếu chưa có
         } else {
           throw new Error('Không tìm thấy nhân viên');
         }
@@ -47,18 +51,42 @@ function EmployeeDetail() {
   if (loading) return <div>Loading...</div>;
   if (!employee) return <div>Không tìm thấy nhân viên</div>;
 
-  const avatarUrl = employee.profilePicture || null;
-  const avatarComponent = avatarUrl ? (
-      <Avatar size={100} src={avatarUrl} />
-  ) : (
-      <Avatar size={100} icon={<UserOutlined />} />
-  );
+  const handleAvatarUpload = async (file) => {
+    try {
+      // const formData = new FormData();
+      // formData.append('file', file);
+      const uploadedFileName = await uploadFile(file, parseInt(id));
+      setAvatarUrl(`${process.env.REACT_APP_API_URL}/${uploadedFileName}`);
+      message.success('Tải ảnh đại diện thành công!');
+    } catch (error) {
+      message.error(`Lỗi khi tải ảnh đại diện: ${error.message}`);
+    }
+  };
+
+  const triggerFileInput = (e) => {
+    e.preventDefault();
+    document.getElementById('avatarUpload').click();
+  };
 
   return (
       <Card
           title={
             <Row align="middle" gutter={16}>
-              <Col>{avatarComponent}</Col>
+              <Col>
+                <Avatar
+                    size={100}
+                    src={avatarUrl}
+                    onClick={triggerFileInput}
+                    style={{ cursor: 'pointer' }}
+                />
+                <input
+                    id="avatarUpload"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleAvatarUpload(e.target.files[0])}
+                />
+              </Col>
               <Col>
                 <h2>Chi tiết Nhân viên</h2>
                 <span style={{ color: '#1890ff' }}>Mã: {employee.employeeCode}</span>

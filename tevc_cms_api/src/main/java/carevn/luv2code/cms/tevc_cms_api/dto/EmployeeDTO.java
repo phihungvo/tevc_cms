@@ -27,7 +27,7 @@ public class EmployeeDTO {
 
     String address;
 
-    String profilePicture;
+    Integer profilePictureId;
 
     Date hireDate;
 

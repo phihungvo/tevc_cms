@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.entity.File;
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
+import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.FileRepository;
 import io.minio.*;
 import io.minio.CopySource;
@@ -35,6 +37,9 @@ public class MinioService {
 
     @Autowired
     private String minioBasePath;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @PostConstruct
     public void init() {
@@ -70,6 +75,40 @@ public class MinioService {
                     file.getSize(),
                     uploadedBy);
             fileRepository.save(fileEntity);
+
+            return fullObjectName;
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.MINIO_UPLOAD_ERROR);
+        }
+    }
+
+    public String uploadFileForEmployee(MultipartFile file, User uploadedBy, Integer employeeId) {
+        try (InputStream inputStream = file.getInputStream()) {
+            LocalDate today = LocalDate.now();
+            String relativePath =
+                    minioBasePath + "/" + today.getYear() + "/" + String.format("%02d", today.getMonthValue()) + "/";
+            String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+            String fullObjectName = relativePath + fileName;
+
+            minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(fullObjectName).stream(
+                            inputStream, file.getSize(), -1)
+                    .contentType(file.getContentType())
+                    .build());
+
+            File fileEntity = new File(
+                    fullObjectName,
+                    file.getOriginalFilename(),
+                    file.getContentType(),
+                    relativePath,
+                    file.getSize(),
+                    uploadedBy);
+            File savedFile = fileRepository.save(fileEntity);
+
+            Employee employee = employeeRepository
+                    .findById(employeeId)
+                    .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+            employee.setProfilePicture(savedFile);
+            employeeRepository.save(employee);
 
             return fullObjectName;
         } catch (Exception e) {

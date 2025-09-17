@@ -43,7 +43,9 @@ public class Employee {
 
     String address;
 
-    String profilePicture;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "profile_picture_id", referencedColumnName = "id")
+    private File profilePicture;
 
     @Column(name = "hire_date")
     Date hireDate;

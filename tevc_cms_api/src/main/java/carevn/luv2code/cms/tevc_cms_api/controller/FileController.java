@@ -35,7 +35,7 @@ public class FileController {
     private UserRepository userRepository;
 
     @PostMapping("/upload")
-    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam Integer employeeId) {
         if (file.isEmpty()) {
             return ApiResponse.<String>builder()
                     .code(HttpStatus.BAD_REQUEST.value())
@@ -49,7 +49,7 @@ public class FileController {
                 .findByUserName(auth.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        String fileName = minioService.uploadFile(file, uploadedBy);
+        String fileName = minioService.uploadFileForEmployee(file, uploadedBy, employeeId);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
                 .message("Upload successful")
