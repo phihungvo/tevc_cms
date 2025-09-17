@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.util.Set;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -19,8 +18,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Position {
     @Id
-    @GeneratedValue
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Column(nullable = false)
     String title;
@@ -34,7 +33,10 @@ public class Position {
     @Column(name = "base_salary", nullable = false)
     Double baseSalary;
 
+    @OneToMany(
+            mappedBy = "position",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonManagedReference
-    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     Set<Employee> employees;
 }

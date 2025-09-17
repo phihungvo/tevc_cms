@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Employee/Employee.module.scss';
 import moment from 'moment';
@@ -10,18 +11,23 @@ import {
     CloudUploadOutlined,
     EditOutlined,
     DeleteOutlined,
+    EyeOutlined, // Thêm icon View
 } from '@ant-design/icons';
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import {Form, message, Tag, DatePicker} from 'antd';
-import {getAllEmployees, createEmployee, updateEmployee, deleteEmployee} from '~/service/admin/employee';
-import {getAllDepartmentsNoPaging} from '~/service/admin/department';
-import {getAllPositions, getAllNoPaging} from '~/service/admin/position';
-import {exportExcelFile} from '~/service/admin/export_service';
-
+import { Form, message, Tag, DatePicker, Watermark } from 'antd';
+import {
+    getAllEmployees,
+    createEmployee,
+    updateEmployee,
+    deleteEmployee,
+} from '~/service/admin/employee';
+import { getAllDepartmentsNoPaging } from '~/service/admin/department';
+import { getAllPositions } from '~/service/admin/position';
+import { exportExcelFile } from '~/service/admin/export_service';
+import CustomTabs from '~/components/Layout/components/Tab';
 import 'moment/locale/vi';
-
 moment.locale('vi');
 
 const cx = classNames.bind(styles);
@@ -40,10 +46,11 @@ function Employee() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [form] = Form.useForm();
+    const navigate = useNavigate();
 
     const genderStyles = {
-        Male: {color: 'processing', label: 'Nam'},
-        Female: {color: 'error', label: 'Nữ'},
+        Male: { color: 'green', label: 'Male' },
+        Female: { color: 'volcano', label: 'Female' },
     };
 
     const columns = [
@@ -55,15 +62,15 @@ function Employee() {
             fixed: 'left',
         },
         {
-            title: 'First Name',
-            dataIndex: 'firstName',
-            key: 'firstName',
-            width: 150,
-        },
-        {
             title: 'Last Name',
             dataIndex: 'lastName',
             key: 'lastName',
+            width: 150,
+        },
+        {
+            title: 'First Name',
+            dataIndex: 'firstName',
+            key: 'firstName',
             width: 150,
         },
         {
@@ -79,8 +86,11 @@ function Employee() {
             dataIndex: 'gender',
             key: 'gender',
             width: 100,
-            render: (gender) => {
-                const style = genderStyles[gender] || {color: 'default', label: gender || 'N/A'};
+            render: (status) => {
+                const style = genderStyles[status] || {
+                    color: 'default',
+                    label: status || 'N/A',
+                };
                 return <Tag color={style.color}>{style.label}</Tag>;
             },
         },
@@ -103,7 +113,10 @@ function Employee() {
             title: 'Hire Date',
             dataIndex: 'hireDate',
             key: 'hireDate',
-            render: (date) => (date && moment(date, moment.ISO_8601, true).isValid() ? moment(date).format('DD/MM/YYYY') : 'N/A'),
+            render: (date) =>
+                date && moment(date, moment.ISO_8601, true).isValid()
+                    ? moment(date).format('DD/MM/YYYY')
+                    : 'N/A',
         },
         {
             title: 'Is Active',
@@ -115,34 +128,48 @@ function Employee() {
             title: 'Created At',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            render: (date) => (date && moment(date, moment.ISO_8601, true).isValid() ? moment(date).format('DD/MM/YYYY') : 'N/A'),
+            render: (date) =>
+                date && moment(date, moment.ISO_8601, true).isValid()
+                    ? moment(date).format('DD/MM/YYYY')
+                    : 'N/A',
         },
         {
             title: 'Updated At',
             dataIndex: 'updatedAt',
             key: 'updatedAt',
-            render: (date) => (date && moment(date, moment.ISO_8601, true).isValid() ? moment(date).format('DD/MM/YYYY') : 'N/A'),
+            render: (date) =>
+                date && moment(date, moment.ISO_8601, true).isValid()
+                    ? moment(date).format('DD/MM/YYYY')
+                    : 'N/A',
         },
         {
             title: 'Actions',
             fixed: 'right',
-            width: 180,
+            width: 170,
             render: (_, record) => (
                 <>
                     <SmartButton
-                        title="Sửa"
-                        type="primary"
-                        icon={<EditOutlined/>}
-                        buttonWidth={80}
-                        onClick={() => handleEditRole(record)}
+                        // title="Xem"
+                        type="default"
+                        icon={<EyeOutlined />}
+                        buttonWidth={50}
+                        onClick={() => navigate(`/admin/employee/${record.id}`)} // Navigate sang detail
                     />
                     <SmartButton
-                        title="Xóa"
+                        // title="Sửa"
+                        type="primary"
+                        icon={<EditOutlined />}
+                        buttonWidth={50}
+                        onClick={() => handleEditRole(record)}
+                        style={{ marginLeft: '8px' }}
+                    />
+                    <SmartButton
+                        // title="Xóa"
                         type="danger"
-                        icon={<DeleteOutlined/>}
-                        buttonWidth={80}
+                        icon={<DeleteOutlined />}
+                        buttonWidth={50}
                         onClick={() => handleDeleteEmployee(record)}
-                        style={{marginLeft: '8px'}}
+                        style={{ marginLeft: '8px' }}
                     />
                 </>
             ),
@@ -151,10 +178,17 @@ function Employee() {
 
     const userModalFields = [
         {
+            label: 'Employee Code',
+            name: 'employeeCode',
+            type: 'text',
+            readOnly: true,
+            disabled: true,
+        },
+        {
             label: 'First Name',
             name: 'firstName',
             type: 'text',
-            rules: [{required: true, message: 'Tên là bắt buộc!'}],
+            rules: [{ required: true, message: 'Tên là bắt buộc!' }],
         },
         {
             label: 'Last Name',
@@ -165,57 +199,59 @@ function Employee() {
             label: 'Date of Birth',
             name: 'dateOfBirth',
             type: 'date',
-            render: () => <DatePicker format="DD/MM/YYYY" style={{width: '100%'}}/>,
-            rules: [{required: true, message: 'Ngày sinh là bắt buộc!'}],
+            render: () => (
+                <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
+            ),
+            rules: [{ required: true, message: 'Ngày sinh là bắt buộc!' }],
         },
         {
             label: 'Gender',
             name: 'gender',
             type: 'select',
             options: ['Male', 'Female', 'Other'],
-            rules: [{required: true, message: 'Giới tính là bắt buộc!'}],
+            rules: [{ required: true, message: 'Giới tính là bắt buộc!' }],
         },
         {
             label: 'Email',
             name: 'email',
             type: 'text',
             rules: [
-                {required: true, message: 'Email là bắt buộc!'},
-                {type: 'email', message: 'Định dạng email không hợp lệ!'},
+                { required: true, message: 'Email là bắt buộc!' },
+                { type: 'email', message: 'Định dạng email không hợp lệ!' },
             ],
         },
         {
             label: 'Phone',
             name: 'phone',
             type: 'text',
-            rules: [{required: true, message: 'Số điện thoại là bắt buộc!'}],
+            rules: [{ required: true, message: 'Số điện thoại là bắt buộc!' }],
         },
         {
             label: 'Address',
             name: 'address',
             type: 'text',
-            rules: [{required: true, message: 'Địa chỉ là bắt buộc!'}],
+            rules: [{ required: true, message: 'Địa chỉ là bắt buộc!' }],
         },
         {
             label: 'Hire Date',
             name: 'hireDate',
             type: 'date',
-            render: () => <DatePicker format="DD/MM/YYYY" style={{width: '100%'}}/>,
-            rules: [{required: true, message: 'Ngày vào làm là bắt buộc!'}],
+            render: () => (
+                <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
+            ),
+            rules: [{ required: true, message: 'Ngày vào làm là bắt buộc!' }],
         },
         {
             label: 'Department',
             name: 'departmentId',
             type: 'select',
             options: departmentOptions,
-            rules: [{required: true, message: 'Phòng ban là bắt buộc!'}],
         },
         {
             label: 'Position',
             name: 'positionId',
             type: 'select',
             options: positionOptions,
-            rules: [{required: true, message: 'Vị trí là bắt buộc!'}],
         },
         {
             label: 'Active',
@@ -228,17 +264,16 @@ function Employee() {
         try {
             const deptResponse = await getAllDepartmentsNoPaging();
             if (deptResponse && Array.isArray(deptResponse)) {
-                const departments = deptResponse.map(dept => ({
+                const departments = deptResponse.map((dept) => ({
                     label: dept.name,
                     value: dept.id,
                 }));
                 setDepartmentOptions(departments);
             }
 
-            // Fetch positions
             const posResponse = await getAllPositions();
             if (posResponse && Array.isArray(posResponse.content)) {
-                const positions = posResponse.content.map(pos => ({
+                const positions = posResponse.content.map((pos) => ({
                     label: pos.title,
                     value: pos.id,
                 }));
@@ -252,13 +287,20 @@ function Employee() {
     const handleGetAllEmployees = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getAllEmployees({page: page - 1, pageSize});
+            const response = await getAllEmployees({
+                page: page - 1,
+                pageSize,
+            });
             if (response && Array.isArray(response.content)) {
-                const mappedEmployees = response.content.map(employee => ({
+                const mappedEmployees = response.content.map((employee) => ({
                     ...employee,
                     isActive: employee.active,
-                    dateOfBirth: employee.dateOfBirth ? moment(employee.dateOfBirth).format('YYYY-MM-DD') : null,
-                    hireDate: employee.hireDate ? moment(employee.hireDate).format('YYYY-MM-DD') : null,
+                    dateOfBirth: employee.dateOfBirth
+                        ? moment(employee.dateOfBirth).format('YYYY-MM-DD')
+                        : null,
+                    hireDate: employee.hireDate
+                        ? moment(employee.hireDate).format('YYYY-MM-DD')
+                        : null,
                 }));
                 setEmployeeSource(mappedEmployees);
                 setPagination({
@@ -289,14 +331,22 @@ function Employee() {
         try {
             const formattedData = {
                 ...formData,
-                dateOfBirth: formData.dateOfBirth ? moment(formData.dateOfBirth).format('YYYY-MM-DD') : null,
-                hireDate: formData.hireDate ? moment(formData.hireDate).format('YYYY-MM-DD') : null,
+                dateOfBirth: formData.dateOfBirth
+                    ? moment(formData.dateOfBirth).format('YYYY-MM-DD')
+                    : null,
+                hireDate: formData.hireDate
+                    ? moment(formData.hireDate).format('YYYY-MM-DD')
+                    : null,
             };
             await createEmployee(formattedData);
             handleGetAllEmployees();
             setIsModalOpen(false);
         } catch (error) {
-            message.error(`Lỗi khi tạo nhân viên: ${error.response?.data?.message || error.message}`);
+            message.error(
+                `Lỗi khi tạo nhân viên: ${
+                    error.response?.data?.message || error.message
+                }`,
+            );
         }
     };
 
@@ -305,8 +355,16 @@ function Employee() {
         setModalMode('edit');
         form.setFieldsValue({
             ...record,
-            dateOfBirth: record.dateOfBirth && moment(record.dateOfBirth, moment.ISO_8601, true).isValid() ? moment(record.dateOfBirth) : null,
-            hireDate: record.hireDate && moment(record.hireDate, moment.ISO_8601, true).isValid() ? moment(record.hireDate) : null,
+            dateOfBirth:
+                record.dateOfBirth &&
+                moment(record.dateOfBirth, moment.ISO_8601, true).isValid()
+                    ? moment(record.dateOfBirth)
+                    : null,
+            hireDate:
+                record.hireDate &&
+                moment(record.hireDate, moment.ISO_8601, true).isValid()
+                    ? moment(record.hireDate)
+                    : null,
         });
         setIsModalOpen(true);
     };
@@ -315,19 +373,26 @@ function Employee() {
         try {
             const formattedData = {
                 ...formData,
-                dateOfBirth: formData.dateOfBirth ? moment(formData.dateOfBirth).format('YYYY-MM-DD') : null,
-                hireDate: formData.hireDate ? moment(formData.hireDate).format('YYYY-MM-DD') : null,
+                dateOfBirth: formData.dateOfBirth
+                    ? moment(formData.dateOfBirth).format('YYYY-MM-DD')
+                    : null,
+                hireDate: formData.hireDate
+                    ? moment(formData.hireDate).format('YYYY-MM-DD')
+                    : null,
             };
             await updateEmployee(selectedEmployee.id, formattedData);
             handleGetAllEmployees();
             setIsModalOpen(false);
         } catch (error) {
-            message.error(`Lỗi khi cập nhật nhân viên: ${error.response?.data?.message || error.message}`);
+            message.error(
+                `Lỗi khi cập nhật nhân viên: ${
+                    error.response?.data?.message || error.message
+                }`,
+            );
         }
     };
 
     const handleFormSubmit = (formData) => {
-        console.log('Form Data:', formData);
         if (modalMode === 'create') {
             handleCallCreatePermission(formData);
         } else if (modalMode === 'edit') {
@@ -346,24 +411,33 @@ function Employee() {
         setModalMode('delete');
         form.resetFields();
         setIsModalOpen(true);
-    }
+    };
 
     const handleCallDeleteEmployee = async () => {
         await deleteEmployee(selectedEmployee.id);
         handleGetAllEmployees();
         setIsModalOpen(false);
-    }
+    };
 
     const handleExportFile = async () => {
         try {
             const response = await exportExcelFile('employee');
-            if (!response.headers['content-type'].includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+            if (
+                !response.headers['content-type'].includes(
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                )
+            ) {
                 throw new Error('Định dạng file không hợp lệ');
             }
             const url = window.URL.createObjectURL(response.data);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `employee_${new Date().toISOString().replace(/[-:]/g, '')}.xlsx`);
+            link.setAttribute(
+                'download',
+                `employee_${new Date()
+                    .toISOString()
+                    .replace(/[-:]/g, '')}.xlsx`,
+            );
             link.click();
             window.URL.revokeObjectURL(url);
             message.success('Tải file Excel thành công!');
@@ -391,48 +465,80 @@ function Employee() {
         handleGetAllEmployees();
     }, []);
 
-    return (
-        <div className={cx('trailer-wrapper')}>
-            <div className={cx('sub_header')}>
-                <SmartInput
-                    size="large"
-                    placeholder="Search"
-                    icon={<SearchOutlined/>}
-                />
-                <div className={cx('features')}>
-                    <SmartButton
-                        title="Add new"
-                        icon={<PlusOutlined/>}
-                        type="primary"
-                        onClick={handleAddRole}
-                    />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
-                    <SmartButton
-                        title="Excel"
-                        icon={<CloudUploadOutlined/>}
-                        onClick={handleExportFile}
+    const tabItems = [
+        {
+            key: '1',
+            label: 'Danh sách Nhân viên',
+            children: (
+                <div className={cx('trailer-wrapper')}>
+                    <div className={cx('sub_header')}>
+                        <SmartInput
+                            size="large"
+                            placeholder="Search"
+                            icon={<SearchOutlined />}
+                        />
+                        <div className={cx('features')}>
+                            <SmartButton
+                                title="Add new"
+                                icon={<PlusOutlined />}
+                                type="primary"
+                                onClick={handleAddRole}
+                            />
+                            <SmartButton
+                                title="Bộ lọc"
+                                icon={<FilterOutlined />}
+                            />
+                            <SmartButton
+                                title="Excel"
+                                icon={<CloudUploadOutlined />}
+                                onClick={handleExportFile}
+                            />
+                        </div>
+                    </div>
+                    <div className={cx('trailer-container')}>
+                        <SmartTable
+                            columns={columns}
+                            dataSources={employeeSource}
+                            loading={loading}
+                            pagination={pagination}
+                            onTableChange={handleTableChange}
+                        />
+                    </div>
+                    <PopupModal
+                        isModalOpen={isModalOpen}
+                        setIsModalOpen={setIsModalOpen}
+                        title={getModalTitle()}
+                        fields={modalMode === 'delete' ? [] : userModalFields}
+                        onSubmit={handleFormSubmit}
+                        initialValues={selectedEmployee}
+                        isDeleteMode={modalMode === 'delete'}
+                        formInstance={form}
                     />
                 </div>
-            </div>
-            <div className={cx('trailer-container')}>
-                <SmartTable
-                    columns={columns}
-                    dataSources={employeeSource}
-                    loading={loading}
-                    pagination={pagination}
-                    onTableChange={handleTableChange}
-                />
-            </div>
+            ),
+        },
+        {
+            key: '2',
+            label: 'Báo cáo',
+            children: (
+                <>
+                    <Watermark content="Ant Design">
+                        <div style={{ height: 500 }} />
+                    </Watermark>
+                </>
+            ),
+        },
+        // Tab 2 có thể để trống hoặc dùng cho nội dung khác (báo cáo, thống kê).
+        // Chi tiết nhân viên sẽ dùng route riêng, không nằm trong tab.
+    ];
 
-            <PopupModal
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                title={getModalTitle()}
-                fields={modalMode === 'delete' ? [] : userModalFields}
-                onSubmit={handleFormSubmit}
-                initialValues={selectedEmployee}
-                isDeleteMode={modalMode === 'delete'}
-                formInstance={form}
+    return (
+        <div>
+            <CustomTabs
+                items={tabItems}
+                defaultActiveKey="1"
+                tabPosition="top"
+                onChange={(key) => console.log('Tab changed:', key)}
             />
         </div>
     );

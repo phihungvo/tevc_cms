@@ -1,8 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
+import carevn.luv2code.cms.tevc_cms_api.enums.HttpMethod;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,21 +19,21 @@ import lombok.experimental.FieldDefaults;
 public class Permission {
 
     @Id
-    @GeneratedValue
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
-    @Column(nullable = false)
-    String resource;
+    String name;
 
-    @Column(unique = false)
-    String action;
-
-    @Column(nullable = true)
     String description;
 
-    @ManyToMany(mappedBy = "permissions")
-    Set<Role> roles;
+    String apiEndpoint;
+
+    @Column(name = "http_method", nullable = false)
+    @Enumerated(EnumType.STRING)
+    HttpMethod httpMethod;
+
+    String resourcePattern;
 
     @ManyToMany(mappedBy = "permissions")
-    Set<User> users;
+    Set<Role> roles = new HashSet<>();
 }

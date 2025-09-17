@@ -1,21 +1,19 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import carevn.luv2code.cms.tevc_cms_api.dto.requests.AuthenticationRequest;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.AuthRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.LogoutRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.RegisterRequest;
-import carevn.luv2code.cms.tevc_cms_api.dto.response.AuthenticationResponse;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.AuthResponse;
 import carevn.luv2code.cms.tevc_cms_api.dto.response.LogoutResponse;
-import carevn.luv2code.cms.tevc_cms_api.entity.User;
-import carevn.luv2code.cms.tevc_cms_api.repository.UserRepository;
 import carevn.luv2code.cms.tevc_cms_api.security.AuthService;
 import carevn.luv2code.cms.tevc_cms_api.security.JwtService;
 import carevn.luv2code.cms.tevc_cms_api.security.TokenBlacklist;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,56 +21,60 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
     private final AuthService authService;
-    private final UserRepository userRepository;
     private final TokenBlacklist tokenBlacklist;
-
-    @GetMapping("/user/profile")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public String getUserProfile() {
-        return "User Profile Access";
-    }
-
-    @GetMapping("/admin/dashboard")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String getAdminDashboard() {
-        return "Admin Dashboard";
-    }
-
-    @GetMapping("/moderator/content")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
-    public String getModeratorContent() {
-        return "Moderator Content";
-    }
+    private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-
-        return userRepository
-                .findByEmail(request.getEmail())
-                .filter(User::isEnabled)
-                .map(user -> {
-                    String token = jwtService.generateToken(user);
-                    return ResponseEntity.ok(new AuthenticationResponse(token));
-                })
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+    public ApiResponse<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
+        AuthResponse response = authService.login(request);
+        return ApiResponse.<AuthResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Login successful")
+                .result(response)
+                .build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        String token = authService.register(request);
-        return ResponseEntity.ok(new AuthenticationResponse(token));
+    public ApiResponse<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        AuthResponse response = authService.register(request);
+        return ApiResponse.<AuthResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Register successful")
+                .result(response)
+                .build();
     }
 
     @PostMapping("/logout")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<LogoutResponse> logout(@RequestBody LogoutRequest request) {
-        tokenBlacklist.addToBlacklist(request.getToken());
+    public ApiResponse<LogoutResponse> logout(@Valid @RequestBody LogoutRequest request) {
+        String jwt = request.getToken();
+        if (jwt == null || jwt.trim().isEmpty()) {
+            return ApiResponse.<LogoutResponse>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("Token không được cung cấp")
+                    .result(null)
+                    .build();
+        }
 
-        return ResponseEntity.ok(new LogoutResponse("Đăng xuất thành công"));
+        if (jwtService.isTokenExpired(jwt)) {
+            return ApiResponse.<LogoutResponse>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("Token đã hết hạn")
+                    .result(null)
+                    .build();
+        }
+
+        tokenBlacklist.addToBlacklist(jwt);
+
+        SecurityContextHolder.clearContext();
+
+        LogoutResponse logoutResponse =
+                LogoutResponse.builder().message("Đăng xuất thành công").build();
+
+        return ApiResponse.<LogoutResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Đăng xuất thành công")
+                .result(logoutResponse)
+                .build();
     }
 }

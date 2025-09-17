@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
-import java.util.UUID;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.LeaveStatus;
 import carevn.luv2code.cms.tevc_cms_api.enums.LeaveType;
@@ -12,9 +11,9 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LeaveDTO {
-    UUID id;
+    Integer id;
 
-    UUID employeeId;
+    Integer employeeId;
 
     String employeeName;
 
@@ -26,7 +25,7 @@ public class LeaveDTO {
 
     String reason;
 
-    LeaveStatus status;
+    LeaveStatus leaveStatus;
 
     String approverComments;
 }

@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -46,15 +45,15 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
 
     @Override
-    public PerformanceDTO updatePerformance(UUID id, PerformanceDTO performanceDTO) {
+    public PerformanceDTO updatePerformance(Integer id, PerformanceDTO performanceDTO) {
         return null;
     }
 
     @Override
-    public void deletePerformance(UUID id) {}
+    public void deletePerformance(Integer id) {}
 
     @Override
-    public PerformanceDTO getPerformance(UUID id) {
+    public PerformanceDTO getPerformance(Integer id) {
         return performanceMapper.toDTO(performanceRepository
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PERFORMANCE_NOT_FOUND)));
@@ -66,14 +65,14 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
 
     @Override
-    public List<PerformanceDTO> getEmployeePerformances(UUID employeeId) {
+    public List<PerformanceDTO> getEmployeePerformances(Integer employeeId) {
         return performanceRepository.findByEmployeeId(employeeId).stream()
                 .map(performanceMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<PerformanceDTO> getReviewerPerformances(UUID reviewerId) {
+    public List<PerformanceDTO> getReviewerPerformances(Integer reviewerId) {
         return performanceRepository.findByReviewerId(reviewerId).stream()
                 .map(performanceMapper::toDTO)
                 .collect(Collectors.toList());

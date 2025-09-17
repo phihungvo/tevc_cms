@@ -91,8 +91,8 @@ function Leave() {
         },
         {
             title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'leaveStatus',
+            key: 'leaveStatus',
             render: (status) => {
               const style = statusStyles[status] || { color: 'default', label: status || 'N/A' };
               return <Tag color={style.color}>{style.label}</Tag>;

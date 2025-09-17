@@ -84,7 +84,7 @@ function Register() {
     return (
         <div className={cx('register-container')}>
             <div className={cx('logo')} onClick={() => navigate('/')}>
-                <img src="https://i.imgur.com/ZEbJI8l.png" alt="MovieNest Logo" />
+                {/*<img src="https://i.imgur.com/ZEbJI8l.png" alt="MovieNest Logo" />*/}
             </div>
             <div className={cx('register-box')}>
                 <h1>Tạo một tài khoản</h1>

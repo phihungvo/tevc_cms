@@ -13,15 +13,12 @@ import carevn.luv2code.cms.tevc_cms_api.entity.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "roles", ignore = true)
-    @Mapping(target = "permissions", ignore = true)
+    @Mapping(target = "roleIds", ignore = true)
     UserDTO toDTO(User user);
 
     @Mapping(target = "roles", ignore = true)
-    @Mapping(target = "permissions", ignore = true)
     User toEntity(UserDTO userDTO);
 
     @Mapping(target = "roles", ignore = true)
-    @Mapping(target = "permissions", ignore = true)
     void updateUserFromDto(UserUpdateRequest request, @MappingTarget User user);
 }

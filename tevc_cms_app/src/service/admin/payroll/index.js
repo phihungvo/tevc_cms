@@ -1,11 +1,11 @@
-import axios from 'axios';
+import apiClient from '~/service/api/api';
 import API_ENDPOINTS from '../../../constants/endpoints';
 import { getToken } from '~/constants/token';
 import { message } from 'antd';
 
 export const getAllPayroll = async ({ page = 0, pageSize = 5 }) => {
     try {
-        const response = await axios.get(API_ENDPOINTS.PAYROLL.GET_ALL, {
+        const response = await apiClient.get(API_ENDPOINTS.PAYROLL.GET_ALL, {
             params: { page, pageSize },
             headers: {
                 Authorization: `Bearer ${getToken()}`,
@@ -23,7 +23,7 @@ export const getAllPayroll = async ({ page = 0, pageSize = 5 }) => {
 export const calculatePayroll = async (employeeId, period) => {
     try {
 
-        const response = axios.post(API_ENDPOINTS.PAYROLL.CALCULATE(employeeId),
+        const response = apiClient.post(API_ENDPOINTS.PAYROLL.CALCULATE(employeeId),
         {},
             { 
                 params: { period }
@@ -48,16 +48,8 @@ export const calculatePayroll = async (employeeId, period) => {
 export const processPayroll = async (payrollIds) => {
     console.log("payrollIds: ", payrollIds)
     try {
-        const response = await axios.patch(
-            API_ENDPOINTS.PAYROLL.PROCESS,
-            payrollIds,
-            {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
+        const response = await apiClient.patch(
+            API_ENDPOINTS.PAYROLL.PROCESS, payrollIds);
         if (response.data) {
             message.success('Payrolls processed successfully');
         }
@@ -72,16 +64,8 @@ export const processPayroll = async (payrollIds) => {
 
 export const updatePayroll = async (payrollIds, formData) => {
     try {
-        const response = await axios.patch(
-            API_ENDPOINTS.PAYROLL.UPDATE(payrollIds),
-            formData,
-            {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`,
-                    'Content-Type': 'application/json',
-                },
-            },
-        );
+        const response = await apiClient.patch(
+            API_ENDPOINTS.PAYROLL.UPDATE(payrollIds), formData);
         if (response.data) {
             message.success('Payrolls updated successfully');
         }

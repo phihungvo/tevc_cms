@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -11,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TrainingDTO {
-    UUID id;
+    Integer id;
 
     String name;
 
@@ -29,7 +28,7 @@ public class TrainingDTO {
 
     String status;
 
-    List<UUID> participantIds;
+    List<Integer> participantIds;
 
     int participantCount;
 }

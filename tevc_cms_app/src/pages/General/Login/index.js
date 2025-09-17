@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { login } from '~/service/admin/user';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode'; // Sửa import nếu cần
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
 import SmartButton from '~/components/Layout/components/SmartButton';
@@ -19,22 +19,21 @@ function Login() {
     const onFinish = async (values) => {
         setLoading(true);
         try {
-            const token = await login(values.email, values.password);
+            const token = await login(values.username, values.password);
 
             if (!token) {
-                message.error('Login failed. Please check your credentials.');
+                message.error('Đăng nhập thất bại. Vui lòng kiểm tra thông tin.');
                 return;
             }
 
             localStorage.setItem('token', token);
             const decodedToken = jwtDecode(token);
-            
-            const permissions = decodedToken.permissions || [];
-            const roles = decodedToken.roles || [];
-            const isAdmin = roles.includes('ADMIN') || permissions.includes('ADMIN:MANAGE');
 
-            // Store necessary info
-            localStorage.setItem('role', isAdmin ? 'ADMIN' : 'USER');
+            const permissions = decodedToken.authorities || []; // Dựa trên response API của bạn
+            const roles = decodedToken.roles || [];
+            const isAdmin = roles.includes('ADMIN') || roles.includes('MANAGER') || permissions.includes('ADMIN:MANAGE');
+
+            localStorage.setItem('roles', JSON.stringify(roles));
             localStorage.setItem('permissions', JSON.stringify(permissions));
 
             authLogin({
@@ -43,13 +42,13 @@ function Login() {
                 permissions,
                 roles,
                 userId: decodedToken.userId,
-                username: decodedToken.username,
-                email: decodedToken.email
+                username: decodedToken.username || decodedToken.sub,
+                email: decodedToken.email || decodedToken.sub,
+                tokenExpiration: decodedToken.exp
             });
 
-            message.success('Login successful!');
-            
-            // Redirect based on role/permissions
+            message.success('Đăng nhập thành công!');
+
             if (isAdmin) {
                 navigate('/admin/dashboard');
             } else {
@@ -57,7 +56,7 @@ function Login() {
             }
         } catch (error) {
             console.error('Error:', error);
-            message.error('Login failed. Please try again.');
+            message.error('Đăng nhập thất bại. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -70,7 +69,7 @@ function Login() {
     return (
         <div className={cx('login-container')}>
             <div className={cx('logo')} onClick={() => navigate('/')}>
-                <img src="https://i.imgur.com/ZEbJI8l.png" alt="MovieNest Logo" />
+                {/*<img src="https://i.imgur.com/ZEbJI8l.png" alt="MovieNest Logo" />*/}
             </div>
             <div className={cx('login-box')}>
                 <h1>Chào mừng trở lại</h1>
@@ -82,15 +81,15 @@ function Login() {
                     autoComplete="off"
                 >
                     <Form.Item
-                        name="email"
+                        name="username"
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your email!',
+                                message: 'Vui lòng nhập username!',
                             },
                         ]}
                     >
-                        <Input />
+                        <Input placeholder="Username" />
                     </Form.Item>
 
                     <Form.Item
@@ -98,24 +97,25 @@ function Login() {
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your password!',
+                                message: 'Vui lòng nhập password!',
                             },
                         ]}
                     >
-                        <Input.Password />
+                        <Input.Password placeholder="Password" />
                     </Form.Item>
 
                     <Form.Item label={null}>
                         <Button
                             htmlType="submit"
                             block
+                            loading={loading}
                             style={{
                                 backgroundColor: '#0ca37f',
                                 color: '#fff',
                                 padding: '16px 0',
                             }}
                         >
-                            Login
+                            Đăng nhập
                         </Button>
                     </Form.Item>
 

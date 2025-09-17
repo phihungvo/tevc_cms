@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -62,7 +61,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDTO updateEmployee(UUID id, EmployeeDTO employeeDTO) {
+    public EmployeeDTO updateEmployee(Integer id, EmployeeDTO employeeDTO) {
         Employee employee =
                 employeeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
@@ -84,7 +83,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDTO getEmployee(UUID id) {
+    public EmployeeDTO getEmployee(Integer id) {
         Employee employee =
                 employeeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
         return employeeMapper.toDTO(employee);
@@ -102,14 +101,34 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Page<EmployeeDTO> findByDepartment(UUID departmentId, int page, int size) {
+    public Page<EmployeeDTO> findByDepartment(Integer departmentId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return employeeRepository.findByDepartmentId(departmentId, pageRequest).map(employeeMapper::toDTO);
     }
 
     @Override
+    public List<EmployeeDTO> getEmployeesByDepartmentId(Integer departmentId) {
+        //        if (!departmentRepository.existsById(departmentId)) {
+        //            throw new AppException(ErrorCode.DEPARTMENT_NOT_FOUND);
+        //        }
+        //
+        //        return employeeRepository.findByDepartmentId(departmentId).stream()
+        //                .map(employeeMapper::toDTO)
+        //                .collect(Collectors.toList());
+        return null;
+    }
+
+    @Override
+    public List<EmployeeRepository.EmployeeBasicProjection> getBasicEmployeesByDepartmentId(Integer departmentId) {
+        if (!departmentRepository.existsById(departmentId)) {
+            throw new AppException(ErrorCode.DEPARTMENT_NOT_FOUND);
+        }
+        return employeeRepository.findByDepartmentId(departmentId);
+    }
+
+    @Override
     @Transactional
-    public void deleteEmployee(UUID id) {
+    public void deleteEmployee(Integer id) {
         Employee employee =
                 employeeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
@@ -130,7 +149,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public boolean toggleEmployeeStatus(UUID id) {
+    public boolean toggleEmployeeStatus(Integer id) {
         Employee employee =
                 employeeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
         employee.setActive(!employee.isActive());

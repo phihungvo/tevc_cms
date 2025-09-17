@@ -1,7 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,7 +45,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public DepartmentDTO assignManager(UUID departmentId, UUID managerId) {
+    public DepartmentDTO assignManager(Integer departmentId, Integer managerId) {
         Department department = departmentRepository
                 .findById(departmentId)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
@@ -62,7 +61,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public DepartmentDTO updateDepartment(UUID id, DepartmentDTO departmentDTO) {
+    public DepartmentDTO updateDepartment(Integer id, DepartmentDTO departmentDTO) {
         Department department =
                 departmentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
 
@@ -88,17 +87,27 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public DepartmentDTO getDepartment(UUID id) {
+    public DepartmentDTO getDepartment(Integer id) {
         Department department =
                 departmentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
-        return departmentMapper.toDTO(department);
+
+        DepartmentDTO dto = departmentMapper.toDTO(department);
+        int count = departmentRepository.countEmployeesByDepartment(department.getId());
+        dto.setEmployeeCount(count);
+        return dto;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<DepartmentDTO> getAllDepartments(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        return departmentRepository.findAll(pageRequest).map(departmentMapper::toDTO);
+
+        return departmentRepository.findAll(pageRequest).map(dept -> {
+            DepartmentDTO dto = departmentMapper.toDTO(dept);
+            int count = departmentRepository.countEmployeesByDepartment(dept.getId());
+            dto.setEmployeeCount(count);
+            return dto;
+        });
     }
 
     @Override
@@ -109,7 +118,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public void deleteDepartment(UUID id) {
+    public void deleteDepartment(Integer id) {
         Department department =
                 departmentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         if (!department.getEmployees().isEmpty()) {
