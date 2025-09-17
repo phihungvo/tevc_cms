@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.configuration;
 
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,8 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import carevn.luv2code.cms.tevc_cms_api.entity.File;
+import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
+import carevn.luv2code.cms.tevc_cms_api.repository.FileRepository;
 import io.minio.*;
 import io.minio.CopySource;
 import io.minio.messages.Item;
@@ -23,8 +27,14 @@ public class MinioService {
     @Autowired
     private MinioClient minioClient;
 
+    @Autowired
+    private FileRepository fileRepository;
+
     @Value("${minio.bucket}")
     private String bucket;
+
+    @Autowired
+    private String minioBasePath;
 
     @PostConstruct
     public void init() {
@@ -39,14 +49,29 @@ public class MinioService {
         }
     }
 
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file, User uploadedBy) {
         try (InputStream inputStream = file.getInputStream()) {
+            LocalDate today = LocalDate.now();
+            String relativePath =
+                    minioBasePath + "/" + today.getYear() + "/" + String.format("%02d", today.getMonthValue()) + "/";
             String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-            minioClient.putObject(
-                    PutObjectArgs.builder().bucket(bucket).object(fileName).stream(inputStream, file.getSize(), -1)
-                            .contentType(file.getContentType())
-                            .build());
-            return fileName;
+            String fullObjectName = relativePath + fileName;
+
+            minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(fullObjectName).stream(
+                            inputStream, file.getSize(), -1)
+                    .contentType(file.getContentType())
+                    .build());
+
+            File fileEntity = new File(
+                    fullObjectName,
+                    file.getOriginalFilename(),
+                    file.getContentType(),
+                    relativePath,
+                    file.getSize(),
+                    uploadedBy);
+            fileRepository.save(fileEntity);
+
+            return fullObjectName;
         } catch (Exception e) {
             throw new AppException(ErrorCode.MINIO_UPLOAD_ERROR);
         }
@@ -63,8 +88,13 @@ public class MinioService {
 
     public void deleteFile(String fileName) {
         try {
+            File fileEntity = fileRepository
+                    .findByFileName(fileName)
+                    .orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
             minioClient.removeObject(
                     RemoveObjectArgs.builder().bucket(bucket).object(fileName).build());
+            fileEntity.setDeleted(true);
+            fileRepository.save(fileEntity);
         } catch (Exception e) {
             throw new AppException(ErrorCode.MINIO_DELETE_ERROR);
         }
@@ -105,14 +135,29 @@ public class MinioService {
 
     public void copyFile(String sourceFileName, String targetFileName) {
         try {
+            File sourceFile = fileRepository
+                    .findByFileName(sourceFileName)
+                    .orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
+            String targetRelativePath = sourceFile.getRelativePath();
+            String fullTargetName = targetRelativePath + targetFileName;
+
             minioClient.copyObject(CopyObjectArgs.builder()
                     .source(CopySource.builder()
                             .bucket(bucket)
                             .object(sourceFileName)
                             .build())
                     .bucket(bucket)
-                    .object(targetFileName)
+                    .object(fullTargetName)
                     .build());
+
+            File newFile = new File(
+                    fullTargetName,
+                    sourceFile.getOriginalName(),
+                    sourceFile.getContentType(),
+                    targetRelativePath,
+                    sourceFile.getSize(),
+                    sourceFile.getUploadedBy());
+            fileRepository.save(newFile);
         } catch (Exception e) {
             throw new AppException(ErrorCode.MINIO_COPY_ERROR);
         }
@@ -120,12 +165,21 @@ public class MinioService {
 
     public void moveFile(String sourceFileName, String targetFileName) {
         try {
-            copyFile(sourceFileName, targetFileName);
-        } catch (AppException e) {
-            throw new AppException(ErrorCode.MINIO_MOVE_COPY_ERROR);
-        }
-        try {
+            File sourceFile = fileRepository
+                    .findByFileName(sourceFileName)
+                    .orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
+            String sourceRelativePath = sourceFile.getRelativePath();
+            String targetRelativePath = sourceRelativePath;
+            String fullTargetName = targetRelativePath + targetFileName;
+
+            copyFile(sourceFileName, fullTargetName);
             deleteFile(sourceFileName);
+
+            File targetFile = fileRepository
+                    .findByFileName(fullTargetName)
+                    .orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
+            targetFile.setFileName(fullTargetName);
+            fileRepository.save(targetFile);
         } catch (AppException e) {
             throw new AppException(ErrorCode.MINIO_MOVE_DELETE_ERROR);
         }

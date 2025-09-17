@@ -7,10 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import carevn.luv2code.cms.tevc_cms_api.configuration.MinioService;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
+import carevn.luv2code.cms.tevc_cms_api.entity.User;
+import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
+import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
+import carevn.luv2code.cms.tevc_cms_api.repository.UserRepository;
+import carevn.luv2code.cms.tevc_cms_api.service.EmployeeService;
 import io.minio.StatObjectResponse;
 
 @RestController
@@ -20,13 +28,33 @@ public class FileController {
     @Autowired
     private MinioService minioService;
 
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("File is empty. Please upload a valid file.");
+            return ApiResponse.<String>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("File is empty. Please upload a valid file.")
+                    .result(null)
+                    .build();
         }
-        String fileName = minioService.uploadFile(file);
-        return ResponseEntity.ok(fileName);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User uploadedBy = userRepository
+                .findByUserName(auth.getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        String fileName = minioService.uploadFile(file, uploadedBy);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Upload successful")
+                .result(fileName.toString())
+                .build();
     }
 
     @GetMapping("/download/{fileName}")

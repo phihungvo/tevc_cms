@@ -6,7 +6,7 @@ const API_ENDPOINTS = {
         REGISTER: `${BASE_URL}/auth/register`,
     },
     FILE: {
-        UPLOAD: `${BASE_URL}/storage/upload`,
+        UPLOAD: `${BASE_URL}/files/upload`,
         CHECK_EXISTED: (file) =>
             `${BASE_URL}/storage/checkFileExists/${file.name}`,
         GET_INFO: `${BASE_URL}/storage/files`,

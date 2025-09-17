@@ -1,39 +1,28 @@
 import apiClient from '~/service/api/api';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
-
-const API_URL = process.env.REACT_APP_API_URL;
 
 export const uploadFile = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const TOKEN = localStorage.getItem('token');
+    // const TOKEN = localStorage.getItem('token');
 
     try {
-        const checkResponse = await apiClient.get(
-            API_ENDPOINTS.FILE.CHECK_EXISTED(file),
-            {
-                headers: {
-                    Authorization: `Bearer ${TOKEN}`,
-                },
-            },
-        );
-
-        // If file exists, get its URL without uploading again
-        if (checkResponse.data && checkResponse.data.exists) {
-            const fileUrl = `${API_URL}/storage/files/${file.name}`;
-
-            return {
-                filename: file.name,
-                url: fileUrl,
-                alreadyExists: true,
-            };
-        }
+        // const checkResponse = await apiClient.get(API_ENDPOINTS.FILE.CHECK_EXISTED(file));
+        //
+        // if (checkResponse.data && checkResponse.data.exists) {
+        //     const fileUrl = `${API_URL}/storage/files/${file.name}`;
+        //
+        //     return {
+        //         filename: file.name,
+        //         url: fileUrl,
+        //         alreadyExists: true,
+        //     };
+        // }
 
         const response = await apiClient.post(API_ENDPOINTS.FILE.UPLOAD, formData, {
             headers: {
-                Authorization: `Bearer ${TOKEN}`,
+                // Authorization: `Bearer ${TOKEN}`,
                 'Content-Type': 'multipart/form-data',
             },
         });
