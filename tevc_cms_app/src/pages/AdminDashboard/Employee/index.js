@@ -468,7 +468,7 @@ function Employee() {
     const tabItems = [
         {
             key: '1',
-            label: 'Danh sách Nhân viên',
+            label: 'Employee List',
             children: (
                 <div className={cx('trailer-wrapper')}>
                     <div className={cx('sub_header')}>
@@ -519,7 +519,7 @@ function Employee() {
         },
         {
             key: '2',
-            label: 'Báo cáo',
+            label: 'Work History',
             children: (
                 <>
                     <Watermark content="Ant Design">
@@ -528,8 +528,28 @@ function Employee() {
                 </>
             ),
         },
-        // Tab 2 có thể để trống hoặc dùng cho nội dung khác (báo cáo, thống kê).
-        // Chi tiết nhân viên sẽ dùng route riêng, không nằm trong tab.
+        {
+            key: '3',
+            label: 'Skills',
+            children: (
+                <>
+                    <Watermark content="Ant Design">
+                        <div style={{ height: 500 }} />
+                    </Watermark>
+                </>
+            ),
+        },
+        {
+            key: '4',
+            label: 'Reports',
+            children: (
+                <>
+                    <Watermark content="Ant Design">
+                        <div style={{ height: 500 }} />
+                    </Watermark>
+                </>
+            ),
+        },
     ];
 
     return (
