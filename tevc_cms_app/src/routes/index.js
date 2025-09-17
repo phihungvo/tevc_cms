@@ -12,6 +12,7 @@ import PayRoll from '~/pages/AdminDashboard/PayRoll';
 import RootRedirect from '~/components/RootRedirect';
 import EmployeeDetail from '~/pages/AdminDashboard/Employee/detail';
 import Team from "~/pages/AdminDashboard/Team";
+import UserManagement from "~/pages/AdminDashboard/User/UserManagement";
 
 const publicRoutes = [
     { path: '/login', component: Login, title: 'Login' },
@@ -26,8 +27,8 @@ const privateRoutes = [
         role: 'admin',
     },
     {
-        path: '/admin/user',
-        component: User,
+        path: '/admin/user-management',
+        component: UserManagement,
         title: 'User Management',
         role: 'admin',
     },

@@ -43,6 +43,8 @@ public class Employee {
 
     String address;
 
+    String profilePicture;
+
     @Column(name = "hire_date")
     Date hireDate;
 

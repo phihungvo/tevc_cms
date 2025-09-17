@@ -1,10 +1,16 @@
+// ~/pages/AdminDashboard/UserManagement/UserList.js
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/User/User.module.scss';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
-    SearchOutlined, PlusOutlined, FilterOutlined, CloudUploadOutlined, EditOutlined, DeleteOutlined,
+    SearchOutlined,
+    PlusOutlined,
+    FilterOutlined,
+    CloudUploadOutlined,
+    EditOutlined,
+    DeleteOutlined,
 } from '@ant-design/icons';
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
@@ -12,19 +18,20 @@ import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
 import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
 import { getAllRolesNoPaging } from '~/service/admin/role';
-import { getAllPermissionsNoPaging } from '~/service/admin/permission';
 import { exportExcelFile } from '~/service/admin/export_service';
 
 const cx = classNames.bind(styles);
 
-function User() {
+function UserList() {
     const [userSource, setUserSource] = useState([]);
     const [roleOptions, setRoleOptions] = useState([]);
-    // const [permissionOptions, setPermissionOptions] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]); // Thêm state để lưu các dòng được chọn
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
-        current: 1, pageSize: 10, total: 0,
+        current: 1,
+        pageSize: 10,
+        total: 0,
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -122,7 +129,7 @@ function User() {
     ];
 
     useEffect(() => {
-        const userNameFilters = [...new Set(userSource.map((user) => user.userName))].map((value) => ({
+        const userNameFilters = [...new Set(userSource.map((user) => user.username))].map((value) => ({
             text: value,
             value,
         }));
@@ -210,12 +217,12 @@ function User() {
             const userList = response.content;
 
             if (response && Array.isArray(userList)) {
-                const transformedTrailers = userList.map((user) => ({
+                const transformedUsers = userList.map((user) => ({
                     ...user,
                     keyDisplay: user.key,
                 }));
 
-                setUserSource(transformedTrailers);
+                setUserSource(transformedUsers);
                 setPagination((prev) => ({
                     ...prev,
                     current: page,
@@ -234,7 +241,7 @@ function User() {
         }
     };
 
-    const fetchRolesAndPermissionOptions = async () => {
+    const fetchRolesOptions = async () => {
         try {
             const rolesResponse = await getAllRolesNoPaging();
             if (rolesResponse && Array.isArray(rolesResponse)) {
@@ -244,15 +251,6 @@ function User() {
                 }));
                 setRoleOptions(roles);
             }
-            // const perResponse = await getAllPermissionsNoPaging();
-            // console.log('per Response: ', perResponse);
-            // if (perResponse && Array.isArray(perResponse)) {
-            //     const permissions = perResponse.map((per) => ({
-            //         label: per.name,
-            //         value: per.id,
-            //     }));
-            //     setPermissionOptions(permissions);
-            // }
         } catch (error) {
             console.error('Error fetching options:', error);
         }
@@ -266,8 +264,13 @@ function User() {
     };
 
     const handleCallCreateUser = async (formData) => {
-        await createUser(formData);
-        handleGetAllUsers();
+        try {
+            await createUser(formData);
+            message.success('Tạo người dùng thành công!');
+            handleGetAllUsers();
+        } catch (error) {
+            message.error(`Lỗi khi tạo người dùng: ${error.response?.data?.message || error.message}`);
+        }
     };
 
     const handleEditUser = (record) => {
@@ -278,14 +281,20 @@ function User() {
     };
 
     const handleCallUpdateUser = async (formData) => {
-        await updateUser(selectedUser.id, formData);
-        handleGetAllUsers();
-        setIsModalOpen(false);
+        try {
+            await updateUser(selectedUser.id, formData);
+            message.success('Cập nhật người dùng thành công!');
+            handleGetAllUsers();
+            setIsModalOpen(false);
+        } catch (error) {
+            message.error(`Lỗi khi cập nhật người dùng: ${error.response?.data?.message || error.message}`);
+        }
     };
 
     const handleDeleteUser = (record) => {
         setModalMode('delete');
         setSelectedRowKeys([record.id]);
+        setSelectedRows([record]); // Lưu dòng được chọn để xử lý xóa
         setIsModalOpen(true);
     };
 
@@ -313,17 +322,25 @@ function User() {
     };
 
     const handleCallDeleteUser = async () => {
-        await deleteUser(selectedRowKeys);
-        handleGetAllUsers();
-        setIsModalOpen(false);
+        try {
+            await deleteUser(selectedRowKeys);
+            message.success('Xóa người dùng thành công!');
+            handleGetAllUsers();
+            setIsModalOpen(false);
+            setSelectedRowKeys([]); // Xóa các dòng đã chọn
+            setSelectedRows([]); // Xóa các dòng đã chọn
+        } catch (error) {
+            message.error(`Lỗi khi xóa người dùng: ${error.response?.data?.message || error.message}`);
+        }
     };
 
-    const handleSelectChange = (newSelectedRowKeys) => {
+    const handleSelectChange = (newSelectedRowKeys, newSelectedRows) => {
         setSelectedRowKeys(newSelectedRowKeys);
+        setSelectedRows(newSelectedRows); // Lưu các dòng được chọn
     };
 
     useEffect(() => {
-        fetchRolesAndPermissionOptions();
+        fetchRolesOptions();
         handleGetAllUsers();
     }, []);
 
@@ -338,29 +355,28 @@ function User() {
     };
 
     const handleTableChange = (pagination, filters, sorter) => {
-        // Chỉ cần xử lý phân trang, bộ lọc được xử lý phía client
         handleGetAllUsers(pagination.current, pagination.pageSize);
     };
 
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Add New User';
+                return 'Thêm Người Dùng Mới';
             case 'edit':
-                return 'Edit User';
+                return 'Chỉnh Sửa Người Dùng';
             case 'delete':
-                return 'Delete User';
+                return 'Xóa Người Dùng';
             default:
-                return 'User Details';
+                return 'Chi Tiết Người Dùng';
         }
     };
 
     return (
         <div className={cx('trailer-wrapper')}>
             <div className={cx('sub_header')}>
-                <SmartInput size="large" placeholder="Search" icon={<SearchOutlined />} />
+                <SmartInput size="large" placeholder="Tìm kiếm" icon={<SearchOutlined />} />
                 <div className={cx('features')}>
-                    <SmartButton title="Add new" icon={<PlusOutlined />} type="primary" onClick={handleAddUser} />
+                    <SmartButton title="Thêm mới" icon={<PlusOutlined />} type="primary" onClick={handleAddUser} />
                     <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
                     <SmartButton title="Excel" icon={<CloudUploadOutlined />} onClick={handleExportFile} />
                 </div>
@@ -391,4 +407,4 @@ function User() {
     );
 }
 
-export default User;
+export default UserList;
