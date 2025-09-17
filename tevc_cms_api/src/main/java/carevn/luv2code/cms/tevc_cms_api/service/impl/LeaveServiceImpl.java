@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -71,7 +72,7 @@ public class LeaveServiceImpl implements LeaveService {
                 "startDate", savedLeave.getStartDate(),
                 "endDate", savedLeave.getEndDate(),
                 "reason", savedLeave.getReason(),
-                "status", savedLeave.getStatus()));
+                "status", savedLeave.getLeaveStatus()));
         return mail;
     }
 
