@@ -89,6 +89,10 @@ const API_ENDPOINTS = {
         ADD_MEMBER: (teamId, memberId) => `${BASE_URL}/teams/${teamId}/addMember/${memberId}`,
         REMOVE_MEMBER: (teamId, memberId) => `${BASE_URL}/teams/${teamId}/removeMember/${memberId}`,
     },
+    WORK_HISTORY: {
+        GET_ALL: `${BASE_URL}/work-histories`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/work-histories/employee/${employeeId}/paged`,
+    },
     SKILL: {
         GET_ALL: `${BASE_URL}/skills`,
         ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/skills/employee/${employeeId}/paged`,

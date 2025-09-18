@@ -65,21 +65,19 @@ function Skill({employeeId}) {
         {
             title: 'Actions',
             fixed: 'right',
-            width: 180,
+            width: 80,
             render: (_, record) => (
                 <>
                     <SmartButton
-                        title="Edit"
                         type="primary"
                         icon={<EditOutlined/>}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleEditUser(record)}
                     />
                     <SmartButton
-                        title="Delete"
                         type="danger"
                         icon={<DeleteOutlined/>}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleDeleteUser(record)}
                         style={{marginLeft: '8px'}}
                     />

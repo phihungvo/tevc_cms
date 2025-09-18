@@ -1,4 +1,3 @@
-// ~/pages/AdminDashboard/UserManagement/UserList.js
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/User/User.module.scss';
@@ -17,12 +16,12 @@ import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import {DatePicker, Form, message, Tag} from 'antd';
 import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
-import { getAllRolesNoPaging } from '~/service/admin/role';
+import { getAllByEmployeePaged } from '~/service/admin/work-history';
 import { exportExcelFile } from '~/service/admin/export_service';
 
 const cx = classNames.bind(styles);
 
-function WorkHistory() {
+function WorkHistory({employeeId}) {
     const [workHistory, setWorkHistorySource] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
@@ -40,41 +39,37 @@ function WorkHistory() {
 
     const baseColumns = [
         {
-            title: 'Employee',
-            dataIndex: 'employeeId',
-            key: 'employeeId',
-            width: 150,
-            fixed: 'left',
-        },
-        {
             title: 'companyName',
             dataIndex: 'companyName',
             key: 'companyName',
-            width: 150,
+            width: 200,
+            fixed: 'left',
         },
         {
             title: 'position',
             dataIndex: 'position',
             key: 'position',
-            width: 100,
+            width: 180,
         },
         {
             title: 'startDate',
             dataIndex: 'startDate',
             key: 'startDate',
-            width: 150,
+            width: 100,
+            render: (date) => (date ? new Date(date).toLocaleDateString('vi-VN') : 'N/A'),
         },
         {
             title: 'endDate',
             dataIndex: 'endDate',
             key: 'endDate',
-            width: 150,
+            width: 100,
+            render: (date) => (date ? new Date(date).toLocaleDateString('vi-VN') : 'N/A'),
         },
         {
             title: 'description',
             dataIndex: 'description',
             key: 'description',
-            width: 200,
+            width: 150,
         },
         {
             title: 'companyAddress',
@@ -92,7 +87,7 @@ function WorkHistory() {
             title: 'salary',
             dataIndex: 'salary',
             key: 'salary',
-            width: 200,
+            width: 130,
         },
         {
             title: 'contractType',
@@ -105,32 +100,23 @@ function WorkHistory() {
             dataIndex: 'supervisorName',
             key: 'supervisorName',
             width: 150,
-        },
-        // {
-        //     title: 'Update At',
-        //     dataIndex: 'updateAt',
-        //     key: 'updateAt',
-        //     width: 150,
-        //     render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
-        // },
+        }, ,
         {
             title: 'Actions',
             fixed: 'right',
-            width: 180,
+            width: 130,
             render: (_, record) => (
                 <>
                     <SmartButton
-                        title="Edit"
                         type="primary"
                         icon={<EditOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleEditUser(record)}
                     />
                     <SmartButton
-                        title="Delete"
                         type="danger"
                         icon={<DeleteOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleDeleteUser(record)}
                         style={{ marginLeft: '8px' }}
                     />
@@ -203,7 +189,7 @@ function WorkHistory() {
     const handleGetAllUsers = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getAllUser({ page: page - 1, pageSize });
+            const response = await getAllByEmployeePaged(employeeId, { page: page - 1, pageSize });
             const userList = response.content;
 
             if (response && Array.isArray(userList)) {
@@ -357,7 +343,7 @@ function WorkHistory() {
             </div>
             <div className={cx('trailer-container')}>
                 <SmartTable
-                    columns={dynamicColumns}
+                    columns={baseColumns}
                     dataSources={workHistory}
                     loading={loading}
                     pagination={pagination}

@@ -36,7 +36,7 @@ import WorkHistory from "~/pages/AdminDashboard/WorkHistory";
 import Skill from "~/pages/AdminDashboard/Skill";
 import Education from "~/pages/AdminDashboard/Education";
 
-const { Title, Text } = Typography;
+const {Title, Text} = Typography;
 
 moment.locale('vi');
 
@@ -126,17 +126,7 @@ function EmployeeDetail() {
         {
             key: '1',
             label: 'Lịch sử công việc',
-            children: employee && employee.workHistory && employee.workHistory.length > 0 ? (
-                <WorkHistory />
-            ) : (
-                <Card style={{ minHeight: 400 }}>
-                    <Watermark content="Ant Design">
-                        <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Text type="secondary">Nội dung lịch sử công việc sẽ được hiển thị ở đây</Text>
-                        </div>
-                    </Watermark>
-                </Card>
-            ),
+            children: <WorkHistory employeeId={id}/>,
         },
         {
             key: '2',
@@ -152,9 +142,9 @@ function EmployeeDetail() {
             key: '4',
             label: 'Báo cáo',
             children: (
-                <Card style={{ minHeight: 400 }}>
+                <Card style={{minHeight: 400}}>
                     <Watermark content="Ant Design">
-                        <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                             <Text type="secondary">Nội dung báo cáo sẽ được hiển thị ở đây</Text>
                         </div>
                     </Watermark>
@@ -164,54 +154,79 @@ function EmployeeDetail() {
     ];
 
     return (
-        <div style={{ minHeight: '100vh' }}>
-            {/* Header với nút quay lại */}
-            <Row style={{ marginBottom: '24px' }}>
-                <Col span={24}>
+        <div style={{
+            minHeight: '100vh',
+            padding: '0 16px',
+            // background: '#f5f5f5'
+        }}>
+            <div style={{
+                maxWidth: '1400px',
+                margin: '0 auto',
+                // paddingTop: '20px'
+            }}>
+                {/* Header với nút quay lại */}
+                <div style={{
+                    marginBottom: '20px',
+                    padding: '0 4px'
+                }}>
                     <Button
                         type="text"
-                        icon={<ArrowLeftOutlined />}
+                        icon={<ArrowLeftOutlined/>}
                         onClick={() => navigate('/admin/employee')}
-                        style={{ fontSize: '14px' }}
+                        style={{
+                            fontSize: '14px',
+                            height: '40px',
+                            paddingLeft: '12px',
+                            paddingRight: '16px'
+                        }}
                     >
                         Quay lại danh sách nhân viên
                     </Button>
-                </Col>
-            </Row>
+                </div>
 
-            {/* Card thông tin chính */}
-            <Card
-                style={{
-                    marginBottom: '24px',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}
-                // bodyStyle={{ padding: '32px' }}
-            >
-                <Row gutter={[32, 24]}>
-                    {/* Cột avatar */}
-                    <Col xs={24} sm={8} md={6} lg={5}>
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{ position: 'relative', display: 'inline-block' }}>
-                                <Avatar
-                                    size={120}
-                                    src={avatarUrl}
-                                    style={{
-                                        border: '4px solid #f0f0f0',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                                    }}
-                                />
-                                <Badge
-                                    status={employee.active ? "success" : "default"}
-                                    style={{
-                                        position: 'absolute',
-                                        bottom: '8px',
-                                        right: '8px',
-                                        transform: 'scale(1.2)'
-                                    }}
-                                />
-                            </div>
-                            <div style={{ marginTop: '16px' }}>
+                {/* Card thông tin chính */}
+                <Card
+                    style={{
+                        marginBottom: '24px',
+                        borderRadius: '16px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        border: 'none',
+                        overflow: 'hidden'
+                    }}
+                    bodyStyle={{
+                        padding: '32px 32px 24px 32px',
+                        background: 'linear-gradient(135deg, #fafafa 0%, #ffffff 100%)'
+                    }}
+                >
+                    <Row gutter={[32, 32]} align="middle">
+                        {/* Cột avatar - responsive */}
+                        <Col
+                            xs={{span: 24, order: 1}}
+                            sm={{span: 24, order: 1}}
+                            md={{span: 8, order: 1}}
+                            lg={{span: 6, order: 1}}
+                            xl={{span: 5, order: 1}}
+                        >
+                            <div style={{
+                                textAlign: 'center',
+                                padding: '0 16px'
+                            }}>
+                                <div style={{
+                                    position: 'relative',
+                                    display: 'inline-block',
+                                    marginBottom: '20px'
+                                }}>
+                                    <Avatar
+                                        size={140}
+                                        src={avatarUrl}
+                                        icon={<UserOutlined/>}
+                                        style={{
+                                            border: '5px solid #ffffff',
+                                            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                                        }}
+                                    />
+                                </div>
                                 <Upload
                                     name="avatar"
                                     showUploadList={false}
@@ -220,200 +235,335 @@ function EmployeeDetail() {
                                 >
                                     <Button
                                         icon={<UploadOutlined/>}
-                                        size="small"
+                                        type="primary"
+                                        ghost
                                         style={{
-                                            borderRadius: '6px',
-                                            fontSize: '12px'
+                                            borderRadius: '8px',
+                                            fontSize: '13px',
+                                            fontWeight: '500',
+                                            height: '36px',
+                                            paddingLeft: '16px',
+                                            paddingRight: '16px'
                                         }}
                                     >
                                         Cập nhật ảnh
                                     </Button>
                                 </Upload>
                             </div>
-                        </div>
-                    </Col>
+                        </Col>
 
-                    {/* Cột thông tin */}
-                    <Col xs={24} sm={16} md={18} lg={19}>
-                        <Row>
-                            <Col span={24}>
-                                <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                                    <div>
-                                        <Title level={2} style={{ margin: 0, color: '#1a1a1a' }}>
-                                            {employee.lastName} {employee.firstName}
-                                        </Title>
-                                        <Text type="secondary" style={{ fontSize: '16px' }}>
-                                            <IdcardOutlined style={{ marginRight: '8px' }} />
+                        {/* Cột thông tin - responsive */}
+                        <Col
+                            xs={{span: 24, order: 2}}
+                            sm={{span: 24, order: 2}}
+                            md={{span: 16, order: 2}}
+                            lg={{span: 18, order: 2}}
+                            xl={{span: 19, order: 2}}
+                        >
+                            <div style={{
+                                textAlign: {xs: 'center', md: 'left'}[0] || 'left',
+                                padding: '0 8px'
+                            }}>
+                                {/* Tên và mã nhân viên */}
+                                <div style={{marginBottom: '20px'}}>
+                                    <Title
+                                        level={1}
+                                        style={{
+                                            margin: '0 0 8px 0',
+                                            color: '#1a1a1a',
+                                            fontSize: 'clamp(24px, 4vw, 32px)',
+                                            fontWeight: '700',
+                                            lineHeight: '1.2'
+                                        }}
+                                    >
+                                        {employee.lastName} {employee.firstName}
+                                    </Title>
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: {xs: 'center', md: 'flex-start'}[0] || 'flex-start',
+                                        gap: '12px',
+                                        flexWrap: 'wrap',
+                                        marginBottom: '16px'
+                                    }}>
+                                        <Text
+                                            type="secondary"
+                                            style={{
+                                                fontSize: '16px',
+                                                fontWeight: '500'
+                                            }}
+                                        >
+                                            <IdcardOutlined style={{marginRight: '8px', color: '#1890ff'}}/>
                                             Mã NV: {employee.employeeCode}
                                         </Text>
-                                    </div>
-
-                                    <div style={{ marginTop: '16px' }}>
                                         <Badge
                                             status={employee.active ? "success" : "error"}
                                             text={
-                                                <Text strong style={{ fontSize: '14px' }}>
+                                                <Text strong style={{
+                                                    fontSize: '14px',
+                                                    color: employee.active ? '#52c41a' : '#ff4d4f'
+                                                }}>
                                                     {employee.active ? 'Đang hoạt động' : 'Không hoạt động'}
                                                 </Text>
                                             }
                                         />
                                     </div>
-                                </Space>
-                            </Col>
-                        </Row>
+                                </div>
 
-                        {/* Thông tin liên hệ nhanh */}
-                        <Row style={{ marginTop: '24px' }}>
-                            <Col span={24}>
-                                <Space wrap size="large">
-                                    <Tooltip title="Email">
-                                        <Button
-                                            type="text"
-                                            icon={<MailOutlined />}
-                                            style={{
+                                {/* Thông tin liên hệ nhanh */}
+                                <div style={{marginTop: '24px'}}>
+                                    <Row gutter={[16, 16]} justify={{xs: 'center', md: 'start'}[0] || 'start'}>
+                                        <Col xs={24} sm={12} md={24} lg={12}>
+                                            <div style={{
+                                                background: '#ffffff',
+                                                padding: '12px 16px',
+                                                borderRadius: '10px',
+                                                border: '1px solid #f0f0f0',
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                padding: '4px 12px',
-                                                height: 'auto'
-                                            }}
-                                        >
-                                            {employee.email}
-                                        </Button>
-                                    </Tooltip>
-                                    <Tooltip title="Số điện thoại">
-                                        <Button
-                                            type="text"
-                                            icon={<PhoneOutlined />}
-                                            style={{
+                                                gap: '12px'
+                                            }}>
+                                                <MailOutlined style={{
+                                                    fontSize: '18px',
+                                                    color: '#1890ff',
+                                                    flexShrink: 0
+                                                }}/>
+                                                <div style={{flex: 1, minWidth: 0}}>
+                                                    <Text style={{
+                                                        fontSize: '13px',
+                                                        color: '#666',
+                                                        display: 'block',
+                                                        marginBottom: '2px'
+                                                    }}>
+                                                        Email
+                                                    </Text>
+                                                    <Text style={{
+                                                        fontSize: '14px',
+                                                        fontWeight: '500',
+                                                        wordBreak: 'break-all'
+                                                    }}>
+                                                        {employee.email}
+                                                    </Text>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                        <Col xs={24} sm={12} md={24} lg={12}>
+                                            <div style={{
+                                                background: '#ffffff',
+                                                padding: '12px 16px',
+                                                borderRadius: '10px',
+                                                border: '1px solid #f0f0f0',
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                padding: '4px 12px',
-                                                height: 'auto'
-                                            }}
-                                        >
-                                            {employee.phone}
-                                        </Button>
-                                    </Tooltip>
-                                </Space>
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
+                                                gap: '12px'
+                                            }}>
+                                                <PhoneOutlined style={{
+                                                    fontSize: '18px',
+                                                    color: '#52c41a',
+                                                    flexShrink: 0
+                                                }}/>
+                                                <div style={{flex: 1, minWidth: 0}}>
+                                                    <Text style={{
+                                                        fontSize: '13px',
+                                                        color: '#666',
+                                                        display: 'block',
+                                                        marginBottom: '2px'
+                                                    }}>
+                                                        Số điện thoại
+                                                    </Text>
+                                                    <Text style={{
+                                                        fontSize: '14px',
+                                                        fontWeight: '500'
+                                                    }}>
+                                                        {employee.phone}
+                                                    </Text>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
 
-                <Divider style={{ margin: '32px 0 24px 0' }} />
+                    <Divider style={{
+                        margin: '32px 0 28px 0',
+                        borderColor: '#e8e8e8'
+                    }}/>
 
-                {/* Thông tin chi tiết */}
-                <Row gutter={[24, 16]}>
-                    <Col xs={24} lg={12}>
-                        <Descriptions
-                            column={1}
-                            size="middle"
-                            labelStyle={{
-                                fontWeight: '500',
-                                color: '#666',
-                                width: '120px'
-                            }}
-                            contentStyle={{
-                                color: '#1a1a1a'
-                            }}
-                        >
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <CalendarOutlined />
-                                        Ngày sinh
-                                    </Space>
-                                }
-                            >
-                                {employee.dateOfBirth ? moment(employee.dateOfBirth).format('DD/MM/YYYY') : 'Chưa cập nhật'}
-                            </Descriptions.Item>
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <UserOutlined />
-                                        Giới tính
-                                    </Space>
-                                }
-                            >
-                                {employee.gender}
-                            </Descriptions.Item>
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <HomeOutlined />
-                                        Địa chỉ
-                                    </Space>
-                                }
-                            >
-                                {employee.address || 'Chưa cập nhật'}
-                            </Descriptions.Item>
-                        </Descriptions>
-                    </Col>
+                    {/* Thông tin chi tiết - responsive grid */}
+                    <Row gutter={[32, 24]}>
+                        <Col xs={24} lg={12}>
+                            <div style={{
+                                background: '#ffffff',
+                                padding: '24px',
+                                borderRadius: '12px',
+                                border: '1px solid #f0f0f0',
+                                height: '100%'
+                            }}>
+                                <Title level={5} style={{
+                                    marginBottom: '20px',
+                                    color: '#1a1a1a',
+                                    fontSize: '16px',
+                                    fontWeight: '600'
+                                }}>
+                                    Thông tin cá nhân
+                                </Title>
+                                <Descriptions
+                                    column={1}
+                                    size="middle"
+                                    labelStyle={{
+                                        fontWeight: '500',
+                                        color: '#666',
+                                        width: '140px',
+                                        fontSize: '14px'
+                                    }}
+                                    contentStyle={{
+                                        color: '#1a1a1a',
+                                        fontSize: '14px',
+                                        fontWeight: '500'
+                                    }}
+                                    colon={false}
+                                >
+                                    <Descriptions.Item
+                                        label={
+                                            <Space size={8}>
+                                                <CalendarOutlined style={{color: '#1890ff'}}/>
+                                                Ngày sinh
+                                            </Space>
+                                        }
+                                    >
+                                        {employee.dateOfBirth ? moment(employee.dateOfBirth).format('DD/MM/YYYY') : 'Chưa cập nhật'}
+                                    </Descriptions.Item>
+                                    <Descriptions.Item
+                                        label={
+                                            <Space size={8}>
+                                                <UserOutlined style={{color: '#722ed1'}}/>
+                                                Giới tính
+                                            </Space>
+                                        }
+                                    >
+                                        {employee.gender || 'Chưa cập nhật'}
+                                    </Descriptions.Item>
+                                    <Descriptions.Item
+                                        label={
+                                            <Space size={8}>
+                                                <HomeOutlined style={{color: '#fa8c16'}}/>
+                                                Địa chỉ
+                                            </Space>
+                                        }
+                                    >
+                                        <div style={{wordBreak: 'break-word'}}>
+                                            {employee.address || 'Chưa cập nhật'}
+                                        </div>
+                                    </Descriptions.Item>
+                                </Descriptions>
+                            </div>
+                        </Col>
 
-                    <Col xs={24} lg={12}>
-                        <Descriptions
-                            column={1}
-                            size="middle"
-                            labelStyle={{
-                                fontWeight: '500',
-                                color: '#666',
-                                width: '180px'
-                            }}
-                            contentStyle={{
-                                color: '#1a1a1a'
-                            }}
-                        >
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <CalendarOutlined />
-                                        Ngày vào làm
-                                    </Space>
-                                }
-                            >
-                                {employee.hireDate ? moment(employee.hireDate).format('DD/MM/YYYY') : 'Chưa cập nhật'}
-                            </Descriptions.Item>
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <IdcardOutlined />
-                                        Ngày tạo
-                                    </Space>
-                                }
-                            >
-                                {employee.createdAt ? moment(employee.createdAt).format('DD/MM/YYYY HH:mm') : 'N/A'}
-                            </Descriptions.Item>
-                            <Descriptions.Item
-                                label={
-                                    <Space>
-                                        <UserOutlined />
-                                        Cập nhật lần cuối
-                                    </Space>
-                                }
-                            >
-                                {employee.updatedAt ? moment(employee.updatedAt).format('DD/MM/YYYY HH:mm') : 'N/A'}
-                            </Descriptions.Item>
-                        </Descriptions>
-                    </Col>
-                </Row>
-            </Card>
+                        <Col xs={24} lg={12}>
+                            <div style={{
+                                background: '#ffffff',
+                                padding: '24px',
+                                borderRadius: '12px',
+                                border: '1px solid #f0f0f0',
+                                height: '100%'
+                            }}>
+                                <Title level={5} style={{
+                                    marginBottom: '20px',
+                                    color: '#1a1a1a',
+                                    fontSize: '16px',
+                                    fontWeight: '600'
+                                }}>
+                                    Thông tin công việc
+                                </Title>
+                                <Descriptions
+                                    column={1}
+                                    size="middle"
+                                    labelStyle={{
+                                        fontWeight: '500',
+                                        color: '#666',
+                                        width: '140px',
+                                        fontSize: '14px'
+                                    }}
+                                    contentStyle={{
+                                        color: '#1a1a1a',
+                                        fontSize: '14px',
+                                        fontWeight: '500'
+                                    }}
+                                    colon={false}
+                                >
+                                    <Descriptions.Item
+                                        label={
+                                            <Space size={8}>
+                                                <CalendarOutlined style={{color: '#52c41a'}}/>
+                                                Ngày vào làm
+                                            </Space>
+                                        }
+                                    >
+                                        {employee.hireDate ? moment(employee.hireDate).format('DD/MM/YYYY') : 'Chưa cập nhật'}
+                                    </Descriptions.Item>
+                                    <Descriptions.Item
+                                        label={
+                                            <Space size={8}>
+                                                <IdcardOutlined style={{color: '#13c2c2'}}/>
+                                                Ngày tạo
+                                            </Space>
+                                        }
+                                    >
+                                        {employee.createdAt ? moment(employee.createdAt).format('DD/MM/YYYY HH:mm') : 'N/A'}
+                                    </Descriptions.Item>
+                                    <Descriptions.Item
+                                        label={
+                                            <Space size={8}>
+                                                <UserOutlined style={{color: '#eb2f96'}}/>
+                                                Cập nhật cuối
+                                            </Space>
+                                        }
+                                    >
+                                        {employee.updatedAt ? moment(employee.updatedAt).format('DD/MM/YYYY HH:mm') : 'N/A'}
+                                    </Descriptions.Item>
+                                </Descriptions>
+                            </div>
+                        </Col>
+                    </Row>
+                </Card>
 
-            {/* Tab content */}
-            <Card
-                style={{
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}
-                bodyStyle={{ padding: '24px' }}
-            >
-                <CustomTabs
-                    items={tabItems}
-                    defaultActiveKey="1"
-                    tabPosition="top"
-                    onChange={(key) => console.log('Tab changed:', key)}
-                    style={{ minHeight: '400px' }}
-                />
-            </Card>
+                {/* Tab content */}
+                <Card
+                    style={{
+                        borderRadius: '16px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        border: 'none',
+                        marginBottom: '24px'
+                    }}
+                    bodyStyle={{
+                        padding: '0',
+                        overflow: 'hidden'
+                    }}
+                >
+                    <CustomTabs
+                        items={tabItems}
+                        defaultActiveKey="1"
+                        tabPosition="top"
+                        onChange={(key) => console.log('Tab changed:', key)}
+                        style={{
+                            minHeight: '400px'
+                        }}
+                        tabBarStyle={{
+                            padding: '0 24px',
+                            margin: 0,
+                            background: '#fafafa',
+                            borderBottom: '1px solid #f0f0f0'
+                        }}
+                        contentStyle={{
+                            padding: '24px'
+                        }}
+                    />
+                </Card>
+            </div>
         </div>
     );
 }

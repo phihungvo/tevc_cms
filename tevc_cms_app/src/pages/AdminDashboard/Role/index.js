@@ -58,21 +58,19 @@ function RoleList() {
         {
             title: 'Hành Động',
             fixed: 'right',
-            width: 180,
+            width: 130,
             render: (_, record) => (
                 <>
                     <SmartButton
-                        title="Sửa"
                         type="primary"
                         icon={<EditOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleEditRole(record)}
                     />
                     <SmartButton
-                        title="Xóa"
                         type="danger"
                         icon={<DeleteOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleDeleteRole(record)}
                         style={{ marginLeft: '8px' }}
                     />
