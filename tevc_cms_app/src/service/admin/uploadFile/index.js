@@ -22,6 +22,15 @@ export const uploadFile = async (file, employeeId) => {
     }
 };
 
+export const getPresignedUrl = async (fileId) => {
+    try {
+        const response = await apiClient.get(API_ENDPOINTS.FILE.PRESIGNED_URL(fileId));
+        return response.data.result;
+    } catch (error) {
+        throw new Error("Lỗi khi lấy presigned URL: " + error.message);
+    }
+};
+
 // Get all file infor
 export const getFileInfo = async () => {
     try {

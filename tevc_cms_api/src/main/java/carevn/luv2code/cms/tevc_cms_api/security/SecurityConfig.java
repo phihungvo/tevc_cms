@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/logout",
                                 "/api/files/**",
+                                "/api/files/presigned-url/**",
                                 "/api/public/**",
                                 "/actuator/health",
                                 "/swagger-ui/**",

@@ -33,6 +33,11 @@ public class MinioConfig {
     }
 
     @Bean
+    public String minioUrl() {
+        return minioUrl;
+    }
+
+    @Bean
     public String minioBasePath() {
         return basePath;
     }
