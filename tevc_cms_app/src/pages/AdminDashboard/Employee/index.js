@@ -11,7 +11,7 @@ import {
     CloudUploadOutlined,
     EditOutlined,
     DeleteOutlined,
-    EyeOutlined, // Thêm icon View
+    EyeOutlined,
 } from '@ant-design/icons';
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
@@ -149,14 +149,12 @@ function Employee() {
             render: (_, record) => (
                 <>
                     <SmartButton
-                        // title="Xem"
                         type="default"
                         icon={<EyeOutlined />}
                         buttonWidth={50}
-                        onClick={() => navigate(`/admin/employee/${record.id}`)} // Navigate sang detail
+                        onClick={() => navigate(`/admin/employee/${record.id}`)}
                     />
                     <SmartButton
-                        // title="Sửa"
                         type="primary"
                         icon={<EditOutlined />}
                         buttonWidth={50}
@@ -164,7 +162,6 @@ function Employee() {
                         style={{ marginLeft: '8px' }}
                     />
                     <SmartButton
-                        // title="Xóa"
                         type="danger"
                         icon={<DeleteOutlined />}
                         buttonWidth={50}

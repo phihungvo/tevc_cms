@@ -94,17 +94,15 @@ function Attendance() {
             render: (_, record) => (
                 <>
                     <SmartButton
-                        title="Sửa"
                         type="primary"
                         icon={<EditOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleEditAttendance(record)}
                     />
                     <SmartButton
-                        title="Xóa"
                         type="danger"
                         icon={<DeleteOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleDeleteAttendance(record.id)}
                         style={{ marginLeft: '8px' }}
                     />

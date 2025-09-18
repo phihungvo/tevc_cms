@@ -1,4 +1,3 @@
-// ~/pages/AdminDashboard/UserManagement/UserList.js
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/User/User.module.scss';
@@ -15,18 +14,17 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag } from 'antd';
+import {DatePicker, Form, message, Tag} from 'antd';
 import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
-import { getAllRolesNoPaging } from '~/service/admin/role';
+import { getAllByEmployeePaged } from '~/service/admin/work-history';
 import { exportExcelFile } from '~/service/admin/export_service';
 
 const cx = classNames.bind(styles);
 
-function UserList() {
-    const [userSource, setUserSource] = useState([]);
-    const [roleOptions, setRoleOptions] = useState([]);
+function WorkHistory({employeeId}) {
+    const [workHistory, setWorkHistorySource] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [selectedRows, setSelectedRows] = useState([]); // Thêm state để lưu các dòng được chọn
+    const [selectedRows, setSelectedRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
@@ -41,67 +39,68 @@ function UserList() {
 
     const baseColumns = [
         {
-            title: 'User Name',
-            dataIndex: 'username',
-            key: 'username',
-            width: 150,
-            fixed: 'left',
-            onFilter: (value, record) => record.username.toLowerCase().startsWith(value.toLowerCase()),
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            width: 150,
-            onFilter: (value, record) => record.email.toLowerCase().startsWith(value.toLowerCase()),
-        },
-        {
-            title: 'Role',
-            dataIndex: 'roleNames',
-            key: 'roleNames',
-            width: 100,
-            onFilter: (value, record) => record.roleNames.toLowerCase().includes(value.toLowerCase()),
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            width: 150,
-            render: (add) => (add ? add : 'Viet Nam'),
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phoneNumber',
-            key: 'phoneNumber',
+            title: 'companyName',
+            dataIndex: 'companyName',
+            key: 'companyName',
             width: 200,
-            render: (phone) => (phone ? phone : 'N/A'),
+            fixed: 'left',
         },
         {
-            title: 'Enable',
-            dataIndex: 'enabled',
-            key: 'enabled',
-            width: 50,
-            render: (enabled) => {
-                const icon = enabled ? '✔️' : '❌';
-                const color = enabled ? 'green' : 'red';
-                return <Tag color={color}>{icon}</Tag>;
-            },
-            onFilter: (value, record) => record.enabled === value,
+            title: 'position',
+            dataIndex: 'position',
+            key: 'position',
+            width: 180,
         },
         {
-            title: 'Create At',
-            dataIndex: 'createAt',
-            key: 'createAt',
+            title: 'startDate',
+            dataIndex: 'startDate',
+            key: 'startDate',
+            width: 100,
+            render: (date) => (date ? new Date(date).toLocaleDateString('vi-VN') : 'N/A'),
+        },
+        {
+            title: 'endDate',
+            dataIndex: 'endDate',
+            key: 'endDate',
+            width: 100,
+            render: (date) => (date ? new Date(date).toLocaleDateString('vi-VN') : 'N/A'),
+        },
+        {
+            title: 'description',
+            dataIndex: 'description',
+            key: 'description',
             width: 150,
-            render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
         },
         {
-            title: 'Update At',
-            dataIndex: 'updateAt',
-            key: 'updateAt',
-            width: 150,
-            render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
+            title: 'companyAddress',
+            dataIndex: 'companyAddress',
+            key: 'companyAddress',
+            width: 200,
         },
+        {
+            title: 'reasonForLeaving',
+            dataIndex: 'reasonForLeaving',
+            key: 'reasonForLeaving',
+            width: 200,
+        },
+        {
+            title: 'salary',
+            dataIndex: 'salary',
+            key: 'salary',
+            width: 130,
+        },
+        {
+            title: 'contractType',
+            dataIndex: 'contractType',
+            key: 'contractType',
+            width: 150,
+        },
+        {
+            title: 'supervisorName',
+            dataIndex: 'supervisorName',
+            key: 'supervisorName',
+            width: 150,
+        }, ,
         {
             title: 'Actions',
             fixed: 'right',
@@ -126,92 +125,71 @@ function UserList() {
         },
     ];
 
-    useEffect(() => {
-        const userNameFilters = [...new Set(userSource.map((user) => user.username))].map((value) => ({
-            text: value,
-            value,
-        }));
-        const emailFilters = [...new Set(userSource.map((user) => user.email))].map((value) => ({
-            text: value,
-            value,
-        }));
-        const roleFilters = [...new Set(userSource.map((user) => user.roleNames))].map((value) => ({
-            text: value,
-            value,
-        }));
-
-        setDynamicColumns([
-            { ...baseColumns[0], filters: userNameFilters },
-            { ...baseColumns[1], filters: emailFilters },
-            { ...baseColumns[2], filters: roleFilters },
-            ...baseColumns.slice(3),
-        ]);
-    }, [userSource]);
-
     const userModalFields = [
         {
-            label: 'User Name',
-            name: 'username',
+            label: 'employeeId',
+            name: 'employeeId',
             type: 'text',
-            rules: [{ required: true, message: 'User Name is required!' }],
+            rules: [{ required: true, message: 'Employee is required!' }],
         },
         {
-            label: 'First Name',
-            name: 'firstName',
-            type: 'text',
-        },
-        {
-            label: 'Last Name',
-            name: 'lastName',
+            label: 'companyName',
+            name: 'companyName',
             type: 'text',
         },
         {
-            label: 'Email',
-            name: 'email',
-            type: 'text',
-            disabled: modalMode === 'edit',
-            rules: modalMode === 'create' ? [{ required: true, message: 'Email is required!' }] : [],
-        },
-        {
-            label: 'Address',
-            name: 'address',
+            label: 'position',
+            name: 'position',
             type: 'text',
         },
         {
-            label: 'Password',
-            name: 'password',
+            label: 'startDate',
+            name: 'startDate',
+            type: 'date',
+            render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
+        },
+        {
+            label: 'endDate',
+            name: 'endDate',
+            type: 'date',
+            render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
+        },
+        {
+            label: 'description',
+            name: 'description',
             type: 'text',
-            disabled: modalMode === 'edit',
-            rules: modalMode === 'create' ? [{ required: true, message: 'Password is required!' }] : [],
         },
         {
-            label: 'Phone Number',
-            name: 'phoneNumber',
+            label: 'companyAddress',
+            name: 'companyAddress',
             type: 'text',
         },
         {
-            label: 'Profile Picture',
-            name: 'profilePicture',
+            label: 'reasonForLeaving',
+            name: 'reasonForLeaving',
             type: 'text',
         },
         {
-            label: 'Role',
-            name: 'roleIds',
-            type: 'select',
-            multiple: true,
-            options: roleOptions,
+            label: 'salary',
+            name: 'salary',
+            type: 'text',
         },
         {
-            label: 'Enable',
-            name: 'enabled',
-            type: 'yesno',
+            label: 'contractType',
+            name: 'contractType',
+            type: 'text',
+        },
+        {
+            label: 'supervisorName',
+            name: 'supervisorName',
+            type: 'text',
         },
     ];
 
     const handleGetAllUsers = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getAllUser({ page: page - 1, pageSize });
+            const response = await getAllByEmployeePaged(employeeId, { page: page - 1, pageSize });
             const userList = response.content;
 
             if (response && Array.isArray(userList)) {
@@ -220,7 +198,7 @@ function UserList() {
                     keyDisplay: user.key,
                 }));
 
-                setUserSource(transformedUsers);
+                setWorkHistorySource(transformedUsers);
                 setPagination((prev) => ({
                     ...prev,
                     current: page,
@@ -229,28 +207,13 @@ function UserList() {
                 }));
             } else {
                 console.error('Invalid data users: ', response);
-                setUserSource([]);
+                setWorkHistorySource([]);
             }
         } catch (error) {
             console.error('Error fetching user', error);
-            setUserSource([]);
+            setWorkHistorySource([]);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const fetchRolesOptions = async () => {
-        try {
-            const rolesResponse = await getAllRolesNoPaging();
-            if (rolesResponse && Array.isArray(rolesResponse)) {
-                const roles = rolesResponse.map((role) => ({
-                    label: role.name,
-                    value: role.id,
-                }));
-                setRoleOptions(roles);
-            }
-        } catch (error) {
-            console.error('Error fetching options:', error);
         }
     };
 
@@ -338,7 +301,6 @@ function UserList() {
     };
 
     useEffect(() => {
-        fetchRolesOptions();
         handleGetAllUsers();
     }, []);
 
@@ -381,8 +343,8 @@ function UserList() {
             </div>
             <div className={cx('trailer-container')}>
                 <SmartTable
-                    columns={dynamicColumns}
-                    dataSources={userSource}
+                    columns={baseColumns}
+                    dataSources={workHistory}
                     loading={loading}
                     pagination={pagination}
                     onTableChange={handleTableChange}
@@ -405,4 +367,4 @@ function UserList() {
     );
 }
 
-export default UserList;
+export default WorkHistory;

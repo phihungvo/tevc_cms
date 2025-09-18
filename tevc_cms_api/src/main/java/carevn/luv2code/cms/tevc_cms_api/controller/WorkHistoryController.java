@@ -2,6 +2,9 @@ package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +54,30 @@ public class WorkHistoryController {
                 .code(HttpStatus.OK.value())
                 .message("Get work histories by employee successful")
                 .result(workHistoryService.getWorkHistoriesByEmployeeId(employeeId))
+                .build();
+    }
+
+    @GetMapping
+    public ApiResponse<Page<WorkHistoryDTO>> getAllWorkHistories(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.<Page<WorkHistoryDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get paginated work histories successful")
+                .result(workHistoryService.getAllWorkHistories(pageable))
+                .build();
+    }
+
+    @GetMapping("/employee/{employeeId}/paged")
+    public ApiResponse<Page<WorkHistoryDTO>> getWorkHistoriesByEmployeeIdPaged(
+            @PathVariable Integer employeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.<Page<WorkHistoryDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get paginated work histories by employee successful")
+                .result(workHistoryService.getWorkHistoriesByEmployeeIdPaged(employeeId, pageable))
                 .build();
     }
 

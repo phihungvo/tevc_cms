@@ -1,8 +1,6 @@
-// ~/pages/AdminDashboard/UserManagement/UserList.js
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/User/User.module.scss';
-import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
     SearchOutlined,
@@ -15,18 +13,17 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag } from 'antd';
-import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
-import { getAllRolesNoPaging } from '~/service/admin/role';
-import { exportExcelFile } from '~/service/admin/export_service';
+import {DatePicker, Form, message, Tag} from 'antd';
+import {getAllUser, createUser, updateUser, deleteUser} from '~/service/admin/user';
+import {getAllByEmployeePaged} from "~/service/admin/education";
+import {exportExcelFile} from '~/service/admin/export_service';
 
 const cx = classNames.bind(styles);
 
-function UserList() {
-    const [userSource, setUserSource] = useState([]);
-    const [roleOptions, setRoleOptions] = useState([]);
+function Education({employeeId}) {
+    const [educationSource, setEducationSource] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [selectedRows, setSelectedRows] = useState([]); // Thêm state để lưu các dòng được chọn
+    const [selectedRows, setSelectedRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
@@ -41,66 +38,41 @@ function UserList() {
 
     const baseColumns = [
         {
-            title: 'User Name',
-            dataIndex: 'username',
-            key: 'username',
+            title: 'institutionName',
+            dataIndex: 'institutionName',
+            key: 'institutionName',
             width: 150,
             fixed: 'left',
-            onFilter: (value, record) => record.username.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
+            title: 'major',
+            dataIndex: 'major',
+            key: 'major',
             width: 150,
-            onFilter: (value, record) => record.email.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
-            title: 'Role',
-            dataIndex: 'roleNames',
-            key: 'roleNames',
+            title: 'degree',
+            dataIndex: 'degree',
+            key: 'degree',
             width: 100,
-            onFilter: (value, record) => record.roleNames.toLowerCase().includes(value.toLowerCase()),
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
+            title: 'startDate',
+            dataIndex: 'startDate',
+            key: 'startDate',
             width: 150,
-            render: (add) => (add ? add : 'Viet Nam'),
         },
         {
-            title: 'Phone Number',
-            dataIndex: 'phoneNumber',
-            key: 'phoneNumber',
-            width: 200,
-            render: (phone) => (phone ? phone : 'N/A'),
-        },
-        {
-            title: 'Enable',
-            dataIndex: 'enabled',
-            key: 'enabled',
-            width: 50,
-            render: (enabled) => {
-                const icon = enabled ? '✔️' : '❌';
-                const color = enabled ? 'green' : 'red';
-                return <Tag color={color}>{icon}</Tag>;
-            },
-            onFilter: (value, record) => record.enabled === value,
-        },
-        {
-            title: 'Create At',
-            dataIndex: 'createAt',
-            key: 'createAt',
+            title: 'graduationDate',
+            dataIndex: 'graduationDate',
+            key: 'graduationDate',
             width: 150,
-            render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
         },
         {
-            title: 'Update At',
-            dataIndex: 'updateAt',
-            key: 'updateAt',
+            title: 'gpa',
+            dataIndex: 'gpa',
+            key: 'gpa',
             width: 150,
-            render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
         },
         {
             title: 'Actions',
@@ -110,108 +82,45 @@ function UserList() {
                 <>
                     <SmartButton
                         type="primary"
-                        icon={<EditOutlined />}
+                        icon={<EditOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleEditUser(record)}
                     />
                     <SmartButton
                         type="danger"
-                        icon={<DeleteOutlined />}
+                        icon={<DeleteOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleDeleteUser(record)}
-                        style={{ marginLeft: '8px' }}
+                        style={{marginLeft: '8px'}}
                     />
                 </>
             ),
         },
     ];
 
-    useEffect(() => {
-        const userNameFilters = [...new Set(userSource.map((user) => user.username))].map((value) => ({
-            text: value,
-            value,
-        }));
-        const emailFilters = [...new Set(userSource.map((user) => user.email))].map((value) => ({
-            text: value,
-            value,
-        }));
-        const roleFilters = [...new Set(userSource.map((user) => user.roleNames))].map((value) => ({
-            text: value,
-            value,
-        }));
-
-        setDynamicColumns([
-            { ...baseColumns[0], filters: userNameFilters },
-            { ...baseColumns[1], filters: emailFilters },
-            { ...baseColumns[2], filters: roleFilters },
-            ...baseColumns.slice(3),
-        ]);
-    }, [userSource]);
-
     const userModalFields = [
         {
-            label: 'User Name',
-            name: 'username',
+            label: 'name',
+            name: 'name',
             type: 'text',
-            rules: [{ required: true, message: 'User Name is required!' }],
+            rules: [{required: true, message: 'Skill name is required!'}],
         },
         {
-            label: 'First Name',
-            name: 'firstName',
-            type: 'text',
-        },
-        {
-            label: 'Last Name',
-            name: 'lastName',
+            label: 'description',
+            name: 'description',
             type: 'text',
         },
         {
-            label: 'Email',
-            name: 'email',
+            label: 'level',
+            name: 'level',
             type: 'text',
-            disabled: modalMode === 'edit',
-            rules: modalMode === 'create' ? [{ required: true, message: 'Email is required!' }] : [],
-        },
-        {
-            label: 'Address',
-            name: 'address',
-            type: 'text',
-        },
-        {
-            label: 'Password',
-            name: 'password',
-            type: 'text',
-            disabled: modalMode === 'edit',
-            rules: modalMode === 'create' ? [{ required: true, message: 'Password is required!' }] : [],
-        },
-        {
-            label: 'Phone Number',
-            name: 'phoneNumber',
-            type: 'text',
-        },
-        {
-            label: 'Profile Picture',
-            name: 'profilePicture',
-            type: 'text',
-        },
-        {
-            label: 'Role',
-            name: 'roleIds',
-            type: 'select',
-            multiple: true,
-            options: roleOptions,
-        },
-        {
-            label: 'Enable',
-            name: 'enabled',
-            type: 'yesno',
-        },
+        }
     ];
 
-    const handleGetAllUsers = async (page = 1, pageSize = 10) => {
+    const handleGetAllEducation = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getAllUser({ page: page - 1, pageSize });
+            const response = await getAllByEmployeePaged(employeeId, { page: page - 1, pageSize });
             const userList = response.content;
 
             if (response && Array.isArray(userList)) {
@@ -220,7 +129,7 @@ function UserList() {
                     keyDisplay: user.key,
                 }));
 
-                setUserSource(transformedUsers);
+                setEducationSource(transformedUsers);
                 setPagination((prev) => ({
                     ...prev,
                     current: page,
@@ -229,28 +138,13 @@ function UserList() {
                 }));
             } else {
                 console.error('Invalid data users: ', response);
-                setUserSource([]);
+                setEducationSource([]);
             }
         } catch (error) {
             console.error('Error fetching user', error);
-            setUserSource([]);
+            setEducationSource([]);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const fetchRolesOptions = async () => {
-        try {
-            const rolesResponse = await getAllRolesNoPaging();
-            if (rolesResponse && Array.isArray(rolesResponse)) {
-                const roles = rolesResponse.map((role) => ({
-                    label: role.name,
-                    value: role.id,
-                }));
-                setRoleOptions(roles);
-            }
-        } catch (error) {
-            console.error('Error fetching options:', error);
         }
     };
 
@@ -265,7 +159,7 @@ function UserList() {
         try {
             await createUser(formData);
             message.success('Tạo người dùng thành công!');
-            handleGetAllUsers();
+            handleGetAllEducation();
         } catch (error) {
             message.error(`Lỗi khi tạo người dùng: ${error.response?.data?.message || error.message}`);
         }
@@ -282,7 +176,7 @@ function UserList() {
         try {
             await updateUser(selectedUser.id, formData);
             message.success('Cập nhật người dùng thành công!');
-            handleGetAllUsers();
+            handleGetAllEducation();
             setIsModalOpen(false);
         } catch (error) {
             message.error(`Lỗi khi cập nhật người dùng: ${error.response?.data?.message || error.message}`);
@@ -292,7 +186,7 @@ function UserList() {
     const handleDeleteUser = (record) => {
         setModalMode('delete');
         setSelectedRowKeys([record.id]);
-        setSelectedRows([record]); // Lưu dòng được chọn để xử lý xóa
+        setSelectedRows([record]);
         setIsModalOpen(true);
     };
 
@@ -323,10 +217,10 @@ function UserList() {
         try {
             await deleteUser(selectedRowKeys);
             message.success('Xóa người dùng thành công!');
-            handleGetAllUsers();
+            handleGetAllEducation();
             setIsModalOpen(false);
-            setSelectedRowKeys([]); // Xóa các dòng đã chọn
-            setSelectedRows([]); // Xóa các dòng đã chọn
+            setSelectedRowKeys([]);
+            setSelectedRows([]);
         } catch (error) {
             message.error(`Lỗi khi xóa người dùng: ${error.response?.data?.message || error.message}`);
         }
@@ -334,12 +228,11 @@ function UserList() {
 
     const handleSelectChange = (newSelectedRowKeys, newSelectedRows) => {
         setSelectedRowKeys(newSelectedRowKeys);
-        setSelectedRows(newSelectedRows); // Lưu các dòng được chọn
+        setSelectedRows(newSelectedRows);
     };
 
     useEffect(() => {
-        fetchRolesOptions();
-        handleGetAllUsers();
+        handleGetAllEducation();
     }, []);
 
     const handleFormSubmit = (formData) => {
@@ -353,7 +246,7 @@ function UserList() {
     };
 
     const handleTableChange = (pagination, filters, sorter) => {
-        handleGetAllUsers(pagination.current, pagination.pageSize);
+        handleGetAllEducation(pagination.current, pagination.pageSize);
     };
 
     const getModalTitle = () => {
@@ -372,17 +265,17 @@ function UserList() {
     return (
         <div className={cx('trailer-wrapper')}>
             <div className={cx('sub_header')}>
-                <SmartInput size="large" placeholder="Tìm kiếm" icon={<SearchOutlined />} />
+                <SmartInput size="large" placeholder="Tìm kiếm" icon={<SearchOutlined/>}/>
                 <div className={cx('features')}>
-                    <SmartButton title="Thêm mới" icon={<PlusOutlined />} type="primary" onClick={handleAddUser} />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined />} onClick={handleExportFile} />
+                    <SmartButton title="Thêm mới" icon={<PlusOutlined/>} type="primary" onClick={handleAddUser}/>
+                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
+                    <SmartButton title="Excel" icon={<CloudUploadOutlined/>} onClick={handleExportFile}/>
                 </div>
             </div>
             <div className={cx('trailer-container')}>
                 <SmartTable
-                    columns={dynamicColumns}
-                    dataSources={userSource}
+                    columns={baseColumns}
+                    dataSources={educationSource}
                     loading={loading}
                     pagination={pagination}
                     onTableChange={handleTableChange}
@@ -405,4 +298,4 @@ function UserList() {
     );
 }
 
-export default UserList;
+export default Education;

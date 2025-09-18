@@ -82,11 +82,10 @@ public enum ErrorCode {
     CANDIDATE_ALREADY_APPLIED(1069, "Candidate has already applied to this job posting", HttpStatus.CONFLICT),
     TEAM_NOT_FOUND(1070, "Team not found", HttpStatus.NOT_FOUND),
     EMPLOYEE_ALREADY_IN_TEAM(1071, "Employee already in team", HttpStatus.CONFLICT),
-    MINIO_PRESIGNED_URL_ERROR(1072, "Error generating presigned URL from MinIO", HttpStatus.INTERNAL_SERVER_ERROR);
+    MINIO_PRESIGNED_URL_ERROR(1072, "Error generating presigned URL from MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
     EDUCATION_NOT_FOUND(1072, "Education not found", HttpStatus.NOT_FOUND),
     SKILL_NOT_FOUND(1073, "Skill not found", HttpStatus.NOT_FOUND),
     WORK_HISTORY_NOT_FOUND(1074, "Work history not found", HttpStatus.NOT_FOUND);
-
 
     int code;
     String message;

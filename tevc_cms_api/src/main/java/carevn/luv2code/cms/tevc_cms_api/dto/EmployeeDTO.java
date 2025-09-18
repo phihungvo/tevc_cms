@@ -31,6 +31,10 @@ public class EmployeeDTO {
 
     Date hireDate;
 
+    Date createdAt;
+
+    Date updatedAt;
+
     Integer departmentId;
 
     Integer positionId;

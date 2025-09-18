@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import carevn.luv2code.cms.tevc_cms_api.enums.SkillLevel;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,5 +33,6 @@ public class Skill {
     LocalDateTime lastUpdated;
 
     @ManyToMany(mappedBy = "skills")
+    @JsonBackReference
     List<Employee> employees = new ArrayList<>();
 }

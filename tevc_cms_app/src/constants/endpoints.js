@@ -88,6 +88,22 @@ const API_ENDPOINTS = {
         DELETE: (teamId) => `${BASE_URL}/teams/${teamId}`,
         ADD_MEMBER: (teamId, memberId) => `${BASE_URL}/teams/${teamId}/addMember/${memberId}`,
         REMOVE_MEMBER: (teamId, memberId) => `${BASE_URL}/teams/${teamId}/removeMember/${memberId}`,
+    },
+    WORK_HISTORY: {
+        GET_ALL: `${BASE_URL}/work-histories`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/work-histories/employee/${employeeId}/paged`,
+    },
+    SKILL: {
+        GET_ALL: `${BASE_URL}/skills`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/skills/employee/${employeeId}/paged`,
+        NO_PAGING: `${BASE_URL}/skills/no-paging`,
+        CREATE: `${BASE_URL}/skills`,
+        UPDATE: (skillId) => `${BASE_URL}/skills/${skillId}`,
+        DELETE: (skillId) => `${BASE_URL}/skills/${skillId}`,
+    },
+    EDUCATION: {
+        GET_ALL: `${BASE_URL}/educations`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/educations/employee/${employeeId}/paged`,
     }
 };
 
