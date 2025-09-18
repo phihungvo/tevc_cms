@@ -1,4 +1,3 @@
-// ~/pages/AdminDashboard/UserManagement/PermissionList.js
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Permission/Permission.module.scss';
@@ -24,19 +23,19 @@ const cx = classNames.bind(styles);
  * Quản lý danh sách quyền (Permission) với các tính năng: hiển thị, thêm, sửa, xóa, chọn nhiều dòng.
  */
 function PermissionList() {
-    const [permissionSource, setPermissionSource] = useState([]); // Dữ liệu nguồn của bảng quyền
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Danh sách ID của các quyền được chọn
-    const [selectedRows, setSelectedRows] = useState([]); // Danh sách bản ghi quyền được chọn
-    const [loading, setLoading] = useState(false); // Trạng thái loading của bảng
+    const [permissionSource, setPermissionSource] = useState([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
         pageSize: 5,
         total: 0,
-    }); // Cấu hình phân trang
-    const [modalMode, setModalMode] = useState('create'); // Chế độ modal: create, edit, delete
-    const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái mở/đóng modal
-    const [selectedPermission, setSelectedPermission] = useState(null); // Quyền đang được chỉnh sửa/xóa
-    const [form] = Form.useForm(); // Form instance từ Ant Design
+    });
+    const [modalMode, setModalMode] = useState('create');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPermission, setSelectedPermission] = useState(null);
+    const [form] = Form.useForm();
 
     // Định nghĩa màu sắc cho các phương thức HTTP
     const httpMethod = {
@@ -50,7 +49,6 @@ function PermissionList() {
         TRACE: 'gray',
     };
 
-    // Cấu hình các cột của bảng
     const columns = [
         {
             title: 'Tên Quyền',
@@ -107,7 +105,6 @@ function PermissionList() {
         },
     ];
 
-    // Cấu hình các trường trong modal
     const permissionModalFields = [
         {
             label: 'Tên Quyền',
@@ -138,7 +135,6 @@ function PermissionList() {
         },
     ];
 
-    // Lấy danh sách quyền từ API
     const handleGetAllPermissions = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
@@ -162,7 +158,6 @@ function PermissionList() {
         }
     };
 
-    // Mở modal để thêm quyền mới
     const handleAddPermission = () => {
         setModalMode('create');
         setSelectedPermission(null);
@@ -170,7 +165,6 @@ function PermissionList() {
         setIsModalOpen(true);
     };
 
-    // Gọi API để tạo quyền mới
     const handleCallCreatePermission = async (formData) => {
         try {
             await createPermission(formData);
@@ -181,7 +175,6 @@ function PermissionList() {
         }
     };
 
-    // Mở modal để chỉnh sửa quyền
     const handleEditPermission = (record) => {
         setSelectedPermission(record);
         setModalMode('edit');
@@ -189,7 +182,6 @@ function PermissionList() {
         setIsModalOpen(true);
     };
 
-    // Gọi API để cập nhật quyền
     const handleCallUpdatePermission = async (formData) => {
         try {
             await updatePermission(selectedPermission.id, formData);
@@ -201,7 +193,6 @@ function PermissionList() {
         }
     };
 
-    // Mở modal xác nhận xóa quyền
     const handleDeletePermission = (record) => {
         setModalMode('delete');
         setSelectedRowKeys([record.id]);
@@ -209,10 +200,9 @@ function PermissionList() {
         setIsModalOpen(true);
     };
 
-    // Gọi API để xóa quyền
     const handleCallDeletePermission = async () => {
         try {
-            await deletePermission(selectedRowKeys[0]); // Xóa một quyền duy nhất
+            await deletePermission(selectedRowKeys[0]);
             message.success('Xóa quyền thành công!');
             handleGetAllPermissions();
             setIsModalOpen(false);
@@ -223,7 +213,6 @@ function PermissionList() {
         }
     };
 
-    // Xử lý submit form trong modal
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreatePermission(formData);
@@ -234,18 +223,15 @@ function PermissionList() {
         }
     };
 
-    // Xử lý thay đổi trạng thái chọn dòng
     const handleSelectChange = (newSelectedRowKeys, newSelectedRows) => {
         setSelectedRowKeys(newSelectedRowKeys);
         setSelectedRows(newSelectedRows);
     };
 
-    // Xử lý thay đổi bảng (phân trang)
     const handleTableChange = (pagination) => {
         handleGetAllPermissions(pagination.current, pagination.pageSize);
     };
 
-    // Lấy tiêu đề modal dựa trên chế độ
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
@@ -259,7 +245,6 @@ function PermissionList() {
         }
     };
 
-    // Khởi tạo dữ liệu khi component mount
     useEffect(() => {
         handleGetAllPermissions();
     }, []);

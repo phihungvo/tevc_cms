@@ -1,8 +1,12 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.SkillDTO;
@@ -26,11 +30,33 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public SkillDTO createSkill(SkillDTO skillDTO) {
-        Skill skill = skillMapper.toEntity(skillDTO);
-        List<Employee> employee = employeeRepository.findAllById(skillDTO.getEmployeesIds());
+        if (skillDTO.getEmployeesIds() != null && !skillDTO.getEmployeesIds().isEmpty()) {
+            List<Employee> employees = employeeRepository.findAllById(skillDTO.getEmployeesIds());
+            if (employees.size() != skillDTO.getEmployeesIds().size()) {
+                throw new AppException(ErrorCode.EMPLOYEE_NOT_FOUND);
+            }
 
-        skill.setEmployees(employee);
-        return skillMapper.toDTO(skillRepository.save(skill));
+            Skill skill = skillMapper.toEntity(skillDTO);
+            skill.setEmployees(employees);
+
+            for (Employee employee : employees) {
+                if (employee.getSkills() == null) {
+                    employee.setSkills(new ArrayList<>());
+                }
+                if (!employee.getSkills().contains(skill)) {
+                    employee.getSkills().add(skill);
+                }
+            }
+
+            Skill savedSkill = skillRepository.save(skill);
+            employeeRepository.saveAll(employees);
+
+            return skillMapper.toDTO(savedSkill);
+        } else {
+            Skill skill = skillMapper.toEntity(skillDTO);
+            Skill savedSkill = skillRepository.save(skill);
+            return skillMapper.toDTO(savedSkill);
+        }
     }
 
     @Override
@@ -51,6 +77,17 @@ public class SkillServiceImpl implements SkillService {
     @Override
     public List<SkillDTO> getAllSkills() {
         return skillRepository.findAll().stream().map(skillMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<SkillDTO> getAllSkillsPagined(int page, int size) {
+        Page<Skill> skillPage = skillRepository.findAll(PageRequest.of(page, size));
+        return skillPage.map(skillMapper::toDTO);
+    }
+
+    @Override
+    public Page<SkillDTO> getSkillsByEmployeeIdPaged(Integer employeeId, Pageable pageable) {
+        return skillRepository.findByEmployeesId(employeeId, pageable).map(skillMapper::toDTO);
     }
 
     @Override

@@ -3,6 +3,8 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.EducationDTO;
@@ -62,6 +64,11 @@ public class EducationServiceImpl implements EducationService {
         return educationRepository.findByEmployeeId(employeeId).stream()
                 .map(educationMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<EducationDTO> getEducationsByEmployeeIdPaged(Integer employeeId, Pageable pageable) {
+        return educationRepository.findByEmployeeId(employeeId, pageable).map(educationMapper::toDTO);
     }
 
     @Override

@@ -2,6 +2,9 @@ package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +53,19 @@ public class EducationController {
                 .code(HttpStatus.OK.value())
                 .message("Get educations by employee successful")
                 .result(educationService.getEducationsByEmployeeId(employeeId))
+                .build();
+    }
+
+    @GetMapping("/employee/{employeeId}/paged")
+    public ApiResponse<Page<EducationDTO>> getEducationsByEmployeeIdPaged(
+            @PathVariable Integer employeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.<Page<EducationDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get paginated educations by employee successful")
+                .result(educationService.getEducationsByEmployeeIdPaged(employeeId, pageable))
                 .build();
     }
 

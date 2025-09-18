@@ -3,6 +3,8 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.WorkHistoryDTO;
@@ -64,6 +66,16 @@ public class WorkHistoryServiceImpl implements WorkHistoryService {
         return workHistoryRepository.findByEmployeeId(employeeId).stream()
                 .map(workHistoryMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<WorkHistoryDTO> getAllWorkHistories(Pageable pageable) {
+        return workHistoryRepository.findAll(pageable).map(workHistoryMapper::toDTO);
+    }
+
+    @Override
+    public Page<WorkHistoryDTO> getWorkHistoriesByEmployeeIdPaged(Integer employeeId, Pageable pageable) {
+        return workHistoryRepository.findByEmployeeId(employeeId, pageable).map(workHistoryMapper::toDTO);
     }
 
     @Override

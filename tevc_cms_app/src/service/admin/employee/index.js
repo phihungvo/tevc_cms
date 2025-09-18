@@ -27,7 +27,6 @@ export const getAllEmployeesNoPaging = async () => {
     }
 };
 
-
 export const employeeDetail = async (employeeId) => {
     try {
         const response = await apiClient.get(
