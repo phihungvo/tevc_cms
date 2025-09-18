@@ -1,8 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -49,6 +47,19 @@ public class Employee {
 
     @Column(name = "hire_date")
     Date hireDate;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    List<WorkHistory> workHistory = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    List<Education> educations = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "employee_skills",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    List<Skill> skills = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
