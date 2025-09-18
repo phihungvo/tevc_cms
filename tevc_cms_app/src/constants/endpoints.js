@@ -9,6 +9,7 @@ const API_ENDPOINTS = {
         UPLOAD: `${BASE_URL}/files/upload`,
         CHECK_EXISTED: (file) =>
             `${BASE_URL}/storage/checkFileExists/${file.name}`,
+        PRESIGNED_URL: (fileId) => `${BASE_URL}/files/presigned-url/${fileId}`,
         GET_INFO: `${BASE_URL}/storage/files`,
         GET_FILE: (filePath) => `${BASE_URL}/storage/files/${filePath}`,
     },

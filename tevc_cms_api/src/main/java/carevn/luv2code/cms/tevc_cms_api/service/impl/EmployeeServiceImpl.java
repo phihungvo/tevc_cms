@@ -82,11 +82,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeMapper.toDTO(updatedEmployee);
     }
 
+    //    @Override
+    //    public EmployeeDTO getEmployee(Integer id) {
+    //        Employee employee =
+    //                employeeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+    //        return employeeMapper.toDTO(employee);
+    //    }
+
     @Override
     public EmployeeDTO getEmployee(Integer id) {
         Employee employee =
                 employeeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
-        return employeeMapper.toDTO(employee);
+        EmployeeDTO dto = employeeMapper.toDTO(employee);
+        if (employee.getProfilePicture() != null) {
+            dto.setProfilePictureId(employee.getProfilePicture().getId());
+        }
+        return dto;
     }
 
     @Override

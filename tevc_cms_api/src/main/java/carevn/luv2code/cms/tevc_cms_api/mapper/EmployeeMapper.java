@@ -18,6 +18,10 @@ public interface EmployeeMapper {
             target = "positionId",
             source = "position.id",
             nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    @Mapping(
+            target = "profilePictureId",
+            source = "profilePicture.id",
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     EmployeeDTO toDTO(Employee employee);
 
     @Mapping(target = "department", ignore = true)
