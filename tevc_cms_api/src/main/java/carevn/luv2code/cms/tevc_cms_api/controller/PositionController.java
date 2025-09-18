@@ -3,10 +3,14 @@ package carevn.luv2code.cms.tevc_cms_api.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.PositionDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 import carevn.luv2code.cms.tevc_cms_api.service.PositionService;
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +44,19 @@ public class PositionController {
     @GetMapping("/no-paging")
     public ResponseEntity<List<PositionDTO>> getAllNoPaging() {
         return ResponseEntity.ok(positionService.getAllNoPaging());
+    }
+
+    @GetMapping("/employee/{employeeId}/paged")
+    public ApiResponse<Page<PositionDTO>> getPositionsByEmployeeIdPaged(
+            @PathVariable Integer employeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.<Page<PositionDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy danh sách vị trí của nhân viên thành công")
+                .result(positionService.getPositionsByEmployeeIdPaged(employeeId, pageable))
+                .build();
     }
 
     @DeleteMapping("/{id}")

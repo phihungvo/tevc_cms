@@ -55,6 +55,7 @@ const API_ENDPOINTS = {
     POSITION: {
         GET_ALL: `${BASE_URL}/positions`,
         GET_ALL_NO_PAGING: `${BASE_URL}/positions/no-paging`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/positions/employee/${employeeId}/paged`,
         CREATE: `${BASE_URL}/positions`,
         GET_BY_TITLE: `${BASE_URL}/positions/getPositionsByTitle`,
         UPDATE: (positionId) => `${BASE_URL}/positions/${positionId}`,
@@ -63,6 +64,7 @@ const API_ENDPOINTS = {
     LEAVE: {
         GET_ALL: `${BASE_URL}/leaves`,
         CREATE: `${BASE_URL}/leaves`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/leaves/employee/${employeeId}/paged`,
         APPROVE: (leaveId) => `${BASE_URL}/leaves/${leaveId}/approve`,
         REJECT: (leaveId) => `${BASE_URL}/leaves/${leaveId}/reject`,
         UPDATE: (leaveId) => `${BASE_URL}/leaves/${leaveId}`,

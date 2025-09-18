@@ -1,11 +1,15 @@
 package carevn.luv2code.cms.tevc_cms_api.controller;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.LeaveDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 import carevn.luv2code.cms.tevc_cms_api.service.LeaveService;
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +38,19 @@ public class LeaveController {
     public ResponseEntity<Page<LeaveDTO>> getAllLeaves(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(leaveService.getAllLeaves(page, size));
+    }
+
+    @GetMapping("/employee/{employeeId}/paged")
+    public ApiResponse<Page<LeaveDTO>> getLeavesByEmployeeIdPaged(
+            @PathVariable Integer employeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.<Page<LeaveDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy danh sách ngày nghỉ của nhân viên thành công")
+                .result(leaveService.getLeavesByEmployeeIdPaged(employeeId, pageable))
+                .build();
     }
 
     @PatchMapping("/{id}/approve")
