@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,11 @@ public class PositionServiceImpl implements PositionService {
     @Transactional(readOnly = true)
     public List<PositionDTO> getAllNoPaging() {
         return positionRepository.findAll().stream().map(positionMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<PositionDTO> getPositionsByEmployeeIdPaged(Integer employeeId, Pageable pageable) {
+        return positionRepository.findByEmployeesId(employeeId, pageable).map(positionMapper::toDTO);
     }
 
     @Override

@@ -3,6 +3,7 @@ package carevn.luv2code.cms.tevc_cms_api.service;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.LeaveDTO;
 
@@ -23,4 +24,6 @@ public interface LeaveService {
     LeaveDTO rejectLeave(Integer id, String comments);
 
     List<LeaveDTO> getEmployeeLeaves(Integer employeeId);
+
+    Page<LeaveDTO> getLeavesByEmployeeIdPaged(Integer employeeId, Pageable pageable);
 }

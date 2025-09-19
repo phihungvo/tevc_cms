@@ -39,6 +39,7 @@ import Leave from "~/pages/AdminDashboard/Leave";
 import Position from "~/pages/AdminDashboard/Position";
 import Contract from "~/pages/AdminDashboard/Contract";
 
+
 const {Title, Text} = Typography;
 
 moment.locale('vi');
@@ -558,7 +559,7 @@ function EmployeeDetail() {
                         marginBottom: '24px'
                     }}
                     bodyStyle={{
-                        padding: '0',
+                        padding: '35px',
                         overflow: 'hidden'
                     }}
                 >

@@ -24,6 +24,16 @@ export const getAllPositionsNoPaging = async () => {
     }
 };
 
+export const getAllByEmployeePaged = async (employeeId) => {
+    try {
+        const response = await apiClient.get(API_ENDPOINTS.POSITION.ALL_BY_EMPLOYEE_PAGED(employeeId));
+
+        return response.data.result;
+    } catch (error) {
+        return null;
+    }
+};
+
 export const createPosition = async (formData) => {
     try {
         const response = await apiClient.post(
