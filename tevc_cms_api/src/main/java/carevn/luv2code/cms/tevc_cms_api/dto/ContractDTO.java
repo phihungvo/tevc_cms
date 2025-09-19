@@ -1,39 +1,53 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Set;
 
-import lombok.AccessLevel;
-import lombok.Data;
+import carevn.luv2code.cms.tevc_cms_api.enums.ContractStatus;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ContractDTO {
+
     Integer id;
 
     Integer employeeId;
 
-    String employeeName;
-
     String contractType;
 
-    Date startDate;
+    /**
+     * Thời gian hiệu lực
+     */
+    LocalDate startDate;
 
-    Date endDate;
+    LocalDate endDate;
 
     Double basicSalary;
 
-    String position;
+    Integer positionId;
+    //    String positionTitle;
 
-    String terms;
+    ContractStatus status;
 
-    String status;
-
-    Date signedDate;
+    LocalDate signedDate;
 
     Integer probationPeriod;
 
+    /**
+     * Lý do chấm dứt hợp đồng
+     */
     String terminationReason;
 
-    Date terminationDate;
+    LocalDate terminationDate;
+
+    Set<Integer> fileIds;
+
+    //    Set<File> files;
+
+    Integer createdById;
 }

@@ -104,6 +104,10 @@ const API_ENDPOINTS = {
     EDUCATION: {
         GET_ALL: `${BASE_URL}/educations`,
         ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/educations/employee/${employeeId}/paged`,
+    },
+    CONTRACT: {
+        GET_ALL: `${BASE_URL}/contracts`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/contracts/employee/${employeeId}/paged`,
     }
 };
 
