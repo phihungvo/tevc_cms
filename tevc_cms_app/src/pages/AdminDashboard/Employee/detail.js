@@ -35,6 +35,9 @@ import CustomTabs from "~/components/Layout/components/Tab";
 import WorkHistory from "~/pages/AdminDashboard/WorkHistory";
 import Skill from "~/pages/AdminDashboard/Skill";
 import Education from "~/pages/AdminDashboard/Education";
+import Leave from "~/pages/AdminDashboard/Leave";
+import Position from "~/pages/AdminDashboard/Position";
+import Contract from "~/pages/AdminDashboard/Contract";
 
 const {Title, Text} = Typography;
 
@@ -140,6 +143,21 @@ function EmployeeDetail() {
         },
         {
             key: '4',
+            label: 'Nghĩ phép',
+            children: <Leave employeeId={id}/>,
+        },
+        {
+            key: '5',
+            label: 'Vị trí công việc',
+            children: <Position employeeId={id}/>,
+        },
+        {
+            key: '6',
+            label: 'Hợp đồng',
+            children: <Contract employeeId={id}/>,
+        },
+        {
+            key: '7',
             label: 'Báo cáo',
             children: (
                 <Card style={{minHeight: 400}}>

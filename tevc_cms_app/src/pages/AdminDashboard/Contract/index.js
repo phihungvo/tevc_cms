@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/User/User.module.scss';
-import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
     SearchOutlined,
@@ -15,14 +14,14 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import {DatePicker, Form, message, Tag} from 'antd';
-import { getAllUser, createUser, updateUser, deleteUser } from '~/service/admin/user';
-import { getAllByEmployeePaged } from '~/service/admin/work-history';
-import { exportExcelFile } from '~/service/admin/export_service';
+import {getAllUser, createUser, updateUser, deleteUser} from '~/service/admin/user';
+import {getAllByEmployeePaged} from "~/service/admin/contract";
+import {exportExcelFile} from '~/service/admin/export_service';
 
 const cx = classNames.bind(styles);
 
-function WorkHistory({employeeId}) {
-    const [workHistory, setWorkHistorySource] = useState([]);
+function Contract({employeeId}) {
+    const [contractSource, setContractSource] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -39,23 +38,17 @@ function WorkHistory({employeeId}) {
 
     const baseColumns = [
         {
-            title: 'companyName',
-            dataIndex: 'companyName',
-            key: 'companyName',
-            width: 200,
+            title: 'Loại hợp đồng',
+            dataIndex: 'contractType',
+            key: 'contractType',
+            width: 150,
             fixed: 'left',
         },
         {
-            title: 'position',
-            dataIndex: 'position',
-            key: 'position',
-            width: 180,
-        },
-        {
-            title: 'Thời gian làm việc',
-            dataIndex: 'workDuration',
-            key: 'workDuration',
-            width: 180,
+            title: 'Thời hạn hợp đồng',
+            dataIndex: 'contractDuration',
+            key: 'contractDuration',
+            width: 175,
             render: (_, record) => {
                 const start = record.startDate ? new Date(record.startDate).toLocaleDateString('vi-VN') : 'N/A';
                 const end = record.endDate ? new Date(record.endDate).toLocaleDateString('vi-VN') : 'N/A';
@@ -63,63 +56,84 @@ function WorkHistory({employeeId}) {
             }
         },
         {
-            title: 'description',
-            dataIndex: 'description',
-            key: 'description',
-            width: 150,
-        },
-        {
-            title: 'companyAddress',
-            dataIndex: 'companyAddress',
-            key: 'companyAddress',
-            width: 200,
-        },
-        {
-            title: 'reasonForLeaving',
-            dataIndex: 'reasonForLeaving',
-            key: 'reasonForLeaving',
-            width: 200,
-        },
-        {
-            title: 'salary',
-            dataIndex: 'salary',
-            key: 'salary',
-            width: 130,
+            title: 'Lương cơ bản',
+            dataIndex: 'basicSalary',
+            key: 'basicSalary',
+            width: 110,
             render: (value) =>
                 value != null
                     ? value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
                     : 'N/A',
         },
         {
-            title: 'contractType',
-            dataIndex: 'contractType',
-            key: 'contractType',
+            title: 'Vị trí',
+            dataIndex: 'positionId',
+            key: 'positionId',
             width: 150,
         },
         {
-            title: 'supervisorName',
-            dataIndex: 'supervisorName',
-            key: 'supervisorName',
-            width: 150,
-        }, ,
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            width: 100,
+        },
         {
-            title: 'Actions',
+            title: 'Ngày ký',
+            dataIndex: 'signedDate',
+            key: 'signedDate',
+            width: 100,
+            render: (date) => (date ? new Date(date).toLocaleDateString('vi-VN') : 'N/A'),
+        },
+        {
+            title: 'Thời gian thử việc (tháng)',
+            dataIndex: 'probationPeriod',
+            key: 'probationPeriod',
+            width: 80,
+        },
+        {
+            title: 'Lý do chấm dứt',
+            dataIndex: 'terminationReason',
+            key: 'terminationReason',
+            width: 150,
+        },
+        {
+            title: 'Ngày chấm dứt',
+            dataIndex: 'terminationDate',
+            key: 'terminationDate',
+            width: 100,
+            render: (date) => (date ? new Date(date).toLocaleDateString('vi-VN') : 'N/A'),
+        },
+        {
+            title: 'Tệp đính kèm',
+            dataIndex: 'fileId',
+            key: 'fileId',
+            width: 150,
+            render: (value) => (value ? `File ID: ${value}` : 'N/A'),
+        },
+        {
+            title: 'Người tạo',
+            dataIndex: 'createdById',
+            key: 'createdById',
+            width: 150,
+        },
+        {
+            title: 'Hành động',
             fixed: 'right',
             width: 130,
             render: (_, record) => (
                 <>
                     <SmartButton
                         type="primary"
-                        icon={<EditOutlined />}
+                        icon={<EditOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleEditUser(record)}
                     />
                     <SmartButton
                         type="danger"
-                        icon={<DeleteOutlined />}
+                        icon={<DeleteOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleDeleteUser(record)}
-                        style={{ marginLeft: '8px' }}
+                        style={{marginLeft: '8px'}}
                     />
                 </>
             ),
@@ -128,66 +142,64 @@ function WorkHistory({employeeId}) {
 
     const userModalFields = [
         {
-            label: 'employeeId',
-            name: 'employeeId',
+            label: 'contractType',
+            name: 'contractType',
             type: 'text',
-            rules: [{ required: true, message: 'Employee is required!' }],
-        },
-        {
-            label: 'companyName',
-            name: 'companyName',
-            type: 'text',
-        },
-        {
-            label: 'position',
-            name: 'position',
-            type: 'text',
+            rules: [{required: true, message: 'Skill name is required!'}],
         },
         {
             label: 'startDate',
             name: 'startDate',
             type: 'date',
-            render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
         },
         {
             label: 'endDate',
             name: 'endDate',
             type: 'date',
-            render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
         },
         {
-            label: 'description',
-            name: 'description',
+            label: 'basicSalary',
+            name: 'basicSalary',
             type: 'text',
         },
         {
-            label: 'companyAddress',
-            name: 'companyAddress',
+            label: 'positionId',
+            name: 'positionId',
             type: 'text',
         },
         {
-            label: 'reasonForLeaving',
-            name: 'reasonForLeaving',
+            label: 'ContractStatus',
+            name: 'status',
             type: 'text',
         },
         {
-            label: 'salary',
-            name: 'salary',
+            label: 'endDate',
+            name: 'signedDate',
+            type: 'date',
+        },
+        {
+            label: 'probationPeriod',
+            name: 'probationPeriod',
             type: 'text',
         },
         {
-            label: 'contractType',
-            name: 'contractType',
+            label: 'terminationReason',
+            name: 'terminationReason',
             type: 'text',
         },
         {
-            label: 'supervisorName',
-            name: 'supervisorName',
+            label: 'endDate',
+            name: 'terminationDate',
             type: 'text',
         },
+        {
+            label: 'file',
+            name: 'fileIds',
+            type: 'text',
+        }
     ];
 
-    const handleGetAllUsers = async (page = 1, pageSize = 10) => {
+    const handleGetAllContracts = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
             const response = await getAllByEmployeePaged(employeeId, { page: page - 1, pageSize });
@@ -199,7 +211,7 @@ function WorkHistory({employeeId}) {
                     keyDisplay: user.key,
                 }));
 
-                setWorkHistorySource(transformedUsers);
+                setContractSource(transformedUsers);
                 setPagination((prev) => ({
                     ...prev,
                     current: page,
@@ -208,11 +220,11 @@ function WorkHistory({employeeId}) {
                 }));
             } else {
                 console.error('Invalid data users: ', response);
-                setWorkHistorySource([]);
+                setContractSource([]);
             }
         } catch (error) {
             console.error('Error fetching user', error);
-            setWorkHistorySource([]);
+            setContractSource([]);
         } finally {
             setLoading(false);
         }
@@ -229,7 +241,7 @@ function WorkHistory({employeeId}) {
         try {
             await createUser(formData);
             message.success('Tạo người dùng thành công!');
-            handleGetAllUsers();
+            handleGetAllContracts();
         } catch (error) {
             message.error(`Lỗi khi tạo người dùng: ${error.response?.data?.message || error.message}`);
         }
@@ -246,7 +258,7 @@ function WorkHistory({employeeId}) {
         try {
             await updateUser(selectedUser.id, formData);
             message.success('Cập nhật người dùng thành công!');
-            handleGetAllUsers();
+            handleGetAllContracts();
             setIsModalOpen(false);
         } catch (error) {
             message.error(`Lỗi khi cập nhật người dùng: ${error.response?.data?.message || error.message}`);
@@ -287,7 +299,7 @@ function WorkHistory({employeeId}) {
         try {
             await deleteUser(selectedRowKeys);
             message.success('Xóa người dùng thành công!');
-            handleGetAllUsers();
+            handleGetAllContracts();
             setIsModalOpen(false);
             setSelectedRowKeys([]); // Xóa các dòng đã chọn
             setSelectedRows([]); // Xóa các dòng đã chọn
@@ -302,7 +314,7 @@ function WorkHistory({employeeId}) {
     };
 
     useEffect(() => {
-        handleGetAllUsers();
+        handleGetAllContracts();
     }, []);
 
     const handleFormSubmit = (formData) => {
@@ -316,7 +328,7 @@ function WorkHistory({employeeId}) {
     };
 
     const handleTableChange = (pagination, filters, sorter) => {
-        handleGetAllUsers(pagination.current, pagination.pageSize);
+        handleGetAllContracts(pagination.current, pagination.pageSize);
     };
 
     const getModalTitle = () => {
@@ -335,17 +347,17 @@ function WorkHistory({employeeId}) {
     return (
         <div className={cx('trailer-wrapper')}>
             <div className={cx('sub_header')}>
-                <SmartInput size="large" placeholder="Tìm kiếm" icon={<SearchOutlined />} />
+                <SmartInput size="large" placeholder="Tìm kiếm" icon={<SearchOutlined/>}/>
                 <div className={cx('features')}>
-                    <SmartButton title="Thêm mới" icon={<PlusOutlined />} type="primary" onClick={handleAddUser} />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined />} onClick={handleExportFile} />
+                    <SmartButton title="Thêm mới" icon={<PlusOutlined/>} type="primary" onClick={handleAddUser}/>
+                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
+                    <SmartButton title="Excel" icon={<CloudUploadOutlined/>} onClick={handleExportFile}/>
                 </div>
             </div>
             <div className={cx('trailer-container')}>
                 <SmartTable
                     columns={baseColumns}
-                    dataSources={workHistory}
+                    dataSources={contractSource}
                     loading={loading}
                     pagination={pagination}
                     onTableChange={handleTableChange}
@@ -368,4 +380,4 @@ function WorkHistory({employeeId}) {
     );
 }
 
-export default WorkHistory;
+export default Contract;
