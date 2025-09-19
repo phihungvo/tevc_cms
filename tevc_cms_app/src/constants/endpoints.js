@@ -6,9 +6,10 @@ const API_ENDPOINTS = {
         REGISTER: `${BASE_URL}/auth/register`,
     },
     FILE: {
-        UPLOAD: `${BASE_URL}/storage/upload`,
+        UPLOAD: `${BASE_URL}/files/upload`,
         CHECK_EXISTED: (file) =>
             `${BASE_URL}/storage/checkFileExists/${file.name}`,
+        PRESIGNED_URL: (fileId) => `${BASE_URL}/files/presigned-url/${fileId}`,
         GET_INFO: `${BASE_URL}/storage/files`,
         GET_FILE: (filePath) => `${BASE_URL}/storage/files/${filePath}`,
     },
@@ -54,6 +55,7 @@ const API_ENDPOINTS = {
     POSITION: {
         GET_ALL: `${BASE_URL}/positions`,
         GET_ALL_NO_PAGING: `${BASE_URL}/positions/no-paging`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/positions/employee/${employeeId}/paged`,
         CREATE: `${BASE_URL}/positions`,
         GET_BY_TITLE: `${BASE_URL}/positions/getPositionsByTitle`,
         UPDATE: (positionId) => `${BASE_URL}/positions/${positionId}`,
@@ -62,6 +64,7 @@ const API_ENDPOINTS = {
     LEAVE: {
         GET_ALL: `${BASE_URL}/leaves`,
         CREATE: `${BASE_URL}/leaves`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/leaves/employee/${employeeId}/paged`,
         APPROVE: (leaveId) => `${BASE_URL}/leaves/${leaveId}/approve`,
         REJECT: (leaveId) => `${BASE_URL}/leaves/${leaveId}/reject`,
         UPDATE: (leaveId) => `${BASE_URL}/leaves/${leaveId}`,
@@ -87,6 +90,26 @@ const API_ENDPOINTS = {
         DELETE: (teamId) => `${BASE_URL}/teams/${teamId}`,
         ADD_MEMBER: (teamId, memberId) => `${BASE_URL}/teams/${teamId}/addMember/${memberId}`,
         REMOVE_MEMBER: (teamId, memberId) => `${BASE_URL}/teams/${teamId}/removeMember/${memberId}`,
+    },
+    WORK_HISTORY: {
+        GET_ALL: `${BASE_URL}/work-histories`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/work-histories/employee/${employeeId}/paged`,
+    },
+    SKILL: {
+        GET_ALL: `${BASE_URL}/skills`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/skills/employee/${employeeId}/paged`,
+        NO_PAGING: `${BASE_URL}/skills/no-paging`,
+        CREATE: `${BASE_URL}/skills`,
+        UPDATE: (skillId) => `${BASE_URL}/skills/${skillId}`,
+        DELETE: (skillId) => `${BASE_URL}/skills/${skillId}`,
+    },
+    EDUCATION: {
+        GET_ALL: `${BASE_URL}/educations`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/educations/employee/${employeeId}/paged`,
+    },
+    CONTRACT: {
+        GET_ALL: `${BASE_URL}/contracts`,
+        ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/contracts/employee/${employeeId}/paged`,
     }
 };
 

@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Permission/Permission.module.scss';
-import { useState, useEffect } from 'react';
-import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
     SearchOutlined,
@@ -16,12 +14,18 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllPermissions, createPermission, updatePermission } from '~/service/admin/permission';
+import { getAllPermissions, createPermission, updatePermission, deletePermission } from '~/service/admin/permission';
 
 const cx = classNames.bind(styles);
 
-function User() {
+/**
+ * Component PermissionList
+ * Quản lý danh sách quyền (Permission) với các tính năng: hiển thị, thêm, sửa, xóa, chọn nhiều dòng.
+ */
+function PermissionList() {
     const [permissionSource, setPermissionSource] = useState([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
@@ -33,6 +37,7 @@ function User() {
     const [selectedPermission, setSelectedPermission] = useState(null);
     const [form] = Form.useForm();
 
+    // Định nghĩa màu sắc cho các phương thức HTTP
     const httpMethod = {
         GET: 'green',
         POST: 'blue',
@@ -46,22 +51,21 @@ function User() {
 
     const columns = [
         {
-            title: 'Name',
+            title: 'Tên Quyền',
             dataIndex: 'name',
             width: 300,
             fixed: 'left',
+            onFilter: (value, record) => record.name.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
-            title: 'Http Method',
+            title: 'Phương Thức HTTP',
             dataIndex: 'httpMethod',
             render: (method) => (
-                <Tag color={httpMethod[method] || 'default'}>
-                    {method}
-                </Tag>
+                <Tag color={httpMethod[method] || 'default'}>{method}</Tag>
             ),
         },
         {
-            title: 'Api Endpoint',
+            title: 'API Endpoint',
             dataIndex: 'apiEndpoint',
             width: 350,
         },
@@ -71,29 +75,27 @@ function User() {
             width: 350,
         },
         {
-            title: 'Description',
+            title: 'Mô Tả',
             dataIndex: 'description',
             width: 500,
         },
         {
-            title: 'Actions',
+            title: 'Hành Động',
             fixed: 'right',
-            width: 180,
+            width: 130,
             render: (_, record) => (
                 <>
                     <SmartButton
-                        title="Edit"
                         type="primary"
                         icon={<EditOutlined />}
-                        buttonWidth={80}
-                        onClick={() => handleEditRole(record)}
+                        buttonWidth={50}
+                        onClick={() => handleEditPermission(record)}
                     />
                     <SmartButton
-                        title="Delete"
                         type="danger"
                         icon={<DeleteOutlined />}
-                        buttonWidth={80}
-                        // onClick={() => handleDeleteRole(record)}
+                        buttonWidth={50}
+                        onClick={() => handleDeletePermission(record)}
                         style={{ marginLeft: '8px' }}
                     />
                 </>
@@ -101,20 +103,20 @@ function User() {
         },
     ];
 
-    const userModalFields = [
+    const permissionModalFields = [
         {
-            label: 'Permission Name',
+            label: 'Tên Quyền',
             name: 'name',
             type: 'text',
-            rules: [{ required: true, message: 'Permission Name is required!' }],
+            rules: [{ required: true, message: 'Tên quyền là bắt buộc!' }],
         },
         {
-            label: 'Description',
+            label: 'Mô Tả',
             name: 'description',
             type: 'text',
         },
         {
-            label: 'Api Endpoint',
+            label: 'API Endpoint',
             name: 'apiEndpoint',
             type: 'text',
         },
@@ -124,7 +126,7 @@ function User() {
             type: 'text',
         },
         {
-            label: 'Http Method',
+            label: 'Phương Thức HTTP',
             name: 'httpMethod',
             type: 'select',
             options: ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'],
@@ -143,18 +145,18 @@ function User() {
                     total: response.totalElements,
                 });
             } else {
-                console.error('Invalid data format:', response);
+                console.error('Định dạng dữ liệu không hợp lệ:', response);
                 setPermissionSource([]);
             }
         } catch (error) {
-            console.error('Error fetching roles:', error);
+            console.error('Lỗi khi lấy danh sách quyền:', error);
             setPermissionSource([]);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleAddRole = () => {
+    const handleAddPermission = () => {
         setModalMode('create');
         setSelectedPermission(null);
         form.resetFields();
@@ -162,66 +164,99 @@ function User() {
     };
 
     const handleCallCreatePermission = async (formData) => {
-        await createPermission(formData);
-        handleGetAllPermissions();
+        try {
+            await createPermission(formData);
+            message.success('Tạo quyền thành công!');
+            handleGetAllPermissions();
+        } catch (error) {
+            message.error(`Lỗi khi tạo quyền: ${error.response?.data?.message || error.message}`);
+        }
     };
 
-    const handleEditRole = (record) => {
+    const handleEditPermission = (record) => {
         setSelectedPermission(record);
         setModalMode('edit');
-
         form.setFieldsValue(record);
         setIsModalOpen(true);
     };
 
     const handleCallUpdatePermission = async (formData) => {
-        await updatePermission(selectedPermission.id, formData);
-        handleGetAllPermissions();
-        setIsModalOpen(false);
+        try {
+            await updatePermission(selectedPermission.id, formData);
+            message.success('Cập nhật quyền thành công!');
+            handleGetAllPermissions();
+            setIsModalOpen(false);
+        } catch (error) {
+            message.error(`Lỗi khi cập nhật quyền: ${error.response?.data?.message || error.message}`);
+        }
     };
 
-    useEffect(() => {
-        handleGetAllPermissions();
-    }, []);
+    const handleDeletePermission = (record) => {
+        setModalMode('delete');
+        setSelectedRowKeys([record.id]);
+        setSelectedRows([record]);
+        setIsModalOpen(true);
+    };
+
+    const handleCallDeletePermission = async () => {
+        try {
+            await deletePermission(selectedRowKeys[0]);
+            message.success('Xóa quyền thành công!');
+            handleGetAllPermissions();
+            setIsModalOpen(false);
+            setSelectedRowKeys([]);
+            setSelectedRows([]);
+        } catch (error) {
+            message.error(`Lỗi khi xóa quyền: ${error.response?.data?.message || error.message}`);
+        }
+    };
 
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreatePermission(formData);
         } else if (modalMode === 'edit') {
             handleCallUpdatePermission(formData);
+        } else if (modalMode === 'delete') {
+            handleCallDeletePermission();
         }
+    };
+
+    const handleSelectChange = (newSelectedRowKeys, newSelectedRows) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+        setSelectedRows(newSelectedRows);
     };
 
     const handleTableChange = (pagination) => {
         handleGetAllPermissions(pagination.current, pagination.pageSize);
     };
+
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Add New Permission';
+                return 'Thêm Quyền Mới';
             case 'edit':
-                return 'Edit Permission';
+                return 'Chỉnh Sửa Quyền';
             case 'delete':
-                return 'Delete Permission';
+                return 'Xóa Quyền';
             default:
-                return 'Permission Details';
+                return 'Chi Tiết Quyền';
         }
     };
+
+    useEffect(() => {
+        handleGetAllPermissions();
+    }, []);
 
     return (
         <div className={cx('trailer-wrapper')}>
             <div className={cx('sub_header')}>
-                <SmartInput
-                    size="large"
-                    placeholder="Search"
-                    icon={<SearchOutlined />}
-                />
+                <SmartInput size="large" placeholder="Tìm kiếm" icon={<SearchOutlined />} />
                 <div className={cx('features')}>
                     <SmartButton
-                        title="Add new"
+                        title="Thêm mới"
                         icon={<PlusOutlined />}
                         type="primary"
-                        onClick={handleAddRole}
+                        onClick={handleAddPermission}
                     />
                     <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
                     <SmartButton title="Excel" icon={<CloudUploadOutlined />} />
@@ -234,14 +269,15 @@ function User() {
                     loading={loading}
                     pagination={pagination}
                     onTableChange={handleTableChange}
+                    selectedRowKeys={selectedRowKeys}
+                    onSelectChange={handleSelectChange}
                 />
             </div>
-
             <PopupModal
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 title={getModalTitle()}
-                fields={modalMode === 'delete' ? [] : userModalFields}
+                fields={modalMode === 'delete' ? [] : permissionModalFields}
                 onSubmit={handleFormSubmit}
                 initialValues={selectedPermission}
                 isDeleteMode={modalMode === 'delete'}
@@ -251,4 +287,4 @@ function User() {
     );
 }
 
-export default User;
+export default PermissionList;

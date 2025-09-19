@@ -25,7 +25,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     boolean existsByEmail(String email);
 
+    Employee findByEmail(String email);
+
     boolean existsByEmployeeCode(String employeeCode);
+
+    @Query(value = "SELECT employee_id FROM employee_skills WHERE skill_id = :skillId", nativeQuery = true)
+    List<Integer> findEmployeeIdsBySkillId(@Param("skillId") Integer skillId);
 
     @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
     Page<Employee> findByDepartmentId(@Param("departmentId") Integer departmentId, Pageable pageable);

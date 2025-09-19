@@ -7,10 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import carevn.luv2code.cms.tevc_cms_api.configuration.MinioService;
+import carevn.luv2code.cms.tevc_cms_api.dto.FileDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
+import carevn.luv2code.cms.tevc_cms_api.entity.File;
+import carevn.luv2code.cms.tevc_cms_api.entity.User;
+import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
+import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
+import carevn.luv2code.cms.tevc_cms_api.repository.FileRepository;
+import carevn.luv2code.cms.tevc_cms_api.repository.UserRepository;
+import carevn.luv2code.cms.tevc_cms_api.service.EmployeeService;
 import io.minio.StatObjectResponse;
 
 @RestController
@@ -20,13 +31,66 @@ public class FileController {
     @Autowired
     private MinioService minioService;
 
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FileRepository fileRepository;
+
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ApiResponse<FileDTO> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam Integer employeeId) {
         if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("File is empty. Please upload a valid file.");
+            return ApiResponse.<FileDTO>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("File is empty. Please upload a valid file.")
+                    .result(null)
+                    .build();
         }
-        String fileName = minioService.uploadFile(file);
-        return ResponseEntity.ok(fileName);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User uploadedBy = userRepository
+                .findByUserName(auth.getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        FileDTO savedFile = minioService.uploadFileForEmployee(file, uploadedBy, employeeId);
+        return ApiResponse.<FileDTO>builder()
+                .code(HttpStatus.OK.value())
+                .message("Upload successful")
+                .result(savedFile)
+                .build();
+    }
+
+    @GetMapping("/presigned-url/{fileId}")
+    public ResponseEntity<ApiResponse<String>> getPresignedUrl(@PathVariable Integer fileId) {
+        try {
+            File existingFile =
+                    fileRepository.findById(fileId).orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
+            String fileName = existingFile.getFileName();
+            if (!minioService.fileExists(fileName)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.<String>builder()
+                                .code(HttpStatus.NOT_FOUND.value())
+                                .message("File not found: " + fileName)
+                                .result(null)
+                                .build());
+            }
+            String presignedUrl = minioService.generatePresignedUrl(fileName);
+            return ResponseEntity.ok(ApiResponse.<String>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Presigned URL generated successfully")
+                    .result(presignedUrl)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<String>builder()
+                            .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                            .message("Error generating presigned URL: " + e.getMessage())
+                            .result(null)
+                            .build());
+        }
     }
 
     @GetMapping("/download/{fileName}")

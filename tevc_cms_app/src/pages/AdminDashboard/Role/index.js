@@ -1,8 +1,7 @@
-import React from 'react';
+// ~/pages/AdminDashboard/UserManagement/RoleList.js
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Role/Role.module.scss';
-import { useState, useEffect } from 'react';
-import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
     SearchOutlined,
@@ -15,58 +14,63 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag } from 'antd';
+import { Form, message } from 'antd';
 import { getAllPermissionsNoPaging } from '~/service/admin/permission';
-import { getAllRoles, createRole, updateRole, deleteRole} from '~/service/admin/role';
+import { getAllRoles, createRole, updateRole, deleteRole } from '~/service/admin/role';
 
 const cx = classNames.bind(styles);
 
-function Role() {
-    const [userSource, setUserSource] = useState([]);
-     const [permissionOptions, setPermissionOptions] = useState([]);
-    const [loading, setLoading] = useState(false);
+/**
+ * Component RoleList
+ * Quản lý danh sách vai trò (Role) với các tính năng: hiển thị, thêm, sửa, xóa, chọn nhiều dòng.
+ */
+function RoleList() {
+    const [roleSource, setRoleSource] = useState([]); // Dữ liệu nguồn của bảng vai trò
+    const [permissionOptions, setPermissionOptions] = useState([]); // Danh sách quyền để chọn trong modal
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Danh sách ID của các vai trò được chọn
+    const [selectedRows, setSelectedRows] = useState([]); // Danh sách bản ghi vai trò được chọn
+    const [loading, setLoading] = useState(false); // Trạng thái loading của bảng
     const [pagination, setPagination] = useState({
         current: 1,
         pageSize: 5,
         total: 0,
-    });
-    const [modalMode, setModalMode] = useState('create');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRole, setSelectedRole] = useState(null);
-    const [form] = Form.useForm();
+    }); // Cấu hình phân trang
+    const [modalMode, setModalMode] = useState('create'); // Chế độ modal: create, edit, delete
+    const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái mở/đóng modal
+    const [selectedRole, setSelectedRole] = useState(null); // Vai trò đang được chỉnh sửa/xóa
+    const [form] = Form.useForm(); // Form instance từ Ant Design
 
+    // Cấu hình các cột của bảng
     const columns = [
         {
-            title: 'Role Name',
+            title: 'Tên Vai Trò',
             dataIndex: 'name',
             key: 'name',
             width: 150,
             fixed: 'left',
+            onFilter: (value, record) => record.name.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
-            title: 'Description',
+            title: 'Mô Tả',
             dataIndex: 'description',
             key: 'description',
-            // width: 150,
         },
         {
-            title: 'Actions',
+            title: 'Hành Động',
             fixed: 'right',
-            width: 180,
+            width: 130,
             render: (_, record) => (
                 <>
                     <SmartButton
-                        title="Edit"
                         type="primary"
                         icon={<EditOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleEditRole(record)}
                     />
                     <SmartButton
-                        title="Delete"
                         type="danger"
                         icon={<DeleteOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleDeleteRole(record)}
                         style={{ marginLeft: '8px' }}
                     />
@@ -75,20 +79,21 @@ function Role() {
         },
     ];
 
-    const userModalFields = [
+    // Cấu hình các trường trong modal
+    const roleModalFields = [
         {
-            label: 'Role Name',
+            label: 'Tên Vai Trò',
             name: 'name',
             type: 'text',
-            rules: [{ required: true, message: 'Role Name is required!' }],
+            rules: [{ required: true, message: 'Tên vai trò là bắt buộc!' }],
         },
         {
-            label: 'Description',
+            label: 'Mô Tả',
             name: 'description',
             type: 'text',
         },
         {
-            label: 'Permission',
+            label: 'Quyền',
             name: 'permissionIds',
             type: 'select',
             multiple: true,
@@ -96,48 +101,51 @@ function Role() {
         },
     ];
 
+    // Lấy danh sách vai trò từ API
     const handleGetAllRoles = async (page = 1, pageSize = 5) => {
         setLoading(true);
         try {
             const response = await getAllRoles({ page: page - 1, pageSize });
             if (response && response.content) {
-                setUserSource(response.content);
+                setRoleSource(response.content);
                 setPagination({
                     current: page,
                     pageSize: pageSize,
                     total: response.totalElements,
                 });
             } else {
-                console.error('Invalid data format:', response);
-                setUserSource([]);
+                console.error('Định dạng dữ liệu không hợp lệ:', response);
+                setRoleSource([]);
             }
         } catch (error) {
-            console.error('Error fetching roles:', error);
-            setUserSource([]);
+            console.error('Lỗi khi lấy danh sách vai trò:', error);
+            setRoleSource([]);
         } finally {
             setLoading(false);
         }
     };
 
+    // Lấy danh sách quyền từ API để hiển thị trong select của modal
     const fetchPermissionOptions = async () => {
         try {
             const perResponse = await getAllPermissionsNoPaging();
             if (perResponse && Array.isArray(perResponse)) {
                 const permissions = perResponse.map((per) => ({
-                    label: per.name + ' ' + '(' + per.description + ')',
+                    label: `${per.name} (${per.description})`,
                     value: per.id,
                 }));
                 setPermissionOptions(permissions);
             } else {
                 setPermissionOptions([]);
-                console.error('Invalid permission response:', perResponse);
+                console.error('Phản hồi quyền không hợp lệ:', perResponse);
             }
         } catch (error) {
-            console.error('Error fetching permissions:', error);
+            console.error('Lỗi khi lấy quyền:', error);
             setPermissionOptions([]);
         }
     };
 
+    // Mở modal để thêm vai trò mới
     const handleAddRole = () => {
         setModalMode('create');
         setSelectedRole(null);
@@ -145,85 +153,111 @@ function Role() {
         setIsModalOpen(true);
     };
 
+    // Gọi API để tạo vai trò mới
     const handleCallCreateRole = async (formData) => {
-        await createRole(formData);
-        handleGetAllRoles();
+        try {
+            await createRole(formData);
+            message.success('Tạo vai trò thành công!');
+            handleGetAllRoles();
+        } catch (error) {
+            message.error(`Lỗi khi tạo vai trò: ${error.response?.data?.message || error.message}`);
+        }
     };
 
+    // Mở modal để chỉnh sửa vai trò
     const handleEditRole = (record) => {
         setSelectedRole(record);
         setModalMode('edit');
-
         form.setFieldsValue({
             ...record,
-            permissions: record.permissions ? record.permissions.map(p => p.id) : [],
+            permissionIds: record.permissions ? record.permissions.map((p) => p.id) : [],
         });
         setIsModalOpen(true);
     };
 
+    // Gọi API để cập nhật vai trò
     const handleCallUpdateRole = async (formData) => {
-        console.log(formData);
-        await updateRole(selectedRole.id, formData);
-        handleGetAllRoles();
-        setIsModalOpen(false);
+        try {
+            await updateRole(selectedRole.id, formData);
+            message.success('Cập nhật vai trò thành công!');
+            handleGetAllRoles();
+            setIsModalOpen(false);
+        } catch (error) {
+            message.error(`Lỗi khi cập nhật vai trò: ${error.response?.data?.message || error.message}`);
+        }
     };
 
+    // Mở modal xác nhận xóa vai trò
     const handleDeleteRole = (record) => {
         setModalMode('delete');
-        setSelectedRole(record);
+        setSelectedRowKeys([record.id]);
+        setSelectedRows([record]);
         setIsModalOpen(true);
     };
 
+    // Gọi API để xóa vai trò
     const handleCallDeleteRole = async () => {
-        console.log('role id: ', selectedRole.id)
-        await deleteRole(selectedRole.id);
-        handleGetAllRoles();
-        setIsModalOpen(false);
-    }
+        try {
+            await deleteRole(selectedRowKeys[0]); // Xóa một vai trò duy nhất
+            message.success('Xóa vai trò thành công!');
+            handleGetAllRoles();
+            setIsModalOpen(false);
+            setSelectedRowKeys([]);
+            setSelectedRows([]);
+        } catch (error) {
+            message.error(`Lỗi khi xóa vai trò: ${error.response?.data?.message || error.message}`);
+        }
+    };
 
-
+    // Xử lý submit form trong modal
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreateRole(formData);
         } else if (modalMode === 'edit') {
             handleCallUpdateRole(formData);
-        }else if (modalMode === 'delete') {
+        } else if (modalMode === 'delete') {
             handleCallDeleteRole();
         }
     };
 
+    // Xử lý thay đổi trạng thái chọn dòng
+    const handleSelectChange = (newSelectedRowKeys, newSelectedRows) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+        setSelectedRows(newSelectedRows);
+    };
+
+    // Xử lý thay đổi bảng (phân trang)
+    const handleTableChange = (pagination) => {
+        handleGetAllRoles(pagination.current, pagination.pageSize);
+    };
+
+    // Lấy tiêu đề modal dựa trên chế độ
+    const getModalTitle = () => {
+        switch (modalMode) {
+            case 'create':
+                return 'Thêm Vai Trò Mới';
+            case 'edit':
+                return 'Chỉnh Sửa Vai Trò';
+            case 'delete':
+                return 'Xóa Vai Trò';
+            default:
+                return 'Chi Tiết Vai Trò';
+        }
+    };
+
+    // Khởi tạo dữ liệu khi component mount
     useEffect(() => {
         fetchPermissionOptions();
         handleGetAllRoles();
     }, []);
 
-    const handleTableChange = (pagination) => {
-        handleGetAllRoles(pagination.current, pagination.pageSize);
-    };
-    const getModalTitle = () => {
-        switch (modalMode) {
-            case 'create':
-                return 'Add New Role';
-            case 'edit':
-                return 'Edit Role';
-            case 'delete':
-                return 'Delete Role';
-            default:
-                return 'Role Details';
-        }
-    };
-
     return (
         <div className={cx('trailer-wrapper')}>
             <div className={cx('sub_header')}>
-                <SmartInput
-                    size="large"
-                    placeholder="Search"
-                    icon={<SearchOutlined />}
-                />
+                <SmartInput size="large" placeholder="Tìm kiếm" icon={<SearchOutlined />} />
                 <div className={cx('features')}>
                     <SmartButton
-                        title="Add new"
+                        title="Thêm mới"
                         icon={<PlusOutlined />}
                         type="primary"
                         onClick={handleAddRole}
@@ -235,18 +269,19 @@ function Role() {
             <div className={cx('trailer-container')}>
                 <SmartTable
                     columns={columns}
-                    dataSources={userSource}
+                    dataSources={roleSource}
                     loading={loading}
                     pagination={pagination}
                     onTableChange={handleTableChange}
+                    selectedRowKeys={selectedRowKeys}
+                    onSelectChange={handleSelectChange}
                 />
             </div>
-
             <PopupModal
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 title={getModalTitle()}
-                fields={modalMode === 'delete' ? [] : userModalFields}
+                fields={modalMode === 'delete' ? [] : roleModalFields}
                 onSubmit={handleFormSubmit}
                 initialValues={selectedRole}
                 isDeleteMode={modalMode === 'delete'}
@@ -256,4 +291,4 @@ function Role() {
     );
 }
 
-export default Role;
+export default RoleList;

@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Position/Position.module.scss';
-import { useState, useEffect } from 'react';
-import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
     SearchOutlined,
@@ -16,11 +14,11 @@ import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
 import { Form, message, Tag } from 'antd';
-import { getAllPositions, createPosition, updatePosition, deletePosition } from '~/service/admin/position';
+import { getAllPositions, createPosition, updatePosition, deletePosition, getAllByEmployeePaged } from '~/service/admin/position';
 
 const cx = classNames.bind(styles);
 
-function Position() {
+function Position({ employeeId }) { // Nhận prop employeeId
     const [positionSource, setPositionSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -46,6 +44,9 @@ function Position() {
             dataIndex: 'positionType',
             key: 'positionType',
             width: 150,
+            render: (positionType) => (
+                <Tag color="blue">{positionType || 'N/A'}</Tag>
+            ),
         },
         {
             title: 'Description',
@@ -58,25 +59,24 @@ function Position() {
             dataIndex: 'baseSalary',
             key: 'baseSalary',
             width: 150,
+            render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()} VND` : 'N/A',
         },
         {
             title: 'Actions',
             fixed: 'right',
-            width: 180,
+            width: 80,
             render: (_, record) => (
                 <>
                     <SmartButton
-                        title="Edit"
                         type="primary"
                         icon={<EditOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleEditPosition(record)}
                     />
                     <SmartButton
-                        title="Delete"
                         type="danger"
                         icon={<DeleteOutlined />}
-                        buttonWidth={80}
+                        buttonWidth={50}
                         onClick={() => handleDeletePosition(record)}
                         style={{ marginLeft: '8px' }}
                     />
@@ -93,14 +93,15 @@ function Position() {
             rules: [{ required: true, message: 'Position Title is required!' }],
         },
         {
-            label: 'Desctiontion',
+            label: 'Description',
             name: 'description',
             type: 'text',
         },
         {
             label: 'Base Salary',
             name: 'baseSalary',
-            type: 'text',
+            type: 'number', // Đổi thành type number để phù hợp với baseSalary
+            rules: [{ type: 'number', min: 0, message: 'Base Salary must be a positive number!' }],
         },
         {
             label: 'Position Type',
@@ -114,23 +115,26 @@ function Position() {
                 'LEADER',
                 'MANAGER',
                 'DIRECTOR',
-                'EXECUTIVE'
+                'EXECUTIVE',
             ],
+            rules: [{ required: true, message: 'Position Type is required!' }],
         },
     ];
 
     useEffect(() => {
-        handleGetAllPositions();
-    }, []);
+        handleGetPositions();
+    }, [employeeId]); // Thêm employeeId vào dependency array
 
-    const handleGetAllPositions = async (page = 1, pageSize = 10) => {
+    const handleGetPositions = async (page = 1, pageSize = 5) => {
         setLoading(true);
         try {
-            const response = await getAllPositions();
+            const response = employeeId
+                ? await getAllByEmployeePaged(employeeId, { page: page - 1, pageSize })
+                : await getAllPositions({ page: page - 1, pageSize });
+
             if (response && Array.isArray(response.content)) {
-                const mappedPositions = response.content.map(employee => ({
-                    ...employee,
-                    isActive: employee.active,
+                const mappedPositions = response.content.map((position) => ({
+                    ...position,
                 }));
                 setPositionSource(mappedPositions);
                 setPagination({
@@ -139,11 +143,11 @@ function Position() {
                     total: response.totalElements,
                 });
             } else {
-                console.error('Invalid data format:', response);
                 setPositionSource([]);
+                message.error('Dữ liệu vị trí không hợp lệ');
             }
         } catch (error) {
-            console.error('Error fetching employees:', error);
+            message.error(`Lỗi khi lấy danh sách vị trí: ${error.response?.data?.message || error.message}`);
             setPositionSource([]);
         } finally {
             setLoading(false);
@@ -159,11 +163,12 @@ function Position() {
 
     const handleCallCreatePosition = async (formData) => {
         try {
-            await createPosition(formData); 
-            handleGetAllPositions();
+            await createPosition(formData);
+            handleGetPositions();
             setIsModalOpen(false);
+            message.success('Tạo vị trí thành công');
         } catch (error) {
-            message.error(`Error creating position: ${error.response?.data?.message || error.message}`);
+            message.error(`Lỗi khi tạo vị trí: ${error.response?.data?.message || error.message}`);
         }
     };
 
@@ -175,21 +180,31 @@ function Position() {
     };
 
     const handleCallUpdatePosition = async (formData) => {
-        await updatePosition(selectedPosition.id, formData);
-        handleGetAllPositions();
-        setIsModalOpen(false);
+        try {
+            await updatePosition(selectedPosition.id, formData);
+            handleGetPositions();
+            setIsModalOpen(false);
+            message.success('Cập nhật vị trí thành công');
+        } catch (error) {
+            message.error(`Lỗi khi cập nhật vị trí: ${error.response?.data?.message || error.message}`);
+        }
     };
 
     const handleDeletePosition = (record) => {
         setModalMode('delete');
-        setSelectedPosition(record.id)
+        setSelectedPosition(record.id);
         setIsModalOpen(true);
     };
 
-    const handleCallDeleteUser = async () => {
-        await deletePosition(selectedPosition);
-        handleGetAllPositions();
-        setIsModalOpen(false);
+    const handleCallDeletePosition = async () => {
+        try {
+            await deletePosition(selectedPosition);
+            handleGetPositions();
+            setIsModalOpen(false);
+            message.success('Xóa vị trí thành công');
+        } catch (error) {
+            message.error(`Lỗi khi xóa vị trí: ${error.response?.data?.message || error.message}`);
+        }
     };
 
     const handleFormSubmit = (formData) => {
@@ -197,25 +212,25 @@ function Position() {
             handleCallCreatePosition(formData);
         } else if (modalMode === 'edit') {
             handleCallUpdatePosition(formData);
-        } else {
-            handleCallDeleteUser();
+        } else if (modalMode === 'delete') {
+            handleCallDeletePosition();
         }
     };
 
     const handleTableChange = (pagination) => {
-        handleGetAllPositions(pagination.current, pagination.pageSize);
+        handleGetPositions(pagination.current, pagination.pageSize);
     };
 
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Add New Position';
+                return 'Thêm vị trí mới';
             case 'edit':
-                return 'Edit Position';
+                return 'Chỉnh sửa vị trí';
             case 'delete':
-                return 'Delete Position';
+                return 'Xóa vị trí';
             default:
-                return 'Position Details';
+                return 'Chi tiết vị trí';
         }
     };
 
@@ -224,12 +239,12 @@ function Position() {
             <div className={cx('sub_header')}>
                 <SmartInput
                     size="large"
-                    placeholder="Search"
+                    placeholder="Tìm kiếm"
                     icon={<SearchOutlined />}
                 />
                 <div className={cx('features')}>
                     <SmartButton
-                        title="Add new"
+                        title="Thêm mới"
                         icon={<PlusOutlined />}
                         type="primary"
                         onClick={handleAddPosition}

@@ -27,7 +27,13 @@ public class EmployeeDTO {
 
     String address;
 
+    Integer profilePictureId;
+
     Date hireDate;
+
+    Date createdAt;
+
+    Date updatedAt;
 
     Integer departmentId;
 

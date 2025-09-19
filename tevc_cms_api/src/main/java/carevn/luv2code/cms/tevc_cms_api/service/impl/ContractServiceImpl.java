@@ -1,16 +1,18 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.ContractDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Contract;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
+import carevn.luv2code.cms.tevc_cms_api.enums.ContractStatus;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.ContractMapper;
@@ -29,9 +31,8 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public ContractDTO createContract(ContractDTO contractDTO) {
-        // Check if employee has active contract
         if (contractRepository
-                .findByEmployeeIdAndStatus(contractDTO.getEmployeeId(), "ACTIVE")
+                .findByEmployeeIdAndStatus(contractDTO.getEmployeeId(), ContractStatus.ACTIVE)
                 .isPresent()) {
             throw new AppException(ErrorCode.CONTRACT_ALREADY_EXISTS);
         }
@@ -42,28 +43,45 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
         contract.setEmployee(employee);
-        contract.setStatus("ACTIVE");
-        contract.setSignedDate(new Date());
+        //        contract.setStatus(ContractStatus.ACTIVE);
+        //        contract.setSignedDate(java.time.LocalDate.now());
 
         return contractMapper.toDTO(contractRepository.save(contract));
     }
 
     @Override
+    @Transactional
     public ContractDTO updateContract(Integer id, ContractDTO contractDTO) {
-        return null;
+        Contract contract =
+                contractRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CONTRACT_NOT_FOUND));
+        contractMapper.updateContractFromDto(contractDTO, contract);
+        Contract updatedContract = contractRepository.save(contract);
+        return contractMapper.toDTO(updatedContract);
     }
 
     @Override
-    public void deleteContract(Integer id) {}
-
-    @Override
     public ContractDTO getContract(Integer id) {
-        return null;
+        Contract contract =
+                contractRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CONTRACT_NOT_FOUND));
+        return contractMapper.toDTO(contract);
     }
 
     @Override
     public Page<ContractDTO> getAllContracts(int page, int size) {
-        return null;
+        return contractRepository.findAll(PageRequest.of(page, size)).map(contractMapper::toDTO);
+    }
+
+    @Override
+    public Page<ContractDTO> getContractsByEmployeeIdPaged(Integer employeeId, Pageable pageable) {
+        return contractRepository.findByEmployeeId(employeeId, pageable).map(contractMapper::toDTO);
+    }
+
+    @Override
+    public List<ContractDTO> getEmployeeContracts(Integer employeeId) {
+        return contractRepository.findAll().stream()
+                .filter(contract -> contract.getEmployee().getId().equals(employeeId))
+                .map(contractMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -76,19 +94,17 @@ public class ContractServiceImpl implements ContractService {
             throw new AppException(ErrorCode.CONTRACT_NOT_ACTIVE);
         }
 
-        contract.setStatus("TERMINATED");
+        contract.setStatus(ContractStatus.TERMINATED);
         contract.setTerminationReason(reason);
-        contract.setTerminationDate(new Date());
-
+        contract.setTerminationDate(java.time.LocalDate.now());
         return contractMapper.toDTO(contractRepository.save(contract));
     }
 
     @Override
-    public List<ContractDTO> getEmployeeContracts(Integer employeeId) {
-        return contractRepository.findByEmployeeId(employeeId).stream()
-                .map(contractMapper::toDTO)
-                .collect(Collectors.toList());
+    @Transactional
+    public void deleteContract(Integer id) {
+        Contract contract =
+                contractRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CONTRACT_NOT_FOUND));
+        contractRepository.delete(contract);
     }
-
-    // ... other standard CRUD methods implementation ...
 }

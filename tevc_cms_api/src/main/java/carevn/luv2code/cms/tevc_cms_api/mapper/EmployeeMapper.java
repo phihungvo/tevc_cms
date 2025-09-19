@@ -18,6 +18,10 @@ public interface EmployeeMapper {
             target = "positionId",
             source = "position.id",
             nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    @Mapping(
+            target = "profilePictureId",
+            source = "profilePicture.id",
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     EmployeeDTO toDTO(Employee employee);
 
     @Mapping(target = "department", ignore = true)
@@ -27,6 +31,9 @@ public interface EmployeeMapper {
     @Mapping(target = "salaries", ignore = true)
     @Mapping(target = "performances", ignore = true)
     @Mapping(target = "managedDepartments", ignore = true)
+    @Mapping(target = "workHistory", ignore = true)
+    @Mapping(target = "educations", ignore = true)
+    @Mapping(target = "skills", ignore = true)
     Employee toEntity(EmployeeDTO employeeDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

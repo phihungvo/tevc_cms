@@ -3,14 +3,22 @@ package carevn.luv2code.cms.tevc_cms_api.dto;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoleDTO {
-    private Integer id;
-    private String name;
-    private String description;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private Set<PermissionDTO> permissions;
+    Integer id;
+
+    String name;
+
+    String description;
+
+    LocalDateTime createdAt;
+
+    LocalDateTime updatedAt;
+
+    Set<PermissionDTO> permissions;
 }

@@ -1,37 +1,15 @@
 import apiClient from '~/service/api/api';
 import API_ENDPOINTS from '../../../constants/endpoints';
-import { getToken } from '~/constants/token';
+import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL;
-
-export const uploadFile = async (file) => {
+export const uploadFile = async (file, employeeId) => {
     const formData = new FormData();
     formData.append('file', file);
 
     const TOKEN = localStorage.getItem('token');
 
     try {
-        const checkResponse = await apiClient.get(
-            API_ENDPOINTS.FILE.CHECK_EXISTED(file),
-            {
-                headers: {
-                    Authorization: `Bearer ${TOKEN}`,
-                },
-            },
-        );
-
-        // If file exists, get its URL without uploading again
-        if (checkResponse.data && checkResponse.data.exists) {
-            const fileUrl = `${API_URL}/storage/files/${file.name}`;
-
-            return {
-                filename: file.name,
-                url: fileUrl,
-                alreadyExists: true,
-            };
-        }
-
-        const response = await apiClient.post(API_ENDPOINTS.FILE.UPLOAD, formData, {
+        const response = await axios.post(`${API_ENDPOINTS.FILE.UPLOAD}?employeeId=${employeeId}`, formData, {
             headers: {
                 Authorization: `Bearer ${TOKEN}`,
                 'Content-Type': 'multipart/form-data',
@@ -41,6 +19,15 @@ export const uploadFile = async (file) => {
         return response.data;
     } catch (error) {
         throw error;
+    }
+};
+
+export const getPresignedUrl = async (fileId) => {
+    try {
+        const response = await apiClient.get(API_ENDPOINTS.FILE.PRESIGNED_URL(fileId));
+        return response.data.result;
+    } catch (error) {
+        throw new Error("Lỗi khi lấy presigned URL: " + error.message);
     }
 };
 

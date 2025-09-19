@@ -11,7 +11,7 @@ import {
     CloudUploadOutlined,
     EditOutlined,
     DeleteOutlined,
-    EyeOutlined, // Thêm icon View
+    EyeOutlined,
 } from '@ant-design/icons';
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
@@ -149,14 +149,12 @@ function Employee() {
             render: (_, record) => (
                 <>
                     <SmartButton
-                        // title="Xem"
                         type="default"
                         icon={<EyeOutlined />}
                         buttonWidth={50}
-                        onClick={() => navigate(`/admin/employee/${record.id}`)} // Navigate sang detail
+                        onClick={() => navigate(`/admin/employee/${record.id}`)}
                     />
                     <SmartButton
-                        // title="Sửa"
                         type="primary"
                         icon={<EditOutlined />}
                         buttonWidth={50}
@@ -164,7 +162,6 @@ function Employee() {
                         style={{ marginLeft: '8px' }}
                     />
                     <SmartButton
-                        // title="Xóa"
                         type="danger"
                         icon={<DeleteOutlined />}
                         buttonWidth={50}
@@ -468,7 +465,7 @@ function Employee() {
     const tabItems = [
         {
             key: '1',
-            label: 'Danh sách Nhân viên',
+            label: 'Employee List',
             children: (
                 <div className={cx('trailer-wrapper')}>
                     <div className={cx('sub_header')}>
@@ -519,7 +516,7 @@ function Employee() {
         },
         {
             key: '2',
-            label: 'Báo cáo',
+            label: 'Work History',
             children: (
                 <>
                     <Watermark content="Ant Design">
@@ -528,8 +525,28 @@ function Employee() {
                 </>
             ),
         },
-        // Tab 2 có thể để trống hoặc dùng cho nội dung khác (báo cáo, thống kê).
-        // Chi tiết nhân viên sẽ dùng route riêng, không nằm trong tab.
+        {
+            key: '3',
+            label: 'Skills',
+            children: (
+                <>
+                    <Watermark content="Ant Design">
+                        <div style={{ height: 500 }} />
+                    </Watermark>
+                </>
+            ),
+        },
+        {
+            key: '4',
+            label: 'Reports',
+            children: (
+                <>
+                    <Watermark content="Ant Design">
+                        <div style={{ height: 500 }} />
+                    </Watermark>
+                </>
+            ),
+        },
     ];
 
     return (

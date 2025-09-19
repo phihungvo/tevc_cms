@@ -16,4 +16,6 @@ public interface PositionRepository extends JpaRepository<Position, Integer> {
     Page<Position> findAll(Pageable pageable);
 
     List<Position> findByTitleContainingIgnoreCase(String title);
+
+    Page<Position> findByEmployeesId(Integer employeeId, Pageable pageable);
 }

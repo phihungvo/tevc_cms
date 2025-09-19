@@ -16,6 +16,16 @@ export const getAllLeaves = async ({ page = 0, pageSize = 10 }) => {
     }
 };
 
+export const getAllByEmployeePaged = async (employeeId) => {
+    try {
+        const response = await apiClient.get(API_ENDPOINTS.LEAVE.ALL_BY_EMPLOYEE_PAGED(employeeId));
+
+        return response.data.result;
+    } catch (error) {
+        return null;
+    }
+};
+
 export const createLeave = async (formData) => {
     try {
         const response = await axiosInstance.post(

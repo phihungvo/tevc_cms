@@ -18,11 +18,32 @@ public class MinioConfig {
     @Value("${minio.secret-key}")
     private String secretKey;
 
+    @Value("${minio.bucket}")
+    private String bucket;
+
+    @Value("${minio.base-path:uploads}")
+    private String basePath;
+
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(minioUrl)
                 .credentials(accessKey, secretKey)
                 .build();
+    }
+
+    @Bean
+    public String minioUrl() {
+        return minioUrl;
+    }
+
+    @Bean
+    public String minioBasePath() {
+        return basePath;
+    }
+
+    @Bean
+    public String minioBucket() {
+        return bucket;
     }
 }
