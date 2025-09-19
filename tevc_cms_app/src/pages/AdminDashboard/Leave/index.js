@@ -59,18 +59,15 @@ function Leave({ employeeId }) { // Nhận prop employeeId
             hidden: !!employeeId, // Ẩn cột Employee Name nếu có employeeId
         },
         {
-            title: 'Start Date',
-            dataIndex: 'startDate',
-            key: 'startDate',
-            width: 150,
-            render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
-        },
-        {
-            title: 'End Date',
-            dataIndex: 'endDate',
-            key: 'endDate',
-            width: 150,
-            render: (date) => (date ? new Date(date).toLocaleString('vi-VN') : 'N/A'),
+            title: 'Thời gian nghĩ phép',
+            dataIndex: 'leaveDuration',
+            key: 'leaveDuration',
+            width: 180,
+            render: (_, record) => {
+                const start = record.startDate ? new Date(record.startDate).toLocaleDateString('vi-VN') : 'N/A';
+                const end = record.endDate ? new Date(record.endDate).toLocaleDateString('vi-VN') : 'N/A';
+                return `${start} ⇒ ${end}`;
+            }
         },
         {
             title: 'Type',

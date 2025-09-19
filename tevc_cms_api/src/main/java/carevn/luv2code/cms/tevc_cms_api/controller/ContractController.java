@@ -3,11 +3,14 @@ package carevn.luv2code.cms.tevc_cms_api.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.ContractDTO;
+import carevn.luv2code.cms.tevc_cms_api.dto.response.ApiResponse;
 import carevn.luv2code.cms.tevc_cms_api.service.ContractService;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/contracts")
 @RequiredArgsConstructor
 public class ContractController {
+
     private final ContractService contractService;
 
     @PostMapping
@@ -36,6 +40,19 @@ public class ContractController {
     public ResponseEntity<Page<ContractDTO>> getAllContracts(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(contractService.getAllContracts(page, size));
+    }
+
+    @GetMapping("/employee/{employeeId}/paged")
+    public ResponseEntity<ApiResponse<Page<ContractDTO>>> getContractsByEmployeeIdPaged(
+            @PathVariable Integer employeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.<Page<ContractDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get paginated contracts by employee successful")
+                .result(contractService.getContractsByEmployeeIdPaged(employeeId, pageable))
+                .build());
     }
 
     @GetMapping("/employee/{employeeId}")

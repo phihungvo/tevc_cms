@@ -1,7 +1,9 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 
+import carevn.luv2code.cms.tevc_cms_api.enums.ContractStatus;
+import carevn.luv2code.cms.tevc_cms_api.enums.ContractType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,35 +16,47 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Contract {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     Employee employee;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    String contractType; // FULL_TIME, PART_TIME, TEMPORARY
+    ContractType contractType;
 
-    Date startDate;
+    LocalDate startDate;
 
-    Date endDate;
+    LocalDate endDate;
 
     Double basicSalary;
 
-    String position;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "position_id", nullable = false)
+    private Position position;
 
-    String terms;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ContractStatus status;
 
-    String status; // ACTIVE, TERMINATED, EXPIRED
-
-    Date signedDate;
+    LocalDate signedDate;
 
     @Column(name = "probation_period")
-    Integer probationPeriod;
+    Integer probationPeriod; // thời gian thử việc (tháng)
 
-    String terminationReason;
+    String terminationReason; // Lý do chấm dứt hợp đồng
 
-    Date terminationDate;
+    LocalDate terminationDate; // Ngày chấm dứt hợp đồng
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id", nullable = true)
+    File file;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    User createdBy;
 }
