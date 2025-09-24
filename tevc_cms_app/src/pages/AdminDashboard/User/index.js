@@ -1,4 +1,3 @@
-// ~/pages/AdminDashboard/UserManagement/UserList.js
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/User/User.module.scss';
@@ -42,11 +41,11 @@ function UserList() {
     const baseColumns = [
         {
             title: 'User Name',
-            dataIndex: 'username',
-            key: 'username',
+            dataIndex: 'userName',
+            key: 'userName',
             width: 150,
             fixed: 'left',
-            onFilter: (value, record) => record.username.toLowerCase().startsWith(value.toLowerCase()),
+            onFilter: (value, record) => record.userName.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
             title: 'Email',
@@ -60,6 +59,24 @@ function UserList() {
             dataIndex: 'roleNames',
             key: 'roleNames',
             width: 100,
+            render: (roleNames) =>
+                Array.isArray(roleNames) && roleNames.length > 0
+                    ? roleNames.map((role, idx) => (
+                        <Tag
+                            key={idx}
+                            color="blue"
+                            style={{
+                                marginRight: 4,
+                                marginBottom: 2,
+                                minWidth: 80,
+                                display: 'inline-block',
+                                textAlign: 'center',
+                            }}
+                        >
+                            {role}
+                        </Tag>
+                    ))
+                    : 'N/A',
             onFilter: (value, record) => record.roleNames.toLowerCase().includes(value.toLowerCase()),
         },
         {
@@ -148,10 +165,10 @@ function UserList() {
         ]);
     }, [userSource]);
 
-    const userModalFields = [
+    const createUserModalFields = [
         {
             label: 'User Name',
-            name: 'username',
+            name: 'userName',
             type: 'text',
             rules: [{ required: true, message: 'User Name is required!' }],
         },
@@ -181,8 +198,7 @@ function UserList() {
             label: 'Password',
             name: 'password',
             type: 'text',
-            disabled: modalMode === 'edit',
-            rules: modalMode === 'create' ? [{ required: true, message: 'Password is required!' }] : [],
+            rules: [{ required: true, message: 'Password is required!' }],
         },
         {
             label: 'Phone Number',
@@ -207,6 +223,8 @@ function UserList() {
             type: 'yesno',
         },
     ];
+
+    const editUserModalFields = createUserModalFields.filter(field => field.name !== 'password');
 
     const handleGetAllUsers = async (page = 1, pageSize = 10) => {
         setLoading(true);
@@ -395,7 +413,7 @@ function UserList() {
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 title={getModalTitle()}
-                fields={modalMode === 'delete' ? [] : userModalFields}
+                fields={modalMode === 'create' ? createUserModalFields : editUserModalFields}
                 onSubmit={handleFormSubmit}
                 initialValues={selectedUser}
                 isDeleteMode={modalMode === 'delete'}

@@ -2,6 +2,7 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -32,32 +33,37 @@ public class LeaveServiceImpl implements LeaveService {
     private final EmployeeRepository employeeRepository;
     private final LeaveMapper leaveMapper;
 
-    @Override
-    @Transactional
     public LeaveDTO createLeave(LeaveDTO leaveDTO) {
-        Leave leave = leaveMapper.toEntity(leaveDTO);
+        try {
+            Leave leave = leaveMapper.toEntity(leaveDTO);
 
-        Employee employee = employeeRepository
-                .findById(leaveDTO.getEmployeeId())
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
-        leave.setEmployee(employee);
-        leave.setLeaveStatus(LeaveStatus.PENDING);
+            Employee employee = employeeRepository
+                    .findById(leaveDTO.getEmployeeId())
+                    .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+            leave.setEmployee(employee);
+            leave.setLeaveStatus(LeaveStatus.PENDING);
 
-        Leave savedLeave = leaveRepository.save(leave);
+            Leave savedLeave = leaveRepository.save(leave);
 
-        List<String> managerEmails = List.of();
-        if (employee.getDepartment() != null && employee.getDepartment().getManager() != null) {
-            String managerMail = employee.getDepartment().getManager().getEmail();
-            if (managerMail != null && !managerMail.isBlank()) {
-                managerEmails = List.of(managerMail);
+            List<String> managerEmails = List.of();
+            if (employee.getDepartment() != null && employee.getDepartment().getManager() != null) {
+                String managerMail = employee.getDepartment().getManager().getEmail();
+                if (managerMail != null && !managerMail.isBlank()) {
+                    managerEmails = List.of(managerMail);
+                }
             }
+
+            TemplateMailRequest mail = getMailRequest(savedLeave, managerEmails);
+
+            mailService.sendTemplate(mail);
+
+            return leaveMapper.toDTO(savedLeave);
+        } catch (AppException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            Logger.getLogger(LeaveServiceImpl.class.getName()).severe(ex.getMessage());
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-
-        TemplateMailRequest mail = getMailRequest(savedLeave, managerEmails);
-
-        mailService.sendTemplate(mail);
-
-        return leaveMapper.toDTO(savedLeave);
     }
 
     @NotNull

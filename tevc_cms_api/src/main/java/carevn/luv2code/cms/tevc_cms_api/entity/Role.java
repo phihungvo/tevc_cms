@@ -28,7 +28,7 @@ public class Role {
     @Column(unique = true, nullable = false)
     String name;
 
-    @Column(nullable = true)
+    @Column(columnDefinition = "TEXT")
     String description;
 
     @ManyToMany(fetch = FetchType.EAGER)

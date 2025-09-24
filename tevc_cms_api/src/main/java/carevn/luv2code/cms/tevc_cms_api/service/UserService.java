@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import carevn.luv2code.cms.tevc_cms_api.dto.UserDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignRoleRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateUserRequest;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.UserUpdateRequest;
 
 public interface UserService {
 
@@ -16,7 +17,7 @@ public interface UserService {
 
     UserDTO assignRoles(AssignRoleRequest request);
 
-    UserDTO updateUser(Integer id, UserDTO request);
+    UserDTO updateUser(Integer id, UserUpdateRequest request);
 
     //    void updateUser(UUID userId, UserUpdateRequest request);
 

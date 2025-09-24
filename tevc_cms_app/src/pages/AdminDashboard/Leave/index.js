@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Leave/Leave.module.scss';
+import {useState, useEffect} from 'react';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
@@ -189,6 +190,7 @@ function Leave({ employeeId }) { // Nhận prop employeeId
                 value: employee.id,
             }));
             setEmployeeSource(employeesData);
+
         } catch (error) {
             message.error(`Lỗi khi lấy danh sách nhân viên: ${error.message}`);
         }
@@ -229,7 +231,7 @@ function Leave({ employeeId }) { // Nhận prop employeeId
         setSelectedLeave(null);
         form.resetFields();
         if (employeeId) {
-            form.setFieldsValue({ employeeId }); // Đặt giá trị employeeId nếu có
+            form.setFieldsValue({ employeeId });
         }
         setIsModalOpen(true);
     };

@@ -103,7 +103,8 @@ export const updateUser = async (userId, formData) => {
 
         updateData.enabled = formData.enabled === 'Yes';
 
-        const response = await apiClient.patch(
+        console.log('Update data: ', updateData);
+        const response = await apiClient.put(
             API_ENDPOINTS.USER.UPDATE(userId), updateData);
 
         if (response.data) {
