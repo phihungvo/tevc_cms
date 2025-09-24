@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import moment from 'moment';
 import TextField from '../TextField';
 import PasswordField from '../PasswordField';
@@ -13,26 +13,26 @@ import UploadField from '../UploadField';
 import CheckboxGroup from '../CheckboxGroup';
 import Checkbox from '../Checkbox';
 import RadioGroup from '../RadioGroup';
-import { Button, Col, Form, message, Modal, Row } from 'antd';
+import {Button, Col, Form, message, Modal, Row} from 'antd';
 
 function PopupModal({
-    isModalOpen,
-    setIsModalOpen,
-    title,
-    fields = [],
-    dataSources = {},
-    onSubmit,
-    initialValues,
-    isDeleteMode,
-    formInstance,
-    footer,
-    width = 700,
-    onBeforeSubmit,
-    deleteMessage,
-    deleteConfirmLabel = 'Xóa',
-    cancelLabel = 'Hủy',
-    submitLabel = 'Xác nhận',
-}) {
+                        isModalOpen,
+                        setIsModalOpen,
+                        title,
+                        fields = [],
+                        dataSources = {},
+                        onSubmit,
+                        initialValues,
+                        isDeleteMode,
+                        formInstance,
+                        footer,
+                        width = 700,
+                        onBeforeSubmit,
+                        deleteMessage,
+                        deleteConfirmLabel = 'Xóa',
+                        cancelLabel = 'Hủy',
+                        submitLabel = 'Xác nhận',
+                    }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [processedFields, setProcessedFields] = useState([]);
     const form = formInstance;
@@ -41,7 +41,12 @@ function PopupModal({
         if (!fields || fields.length === 0) return;
 
         const updatedFields = fields.map((field) => {
-            const updatedField = { ...field };
+            const updatedField = {...field};
+
+            // Gán fullWidth: true cho textarea để luôn chiếm toàn bộ hàng
+            if (field.type === 'textarea') {
+                updatedField.fullWidth = true;
+            }
 
             if (field.dataSourceKey && dataSources[field.dataSourceKey]) {
                 const dataSource = dataSources[field.dataSourceKey];
@@ -167,31 +172,31 @@ function PopupModal({
         // Truyền readOnly và disabled vào các component con
         switch (field.type) {
             case 'text':
-                return <TextField field={field} />;
+                return <TextField field={field}/>;
             case 'password':
-                return <PasswordField field={field} />;
+                return <PasswordField field={field}/>;
             case 'date':
-                return <DateField field={field} />;
+                return <DateField field={field}/>;
             case 'daterange':
-                return <DateRange field={field} />;
+                return <DateRange field={field}/>;
             case 'time':
-                return <TimeField field={field} />;
+                return <TimeField field={field}/>;
             case 'number':
-                return <InputNumberField field={field} />;
+                return <InputNumberField field={field}/>;
             case 'select':
-                return <SelectField field={field} />;
+                return <SelectField field={field}/>;
             case 'cascader':
-                return <CalendarField field={field} />;
+                return <CalendarField field={field}/>;
             case 'textarea':
-                return <TextAreaField field={field} />;
+                return <TextAreaField field={field}/>;
             case 'upload':
-                return <UploadField field={field} />;
+                return <UploadField field={field}/>;
             case 'checkbox':
-                return <Checkbox field={field} />;
+                return <Checkbox field={field}/>;
             case 'checkbox-group':
-                return <CheckboxGroup field={field} />;
+                return <CheckboxGroup field={field}/>;
             case 'radio':
-                return <RadioGroup field={field} />;
+                return <RadioGroup field={field}/>;
             default:
                 return null;
         }

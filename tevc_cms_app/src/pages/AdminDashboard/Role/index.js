@@ -54,11 +54,23 @@ function RoleList() {
             title: 'Mô Tả',
             dataIndex: 'description',
             key: 'description',
+            width: 750,
+            render: (text) =>
+                text
+                    ? text
+                        .split(/\d+\.\s/)
+                        .filter(Boolean)
+                        .map((item, idx) => (
+                            <div key={idx}>
+                                {`${idx + 1}. ${item.trim()}`}
+                            </div>
+                        ))
+                    : null,
         },
         {
             title: 'Hành Động',
             fixed: 'right',
-            width: 130,
+            width: 120,
             render: (_, record) => (
                 <>
                     <SmartButton
@@ -90,13 +102,14 @@ function RoleList() {
         {
             label: 'Mô Tả',
             name: 'description',
-            type: 'text',
+            type: 'textarea',
         },
         {
             label: 'Quyền',
             name: 'permissionIds',
             type: 'select',
             multiple: true,
+            fullWidth: true,
             options: permissionOptions,
         },
     ];
@@ -157,7 +170,6 @@ function RoleList() {
     const handleCallCreateRole = async (formData) => {
         try {
             await createRole(formData);
-            message.success('Tạo vai trò thành công!');
             handleGetAllRoles();
         } catch (error) {
             message.error(`Lỗi khi tạo vai trò: ${error.response?.data?.message || error.message}`);
@@ -179,7 +191,7 @@ function RoleList() {
     const handleCallUpdateRole = async (formData) => {
         try {
             await updateRole(selectedRole.id, formData);
-            message.success('Cập nhật vai trò thành công!');
+
             handleGetAllRoles();
             setIsModalOpen(false);
         } catch (error) {

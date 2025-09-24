@@ -11,7 +11,7 @@ export default function TextAreaField({ field }) {
             tooltip={field.tooltip}
         >
             <TextArea
-                rows={field.rows || 3}
+                rows={field.rows || 6}
                 placeholder={field.placeholder}
                 disabled={field.disabled}
                 maxLength={field.maxLength}

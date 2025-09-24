@@ -33,7 +33,9 @@ export const createRole = async (formData) => {
             API_ENDPOINTS.ROLE.CREATE,
             formData,
         );
-        message.success('Role created successfully');
+        if (response.data) {
+            message.success('Tạo vai trò thành công');
+        }
         return response.data;
     } catch (error) {
         console.error('Error when creating role: ', error);
@@ -42,9 +44,11 @@ export const createRole = async (formData) => {
 
 export const updateRole = async (roleId, formData) => {
     try {
-        const response = await apiClient.patch(API_ENDPOINTS.ROLE.UPDATE(roleId), formData);
+        const response = await apiClient.put(API_ENDPOINTS.ROLE.UPDATE(roleId), formData);
 
-        message.success('Role updated successfully');
+        if (response.data) {
+            message.success('Cập nhật vai trò thành công');
+        }
         return response.data;
     } catch (error) {
         console.error('Error when updating role:', error);
@@ -58,7 +62,7 @@ export const deleteRole = async (roleId) => {
         const response = await apiClient.delete(API_ENDPOINTS.ROLE.DELETE(roleId));
 
         if (response.data) {
-            message.success("Role deleted successfully!");
+            message.success("Xoá vai trờ thành công!");
             return response.data.result;
         }
 

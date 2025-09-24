@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import carevn.luv2code.cms.tevc_cms_api.dto.PermissionDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.RoleDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignPermissionRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateRoleRequest;
@@ -217,15 +218,23 @@ public class RoleServiceImpl implements RoleService {
     //        roleRepository.save(role);
     //    }
     //
-    //    private Set<Permission> convertToPermissionSet(Set<UUID> permissionIds) {
-    //        if (permissionIds == null) return Collections.emptySet();
+    //        private Set<Permission> convertToPermissionSet(Set<UUID> permissionIds) {
+    //            if (permissionIds == null) return Collections.emptySet();
     //
-    //        return permissionIds.stream()
-    //                .map(id -> permissionRepository
-    //                        .findById(id)
-    //                        .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND)))
-    //                .collect(Collectors.toSet());
-    //    }
+    //            return permissionIds.stream()
+    //                    .map(id -> permissionRepository
+    //                            .findById(id)
+    //                            .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND)))
+    //                    .collect(Collectors.toSet());
+    //        }
+
+    private PermissionDTO convertToPermissionDTO(Permission permission) {
+        PermissionDTO dto = new PermissionDTO();
+        dto.setId(permission.getId());
+        dto.setName(permission.getName());
+        dto.setDescription(permission.getDescription());
+        return dto;
+    }
     //
     private RoleDTO convertToDTO(Role role) {
         RoleDTO dto = new RoleDTO();
@@ -233,11 +242,12 @@ public class RoleServiceImpl implements RoleService {
         dto.setName(role.getName());
         dto.setDescription(role.getDescription());
 
-        //        if (role.getPermissions() != null) {
-        //            Set<UUID> permissions =
-        //                    role.getPermissions().stream().map(Permission::getId).collect(Collectors.toSet());
-        //            dto.setPermissions(permissions);
-        //        }
+        if (role.getPermissions() != null) {
+            Set<PermissionDTO> permissionDTOs = role.getPermissions().stream()
+                    .map(this::convertToPermissionDTO)
+                    .collect(Collectors.toSet());
+            dto.setPermissions(permissionDTOs);
+        }
 
         return dto;
     }

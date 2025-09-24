@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import carevn.luv2code.cms.tevc_cms_api.dto.UserDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignRoleRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateUserRequest;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.UserUpdateRequest;
 import carevn.luv2code.cms.tevc_cms_api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class UserController {
     //    }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserRequest request) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserRequest request) {
         UserDTO createdUser = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @Valid @RequestBody UserDTO request) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserUpdateRequest request) {
         UserDTO updatedUser = userService.updateUser(id, request);
         return ResponseEntity.ok(updatedUser);
     }

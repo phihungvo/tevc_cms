@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Leave/Leave.module.scss';
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import moment from 'moment';
 import SmartTable from '~/components/Layout/components/SmartTable';
 import {
@@ -15,9 +15,9 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag } from 'antd';
-import { getAllLeaves, createLeave, updateLeave, deleteLeave } from '~/service/admin/leave';
-import { getAllEmployees } from '~/service/admin/employee';
+import {Form, message, Tag} from 'antd';
+import {getAllLeaves, createLeave, updateLeave, deleteLeave} from '~/service/admin/leave';
+import {getAllEmployees} from '~/service/admin/employee';
 
 const cx = classNames.bind(styles);
 
@@ -36,20 +36,20 @@ function Leave() {
     const [form] = Form.useForm();
 
     const leaveTypeStyles = {
-        ANNUAL: { color: 'green', label: 'Annual' },
-        SICK: { color: 'volcano', label: 'Sick' },
-        UNPAID: { color: 'gold', label: 'Unpaid' },
-        MATERNITY: { color: 'pink', label: 'Maternity' },
-        PATERNTIY: { color: 'blue', label: 'Paternity' },
-        BEREAVEMENT: { color: 'purple', label: 'Bereavement' },
-        COMPASSIONATE: { color: 'cyan', label: 'Compassionate' },
-      };
+        ANNUAL: {color: 'green', label: 'Annual'},
+        SICK: {color: 'volcano', label: 'Sick'},
+        UNPAID: {color: 'gold', label: 'Unpaid'},
+        MATERNITY: {color: 'pink', label: 'Maternity'},
+        PATERNTIY: {color: 'blue', label: 'Paternity'},
+        BEREAVEMENT: {color: 'purple', label: 'Bereavement'},
+        COMPASSIONATE: {color: 'cyan', label: 'Compassionate'},
+    };
 
-      const statusStyles = {
-        PENDING: { color: 'orange', label: 'Pending' },
-        APPROVED: { color: 'green', label: 'Approved' },
-        REJECTED: { color: 'red', label: 'Rejected' },
-      };
+    const statusStyles = {
+        PENDING: {color: 'orange', label: 'Pending'},
+        APPROVED: {color: 'green', label: 'Approved'},
+        REJECTED: {color: 'red', label: 'Rejected'},
+    };
 
     const columns = [
         {
@@ -75,10 +75,10 @@ function Leave() {
             key: 'leaveType',
             width: 100,
             render: (leaveType) => {
-              const style = leaveTypeStyles[leaveType] || { color: 'default', label: leaveType || 'N/A' };
-              return <Tag color={style.color}>{style.label}</Tag>;
+                const style = leaveTypeStyles[leaveType] || {color: 'default', label: leaveType || 'N/A'};
+                return <Tag color={style.color}>{style.label}</Tag>;
             },
-          },
+        },
         {
             title: 'Reason',
             dataIndex: 'reason',
@@ -89,10 +89,10 @@ function Leave() {
             dataIndex: 'leaveStatus',
             key: 'leaveStatus',
             render: (status) => {
-              const style = statusStyles[status] || { color: 'default', label: status || 'N/A' };
-              return <Tag color={style.color}>{style.label}</Tag>;
+                const style = statusStyles[status] || {color: 'default', label: status || 'N/A'};
+                return <Tag color={style.color}>{style.label}</Tag>;
             },
-          },
+        },
         {
             title: 'Approver Comments',
             dataIndex: 'approverComments',
@@ -106,16 +106,16 @@ function Leave() {
                 <>
                     <SmartButton
                         type="primary"
-                        icon={<EditOutlined />}
+                        icon={<EditOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleEditLeave(record)}
                     />
                     <SmartButton
                         type="danger"
-                        icon={<DeleteOutlined />}
+                        icon={<DeleteOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleDeleteLeave(record)}
-                        style={{ marginLeft: '8px' }}
+                        style={{marginLeft: '8px'}}
                     />
                 </>
             ),
@@ -128,14 +128,16 @@ function Leave() {
             name: 'employeeId',
             type: 'select',
             options: employeeSource,
-            rules: [{ required: true, message: 'Employee is required!' }],
+            rules: [{required: true, message: 'Employee is required!'}],
         },
-        {
-            label: 'Leave Status',
-            name: 'leaveStatus',
-            type: 'select',
-            options: ['PENDING', 'APPROVED', 'REJECTED'],
-        },
+        ...(modalMode === 'edit'
+            ? [{
+                label: 'Leave Status',
+                name: 'leaveStatus',
+                type: 'select',
+                options: ['PENDING', 'APPROVED', 'REJECTED'],
+            }]
+            : []),
         {
             label: 'Leave Type',
             name: 'leaveType',
@@ -169,7 +171,7 @@ function Leave() {
             label: 'Approver Comments',
             name: 'approverComments',
             type: 'text',
-        }
+        },
     ];
 
     useEffect(() => {
@@ -179,28 +181,28 @@ function Leave() {
 
     const handleGetAllEmployees = async (page = 1, pageSize = 10) => {
         try {
-            const response = await getAllEmployees({ page: page - 1, pageSize });
-    
+            const response = await getAllEmployees({page: page - 1, pageSize});
+
             if (!response || !Array.isArray(response.content)) {
                 throw new Error('Invalid response: employees data is missing or not an array');
             }
-          
+
             const employeesData = response.content.map(employee => ({
                 label: `${employee.firstName} ${employee.lastName}`.trim(),
                 value: employee.id,
             }));
 
             setEmployeeSource(employeesData);
-    
+
         } catch (error) {
-            return { success: false, error: error.message};
+            return {success: false, error: error.message};
         }
     };
-                
+
     const handleGetAllLeaves = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getAllLeaves({ page: page - 1, pageSize });
+            const response = await getAllLeaves({page: page - 1, pageSize});
             if (response && Array.isArray(response.content)) {
                 const mappedLeaves = response.content.map((leave) => ({
                     ...leave,
@@ -297,17 +299,17 @@ function Leave() {
                 <SmartInput
                     size="large"
                     placeholder="Search"
-                    icon={<SearchOutlined />}
+                    icon={<SearchOutlined/>}
                 />
                 <div className={cx('features')}>
                     <SmartButton
                         title="Add new"
-                        icon={<PlusOutlined />}
+                        icon={<PlusOutlined/>}
                         type="primary"
                         onClick={handleAddRole}
                     />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined />} />
+                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
+                    <SmartButton title="Excel" icon={<CloudUploadOutlined/>}/>
                 </div>
             </div>
             <div className={cx('trailer-container')}>

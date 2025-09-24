@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import carevn.luv2code.cms.tevc_cms_api.dto.UserDTO;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.AssignRoleRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateUserRequest;
+import carevn.luv2code.cms.tevc_cms_api.dto.requests.UserUpdateRequest;
 import carevn.luv2code.cms.tevc_cms_api.entity.Role;
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import carevn.luv2code.cms.tevc_cms_api.mapper.UserMapper;
@@ -73,20 +75,16 @@ public class UserServiceImpl implements UserService {
     //        userRepository.save(user);
     //    }
 
-    @CacheEvict(value = "userPermissions", key = "#request.username")
+    @CacheEvict(value = "userPermissions", key = "#request.userName")
     public UserDTO createUser(CreateUserRequest request) {
-        if (userRepository.existsByUserName(request.getUsername())) {
+        if (userRepository.existsByUserName(request.getUserName())) {
             throw new RuntimeException("Username already exists");
         }
 
-        User user = new User();
-        user.setUserName(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail());
-        //        user.setFul(request.getFullName());
-        user.setEnabled(request.getEnabled());
+        User user = userMapper.toEntity(request);
 
-        // Assign roles
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
         if (request.getRoleIds() != null && !request.getRoleIds().isEmpty()) {
             Set<Role> roles = new HashSet<>();
             for (Integer roleId : request.getRoleIds()) {
@@ -121,31 +119,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @CacheEvict(value = "userPermissions", allEntries = true)
-    public UserDTO updateUser(Integer id, UserDTO request) {
+    public UserDTO updateUser(Integer id, UserUpdateRequest request) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (request.getEmail() != null) {
-            user.setEmail(request.getEmail());
-        }
+        userMapper.updateUserFromDto(request, user);
 
-        if (request.getEnabled() != null) {
-            user.setEnabled(request.getEnabled());
-        }
-
-        // Update roles
+        // update roles nếu có
         if (request.getRoleIds() != null) {
-            Set<Role> roles = new HashSet<>();
-            for (Integer roleId : request.getRoleIds()) {
-                Role role = roleRepository
-                        .findById(roleId)
-                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleId));
-                roles.add(role);
-            }
+            Set<Role> roles = request.getRoleIds().stream()
+                    .map(roleId -> roleRepository
+                            .findById(roleId)
+                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
+                    .collect(Collectors.toSet());
             user.setRoles(roles);
         }
 
-        User updatedUser = userRepository.save(user);
-        return userMapper.toDTO(updatedUser);
+        User savedUser = userRepository.save(user);
+        return userMapper.toDTO(savedUser);
     }
 
     //    @Override
@@ -254,7 +244,7 @@ public class UserServiceImpl implements UserService {
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
+        dto.setUserName(user.getUsername());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
@@ -263,21 +253,17 @@ public class UserServiceImpl implements UserService {
         dto.setEnabled(user.isEnabled());
         dto.setProfilePicture(user.getProfilePicture());
 
-        //        if (user.getRoles() != null) {
-        //            Set<Integer> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toSet());
-        //            dto.setRoles(roleIds);
-        //
-        //            dto.setRoleNames(user.getRoles().stream()
-        //                    .map(Role::getName)
-        //                    .filter(Objects::nonNull)
-        //                    .collect(Collectors.toList()));
-        //        }
-        //
-        //        if (user.getPermissions() != null) {
-        //            List<UUID> permissions =
-        //                    user.getPermissions().stream().map(Permission::getId).collect(Collectors.toList());
-        //            dto.setPermissions(permissions);
-        //        }
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+            Set<Integer> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toSet());
+
+            Set<String> roleNames = user.getRoles().stream()
+                    .map(Role::getName)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            dto.setRoleIds(roleIds);
+            dto.setRoleNames(roleNames);
+        }
 
         return dto;
     }

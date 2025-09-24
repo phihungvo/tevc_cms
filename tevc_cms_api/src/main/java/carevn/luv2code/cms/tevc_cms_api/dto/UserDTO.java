@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 public class UserDTO {
     Integer id;
 
-    String username;
+    String userName;
 
     String firstName;
 
@@ -33,4 +33,6 @@ public class UserDTO {
     LocalDateTime updatedAt;
 
     Set<Integer> roleIds;
+
+    Set<String> roleNames;
 }
