@@ -15,13 +15,13 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import {Form, message, Tag} from 'antd';
-import {getAllLeaves, createLeave, updateLeave, deleteLeave} from '~/service/admin/leave';
-import {getAllEmployees} from '~/service/admin/employee';
+import { Form, message, Tag } from 'antd';
+import { getAllLeaves, createLeave, updateLeave, deleteLeave, getAllByEmployeePaged } from '~/service/admin/leave';
+import { getAllEmployees } from '~/service/admin/employee';
 
 const cx = classNames.bind(styles);
 
-function Leave() {
+function Leave({ employeeId }) { // Nhận prop employeeId
     const [leaveSource, setLeaveSource] = useState([]);
     const [employeeSource, setEmployeeSource] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -36,19 +36,19 @@ function Leave() {
     const [form] = Form.useForm();
 
     const leaveTypeStyles = {
-        ANNUAL: {color: 'green', label: 'Annual'},
-        SICK: {color: 'volcano', label: 'Sick'},
-        UNPAID: {color: 'gold', label: 'Unpaid'},
-        MATERNITY: {color: 'pink', label: 'Maternity'},
-        PATERNTIY: {color: 'blue', label: 'Paternity'},
-        BEREAVEMENT: {color: 'purple', label: 'Bereavement'},
-        COMPASSIONATE: {color: 'cyan', label: 'Compassionate'},
+        ANNUAL: { color: 'green', label: 'Annual' },
+        SICK: { color: 'volcano', label: 'Sick' },
+        UNPAID: { color: 'gold', label: 'Unpaid' },
+        MATERNITY: { color: 'pink', label: 'Maternity' },
+        PATERNTIY: { color: 'blue', label: 'Paternity' },
+        BEREAVEMENT: { color: 'purple', label: 'Bereavement' },
+        COMPASSIONATE: { color: 'cyan', label: 'Compassionate' },
     };
 
     const statusStyles = {
-        PENDING: {color: 'orange', label: 'Pending'},
-        APPROVED: {color: 'green', label: 'Approved'},
-        REJECTED: {color: 'red', label: 'Rejected'},
+        PENDING: { color: 'orange', label: 'Pending' },
+        APPROVED: { color: 'green', label: 'Approved' },
+        REJECTED: { color: 'red', label: 'Rejected' },
     };
 
     const columns = [
@@ -57,6 +57,7 @@ function Leave() {
             dataIndex: 'employeeName',
             key: 'employeeName',
             width: 150,
+            hidden: !!employeeId, // Ẩn cột Employee Name nếu có employeeId
         },
         {
             title: 'Thời gian nghĩ phép',
@@ -75,7 +76,7 @@ function Leave() {
             key: 'leaveType',
             width: 100,
             render: (leaveType) => {
-                const style = leaveTypeStyles[leaveType] || {color: 'default', label: leaveType || 'N/A'};
+                const style = leaveTypeStyles[leaveType] || { color: 'default', label: leaveType || 'N/A' };
                 return <Tag color={style.color}>{style.label}</Tag>;
             },
         },
@@ -89,7 +90,7 @@ function Leave() {
             dataIndex: 'leaveStatus',
             key: 'leaveStatus',
             render: (status) => {
-                const style = statusStyles[status] || {color: 'default', label: status || 'N/A'};
+                const style = statusStyles[status] || { color: 'default', label: status || 'N/A' };
                 return <Tag color={style.color}>{style.label}</Tag>;
             },
         },
@@ -106,21 +107,21 @@ function Leave() {
                 <>
                     <SmartButton
                         type="primary"
-                        icon={<EditOutlined/>}
+                        icon={<EditOutlined />}
                         buttonWidth={50}
                         onClick={() => handleEditLeave(record)}
                     />
                     <SmartButton
                         type="danger"
-                        icon={<DeleteOutlined/>}
+                        icon={<DeleteOutlined />}
                         buttonWidth={50}
                         onClick={() => handleDeleteLeave(record)}
-                        style={{marginLeft: '8px'}}
+                        style={{ marginLeft: '8px' }}
                     />
                 </>
             ),
         },
-    ];
+    ].filter((col) => !col.hidden); // Lọc bỏ các cột ẩn
 
     const userModalFields = [
         {
@@ -128,16 +129,15 @@ function Leave() {
             name: 'employeeId',
             type: 'select',
             options: employeeSource,
-            rules: [{required: true, message: 'Employee is required!'}],
+            rules: [{ required: true, message: 'Employee is required!' }],
+            hidden: !!employeeId, // Ẩn trường Employee Name nếu có employeeId
         },
-        ...(modalMode === 'edit'
-            ? [{
-                label: 'Leave Status',
-                name: 'leaveStatus',
-                type: 'select',
-                options: ['PENDING', 'APPROVED', 'REJECTED'],
-            }]
-            : []),
+        {
+            label: 'Leave Status',
+            name: 'leaveStatus',
+            type: 'select',
+            options: ['PENDING', 'APPROVED', 'REJECTED'],
+        },
         {
             label: 'Leave Type',
             name: 'leaveType',
@@ -147,7 +147,7 @@ function Leave() {
                 'SICK',
                 'UNPAID',
                 'MATERNITY',
-                'PATERNITY',
+                'PATERNTIY',
                 'BEREAVEMENT',
                 'COMPASSIONATE',
             ],
@@ -172,40 +172,42 @@ function Leave() {
             name: 'approverComments',
             type: 'text',
         },
-    ];
+    ].filter((field) => !field.hidden); // Lọc bỏ các trường ẩn
 
     useEffect(() => {
         handleGetAllEmployees();
-        handleGetAllLeaves();
-    }, []);
+        handleGetLeaves();
+    }, [employeeId]); // Thêm employeeId vào dependency array
 
     const handleGetAllEmployees = async (page = 1, pageSize = 10) => {
         try {
-            const response = await getAllEmployees({page: page - 1, pageSize});
-
+            const response = await getAllEmployees({ page: page - 1, pageSize });
             if (!response || !Array.isArray(response.content)) {
                 throw new Error('Invalid response: employees data is missing or not an array');
             }
-
-            const employeesData = response.content.map(employee => ({
+            const employeesData = response.content.map((employee) => ({
                 label: `${employee.firstName} ${employee.lastName}`.trim(),
                 value: employee.id,
             }));
-
             setEmployeeSource(employeesData);
 
         } catch (error) {
-            return {success: false, error: error.message};
+            message.error(`Lỗi khi lấy danh sách nhân viên: ${error.message}`);
         }
     };
 
-    const handleGetAllLeaves = async (page = 1, pageSize = 10) => {
+    const handleGetLeaves = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getAllLeaves({page: page - 1, pageSize});
+            const response = employeeId
+                ? await getAllByEmployeePaged(employeeId, { page: page - 1, pageSize })
+                : await getAllLeaves({ page: page - 1, pageSize });
+
             if (response && Array.isArray(response.content)) {
                 const mappedLeaves = response.content.map((leave) => ({
                     ...leave,
+                    startDate: leave.startDate ? new Date(leave.startDate) : null,
+                    endDate: leave.endDate ? new Date(leave.endDate) : null,
                 }));
                 setLeaveSource(mappedLeaves);
                 setPagination({
@@ -217,58 +219,76 @@ function Leave() {
                 setLeaveSource([]);
             }
         } catch (error) {
+            message.error(`Lỗi khi lấy danh sách ngày nghỉ: ${error.message}`);
             setLeaveSource([]);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleAddRole = () => {
+    const handleAddLeave = () => {
         setModalMode('create');
         setSelectedLeave(null);
         form.resetFields();
+        if (employeeId) {
+            form.setFieldsValue({ employeeId });
+        }
         setIsModalOpen(true);
     };
 
-    const handleCallCreatePermission = async (formData) => {
+    const handleCallCreateLeave = async (formData) => {
         try {
             await createLeave(formData);
-            handleGetAllLeaves();
+            handleGetLeaves();
             setIsModalOpen(false);
+            message.success('Tạo ngày nghỉ thành công');
         } catch (error) {
-            message.error(`Error creating leave: ${error.response?.data?.message || error.message}`);
+            message.error(`Lỗi khi tạo ngày nghỉ: ${error.response?.data?.message || error.message}`);
         }
     };
 
     const handleEditLeave = (record) => {
         setSelectedLeave(record);
         setModalMode('edit');
-
-        form.setFieldsValue(record);
+        form.setFieldsValue({
+            ...record,
+            startDate: record.startDate ? moment(record.startDate) : null,
+            endDate: record.endDate ? moment(record.endDate) : null,
+        });
         setIsModalOpen(true);
     };
 
     const handleCallUpdateLeave = async (formData) => {
-        await updateLeave(selectedLeave.id, formData);
-        handleGetAllLeaves();
-        setIsModalOpen(false);
-    }
+        try {
+            await updateLeave(selectedLeave.id, formData);
+            handleGetLeaves();
+            setIsModalOpen(false);
+            message.success('Cập nhật ngày nghỉ thành công');
+        } catch (error) {
+            message.error(`Lỗi khi cập nhật ngày nghỉ: ${error.response?.data?.message || error.message}`);
+        }
+    };
 
     const handleDeleteLeave = async (record) => {
         setModalMode('delete');
         setSelectedLeave(record.id);
         setIsModalOpen(true);
-    }
+    };
 
     const handleCallDeleteLeave = async () => {
-        await deleteLeave(selectedLeave);
-        handleGetAllLeaves();
-        setIsModalOpen(false);
-    }
+        try {
+            await deleteLeave(selectedLeave);
+            handleGetLeaves();
+            setIsModalOpen(false);
+            message.success('Xóa ngày nghỉ thành công');
+        } catch (error) {
+            message.error(`Lỗi khi xóa ngày nghỉ: ${error.response?.data?.message || error.message}`);
+        }
+    };
 
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
-            handleCallCreatePermission(formData);
+            handleCallCreateLeave(formData);
         } else if (modalMode === 'edit') {
             handleCallUpdateLeave(formData);
         } else if (modalMode === 'delete') {
@@ -277,19 +297,19 @@ function Leave() {
     };
 
     const handleTableChange = (pagination) => {
-        handleGetAllLeaves(pagination.current, pagination.pageSize);
+        handleGetLeaves(pagination.current, pagination.pageSize);
     };
 
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Add New Leave';
+                return 'Thêm ngày nghỉ';
             case 'edit':
-                return 'Edit Leave';
+                return 'Chỉnh sửa ngày nghỉ';
             case 'delete':
-                return 'Delete Leave';
+                return 'Xóa ngày nghỉ';
             default:
-                return 'Leave Details';
+                return 'Chi tiết ngày nghỉ';
         }
     };
 
@@ -298,18 +318,18 @@ function Leave() {
             <div className={cx('sub_header')}>
                 <SmartInput
                     size="large"
-                    placeholder="Search"
-                    icon={<SearchOutlined/>}
+                    placeholder="Tìm kiếm"
+                    icon={<SearchOutlined />}
                 />
                 <div className={cx('features')}>
                     <SmartButton
-                        title="Add new"
-                        icon={<PlusOutlined/>}
+                        title="Thêm mới"
+                        icon={<PlusOutlined />}
                         type="primary"
-                        onClick={handleAddRole}
+                        onClick={handleAddLeave}
                     />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined/>}/>
-                    <SmartButton title="Excel" icon={<CloudUploadOutlined/>}/>
+                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
+                    <SmartButton title="Excel" icon={<CloudUploadOutlined />} />
                 </div>
             </div>
             <div className={cx('trailer-container')}>

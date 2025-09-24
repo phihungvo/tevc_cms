@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,6 +149,11 @@ public class LeaveServiceImpl implements LeaveService {
     @Override
     public List<LeaveDTO> getEmployeeLeaves(Integer employeeId) {
         return List.of();
+    }
+
+    @Override
+    public Page<LeaveDTO> getLeavesByEmployeeIdPaged(Integer employeeId, Pageable pageable) {
+        return leaveRepository.findByEmployeeId(employeeId, pageable).map(leaveMapper::toDTO);
     }
 
     //    private void sendMailToManagers(Employee employee, Leave leave) {
