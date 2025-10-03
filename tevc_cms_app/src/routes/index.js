@@ -13,6 +13,8 @@ import RootRedirect from '~/components/RootRedirect';
 import EmployeeDetail from '~/pages/AdminDashboard/Employee/detail';
 import Team from "~/pages/AdminDashboard/Team";
 import UserManagement from "~/pages/AdminDashboard/User/UserManagement";
+import RecruitmentCMS from "src/pages/AdminDashboard/Recruitment";
+import TabRecruitment from "~/pages/AdminDashboard/Recruitment/TabRecruitment";
 
 const publicRoutes = [
     { path: '/login', component: Login, title: 'Login' },
@@ -51,7 +53,7 @@ const privateRoutes = [
         role: 'admin',
     },
     {
-        path: '/admin/employee/:id', // Route mới cho chi tiết
+        path: '/admin/employee/:id',
         component: EmployeeDetail,
         title: 'Employee Detail',
         role: 'admin',
@@ -86,6 +88,18 @@ const privateRoutes = [
         title: 'Team Management',
         role: 'admin',
     },
+    {
+        path: '/admin/recruitment',
+        component: TabRecruitment,
+        title: 'Recruitment Management',
+        role: 'admin',
+    },
+    // {
+    //     path: '/admin/recruitment',
+    //     component: RecruitmentCMS,
+    //     title: 'Recruitment Management',
+    //     role: 'admin',
+    // },
 
     {
         path: '/',

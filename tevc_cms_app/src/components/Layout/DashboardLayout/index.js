@@ -22,7 +22,9 @@ import {
     ProjectOutlined, 
     CalendarOutlined, 
     DollarOutlined, 
-    CoffeeOutlined, 
+    CoffeeOutlined,
+    IdcardOutlined,
+    UserAddOutlined
 } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
@@ -104,6 +106,16 @@ const sideBar = [
         color: '#0baedb',
         icon: <TeamOutlined />,
         url: '/admin/team',
+        role: 'ADMIN',
+        permissions: ['ADMIN:MANAGE'],
+        roleIcon: <SafetyOutlined />,
+        permissionIcon: <LockOutlined />,
+    },
+    {
+        title: 'Recruitment',
+        color: '#26a69a',
+        icon: <UserAddOutlined />,
+        url: '/admin/recruitment',
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
         roleIcon: <SafetyOutlined />,

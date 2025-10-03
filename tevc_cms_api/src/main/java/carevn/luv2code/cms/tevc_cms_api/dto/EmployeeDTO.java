@@ -19,7 +19,7 @@ public class EmployeeDTO {
 
     Date dateOfBirth;
 
-    String gender;
+    boolean gender;
 
     String email;
 

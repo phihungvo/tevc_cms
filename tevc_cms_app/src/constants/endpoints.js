@@ -110,6 +110,13 @@ const API_ENDPOINTS = {
     CONTRACT: {
         GET_ALL: `${BASE_URL}/contracts`,
         ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/contracts/employee/${employeeId}/paged`,
+    },
+    CANDIDATE: {
+        GET_ALL: `${BASE_URL}/candidates/paginated`,
+    },
+    JOB_POSTING: {
+        GET_ALL: `${BASE_URL}/job-postings/paginated`,
+        GET_BY_CANDIDATE: (candidateId) => `${BASE_URL}/job-postings/${candidateId}/by-candidate`,
     }
 };
 

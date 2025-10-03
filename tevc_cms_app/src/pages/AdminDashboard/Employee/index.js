@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from '~/pages/AdminDashboard/Employee/Employee.module.scss';
 import moment from 'moment';
@@ -16,18 +16,19 @@ import {
 import SmartInput from '~/components/Layout/components/SmartInput';
 import SmartButton from '~/components/Layout/components/SmartButton';
 import PopupModal from '~/components/Layout/components/PopupModal';
-import { Form, message, Tag, DatePicker, Watermark } from 'antd';
+import {Form, message, Tag, DatePicker, Watermark} from 'antd';
 import {
     getAllEmployees,
     createEmployee,
     updateEmployee,
     deleteEmployee,
 } from '~/service/admin/employee';
-import { getAllDepartmentsNoPaging } from '~/service/admin/department';
-import { getAllPositions } from '~/service/admin/position';
-import { exportExcelFile } from '~/service/admin/export_service';
+import {getAllDepartmentsNoPaging} from '~/service/admin/department';
+import {getAllPositions} from '~/service/admin/position';
+import {exportExcelFile} from '~/service/admin/export_service';
 import CustomTabs from '~/components/Layout/components/Tab';
 import 'moment/locale/vi';
+
 moment.locale('vi');
 
 const cx = classNames.bind(styles);
@@ -49,8 +50,14 @@ function Employee() {
     const navigate = useNavigate();
 
     const genderStyles = {
-        Male: { color: 'green', label: 'Male' },
-        Female: { color: 'volcano', label: 'Female' },
+        Male: {color: 'green', label: 'Male'},
+        Female: {color: 'volcano', label: 'Female'},
+    };
+
+    const genderMap = {
+        'Male': true,
+        'Female': false,
+        'Other': true,
     };
 
     const columns = [
@@ -86,12 +93,11 @@ function Employee() {
             dataIndex: 'gender',
             key: 'gender',
             width: 100,
-            render: (status) => {
-                const style = genderStyles[status] || {
-                    color: 'default',
-                    label: status || 'N/A',
-                };
-                return <Tag color={style.color}>{style.label}</Tag>;
+            render: (gender) => {
+                if (gender === null || gender === undefined) return <Tag color="default">N/A</Tag>;
+                const label = gender ? 'Male' : 'Female';
+                const color = gender ? 'green' : 'volcano';
+                return <Tag color={color}>{label}</Tag>;
             },
         },
         {
@@ -150,23 +156,23 @@ function Employee() {
                 <>
                     <SmartButton
                         type="default"
-                        icon={<EyeOutlined />}
+                        icon={<EyeOutlined/>}
                         buttonWidth={50}
                         onClick={() => navigate(`/admin/employee/${record.id}`)}
                     />
                     <SmartButton
                         type="primary"
-                        icon={<EditOutlined />}
+                        icon={<EditOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleEditRole(record)}
-                        style={{ marginLeft: '8px' }}
+                        style={{marginLeft: '8px'}}
                     />
                     <SmartButton
                         type="danger"
-                        icon={<DeleteOutlined />}
+                        icon={<DeleteOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleDeleteEmployee(record)}
-                        style={{ marginLeft: '8px' }}
+                        style={{marginLeft: '8px'}}
                     />
                 </>
             ),
@@ -185,7 +191,7 @@ function Employee() {
             label: 'First Name',
             name: 'firstName',
             type: 'text',
-            rules: [{ required: true, message: 'Tên là bắt buộc!' }],
+            rules: [{required: true, message: 'Tên là bắt buộc!'}],
         },
         {
             label: 'Last Name',
@@ -197,46 +203,46 @@ function Employee() {
             name: 'dateOfBirth',
             type: 'date',
             render: () => (
-                <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
+                <DatePicker format="DD/MM/YYYY" style={{width: '100%'}}/>
             ),
-            rules: [{ required: true, message: 'Ngày sinh là bắt buộc!' }],
+            rules: [{required: true, message: 'Ngày sinh là bắt buộc!'}],
         },
         {
             label: 'Gender',
             name: 'gender',
             type: 'select',
             options: ['Male', 'Female', 'Other'],
-            rules: [{ required: true, message: 'Giới tính là bắt buộc!' }],
+            rules: [{required: true, message: 'Giới tính là bắt buộc!'}],
         },
         {
             label: 'Email',
             name: 'email',
             type: 'text',
             rules: [
-                { required: true, message: 'Email là bắt buộc!' },
-                { type: 'email', message: 'Định dạng email không hợp lệ!' },
+                {required: true, message: 'Email là bắt buộc!'},
+                {type: 'email', message: 'Định dạng email không hợp lệ!'},
             ],
         },
         {
             label: 'Phone',
             name: 'phone',
             type: 'text',
-            rules: [{ required: true, message: 'Số điện thoại là bắt buộc!' }],
+            rules: [{required: true, message: 'Số điện thoại là bắt buộc!'}],
         },
         {
             label: 'Address',
             name: 'address',
             type: 'text',
-            rules: [{ required: true, message: 'Địa chỉ là bắt buộc!' }],
+            rules: [{required: true, message: 'Địa chỉ là bắt buộc!'}],
         },
         {
             label: 'Hire Date',
             name: 'hireDate',
             type: 'date',
             render: () => (
-                <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
+                <DatePicker format="DD/MM/YYYY" style={{width: '100%'}}/>
             ),
-            rules: [{ required: true, message: 'Ngày vào làm là bắt buộc!' }],
+            rules: [{required: true, message: 'Ngày vào làm là bắt buộc!'}],
         },
         {
             label: 'Department',
@@ -350,18 +356,13 @@ function Employee() {
     const handleEditRole = (record) => {
         setSelectedEmployee(record);
         setModalMode('edit');
+        // Map gender boolean sang string
+        const genderString = record.gender ? 'Male' : 'Female';
         form.setFieldsValue({
             ...record,
-            dateOfBirth:
-                record.dateOfBirth &&
-                moment(record.dateOfBirth, moment.ISO_8601, true).isValid()
-                    ? moment(record.dateOfBirth)
-                    : null,
-            hireDate:
-                record.hireDate &&
-                moment(record.hireDate, moment.ISO_8601, true).isValid()
-                    ? moment(record.hireDate)
-                    : null,
+            gender: genderString,
+            dateOfBirth: record.dateOfBirth && moment(record.dateOfBirth, moment.ISO_8601, true).isValid() ? moment(record.dateOfBirth) : null,
+            hireDate: record.hireDate && moment(record.hireDate, moment.ISO_8601, true).isValid() ? moment(record.hireDate) : null,
         });
         setIsModalOpen(true);
     };
@@ -376,6 +377,7 @@ function Employee() {
                 hireDate: formData.hireDate
                     ? moment(formData.hireDate).format('YYYY-MM-DD')
                     : null,
+                gender: genderMap[formData.gender]
             };
             await updateEmployee(selectedEmployee.id, formattedData);
             handleGetAllEmployees();
@@ -472,22 +474,22 @@ function Employee() {
                         <SmartInput
                             size="large"
                             placeholder="Search"
-                            icon={<SearchOutlined />}
+                            icon={<SearchOutlined/>}
                         />
                         <div className={cx('features')}>
                             <SmartButton
                                 title="Add new"
-                                icon={<PlusOutlined />}
+                                icon={<PlusOutlined/>}
                                 type="primary"
                                 onClick={handleAddRole}
                             />
                             <SmartButton
                                 title="Bộ lọc"
-                                icon={<FilterOutlined />}
+                                icon={<FilterOutlined/>}
                             />
                             <SmartButton
                                 title="Excel"
-                                icon={<CloudUploadOutlined />}
+                                icon={<CloudUploadOutlined/>}
                                 onClick={handleExportFile}
                             />
                         </div>
@@ -520,7 +522,7 @@ function Employee() {
             children: (
                 <>
                     <Watermark content="Ant Design">
-                        <div style={{ height: 500 }} />
+                        <div style={{height: 500}}/>
                     </Watermark>
                 </>
             ),
@@ -531,7 +533,7 @@ function Employee() {
             children: (
                 <>
                     <Watermark content="Ant Design">
-                        <div style={{ height: 500 }} />
+                        <div style={{height: 500}}/>
                     </Watermark>
                 </>
             ),
@@ -542,7 +544,7 @@ function Employee() {
             children: (
                 <>
                     <Watermark content="Ant Design">
-                        <div style={{ height: 500 }} />
+                        <div style={{height: 500}}/>
                     </Watermark>
                 </>
             ),
