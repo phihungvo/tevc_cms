@@ -1,6 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.AttendanceStatus;
 import jakarta.persistence.*;
@@ -25,11 +25,11 @@ public class Attendance {
     Employee employee;
 
     @Column(name = "attendance_date", nullable = false)
-    Date attendanceDate;
+    LocalDateTime attendanceDate;
 
-    Date checkIn;
+    LocalDateTime checkIn;
 
-    Date checkOut;
+    LocalDateTime checkOut;
 
     @Enumerated(EnumType.STRING)
     AttendanceStatus status;

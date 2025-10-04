@@ -303,13 +303,22 @@ function Attendance() {
     const handleExportFile = async () => {
         try {
             const response = await exportExcelFile('attendance');
-            if (!response.headers['content-type'].includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+            if (
+                !response.headers['content-type'].includes(
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                )
+            ) {
                 throw new Error('Định dạng file không hợp lệ');
             }
             const url = window.URL.createObjectURL(response.data);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `attendance_${new Date().toISOString().replace(/[-:]/g, '')}.xlsx`);
+            link.setAttribute(
+                'download',
+                `attendance_${new Date()
+                    .toISOString()
+                    .replace(/[-:]/g, '')}.xlsx`,
+            );
             link.click();
             window.URL.revokeObjectURL(url);
             message.success('Tải file Excel thành công!');
