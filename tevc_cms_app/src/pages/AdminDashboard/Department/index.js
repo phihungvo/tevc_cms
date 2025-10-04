@@ -39,29 +39,30 @@ function Department() {
 
     const columns = [
         {
-            title: 'Department Name',
+            title: 'Tên phòng ban',
             dataIndex: 'name',
             key: 'name',
             width: 200,
             fixed: 'left',
         },
         {
-            title: 'Manager',
+            title: 'Tên quản lý',
             dataIndex: 'managerName',
             key: 'managerName',
         },
         {
-            title: 'Number Empl',
+            title: 'Số lượng nhân viên',
             dataIndex: 'employeeCount',
             key: 'employeeCount',
+            width: 100,
         },
         {
-            title: 'Description',
+            title: 'Mô tả chi tiết',
             dataIndex: 'description',
             key: 'description',
         },
         {
-            title: 'Actions',
+            title: 'Thao tác',
             fixed: 'right',
             width: 130,
             render: (_, record) => (
@@ -86,28 +87,28 @@ function Department() {
 
     const userModalFields = [
         {
-            label: 'Department Name',
+            label: 'Tên phòng ban',
             name: 'name',
             type: 'text',
-            rules: [{required: true, message: 'Department name is required!'}],
+            rules: [{required: true, message: 'Tên phòng ban bắt buộc!'}],
         },
         {
-            label: 'Description',
+            label: 'Mô tả chi tiết',
             name: 'description',
             type: 'text',
         },
 
         {
-            label: 'Manager',
+            label: 'Nhân sự quản lý',
             name: 'managerId',
             type: 'select',
             options: managerPositionSource,
         },
-        {
-            label: 'Number of Employee',
-            name: 'employeeCount',
-            type: 'number',
-        },
+        // {
+        //     label: 'Số lượng nhân viên',
+        //     name: 'employeeCount',
+        //     type: 'number',
+        // },
     ];
 
     useEffect(() => {
@@ -238,11 +239,11 @@ function Department() {
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Add New Department';
+                return 'Thêm phòng ban';
             case 'edit':
-                return 'Edit Department';
+                return 'Chỉnh sửa phòng ban';
             case 'delete':
-                return 'Delete Department';
+                return 'Xoá phòng ban';
             default:
                 return 'Department Details';
         }
@@ -258,7 +259,7 @@ function Department() {
                 />
                 <div className={cx('features')}>
                     <SmartButton
-                        title="Add new"
+                        title="Thêm"
                         icon={<PlusOutlined/>}
                         type="primary"
                         onClick={handleAddRole}
