@@ -167,18 +167,18 @@ function Payroll() {
 
     const userModelFields = [
         {
-            label: 'Employee',
+            label: 'Nhân viên',
             name: 'employeeId',
             type: 'select',
             options: employeeSource,
-            rules: [{ required: true, message: 'Employee is required!' }],
+            rules: [{ required: true, message: 'Nhân viên bắt buộc chọn!' }],
         },
         {
-            label: 'period',
+            label: 'Kì hạn',
             name: 'period',
             type: 'date',
             render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
-            rules: [{ required: true, message: 'period is required!' }],
+            rules: [{ required: true, message: 'Kỳ hạn bắt buộc!' }],
         },
     ];
 
@@ -191,60 +191,60 @@ function Payroll() {
             disabled: true,
         },
         {
-            label: 'Employee',
+            label: 'Nhân viên',
             name: 'employeeId',
             type: 'select',
             readOnly: true,
             disabled: true,
         },
         {
-            label: 'Period',
+            label: 'Kỳ hạn',
             name: 'period',
             type: 'text',
-            rules: [{ required: true, message: 'period is required!' }],
+            rules: [{ required: true, message: 'Kì hạn là bắt buộc!' }],
         },
         {
-            label: 'Basic Salary',
+            label: 'Lương cơ bản',
             name: 'basicSalary',
             type: 'text',
         },
         {
-            label: 'Overtime',
+            label: 'Làm thêm giờ',
             name: 'overtime',
             type: 'text',
         },
         {
-            label: 'Bonus',
+            label: 'Thưởng',
             name: 'bonus',
             type: 'text',
         },
         {
-            label: 'Allowances',
+            label: 'Phụ cấp',
             name: 'allowances',
             type: 'text',
         },
         {
-            label: 'Deductions',
+            label: 'Khấu trừ',
             name: 'deductions',
             type: 'text',
         },
         {
-            label: 'Tax',
+            label: 'Thuế',
             name: 'tax',
             type: 'text',
         },
         {
-            label: 'Insurance',
+            label: 'Bảo hiểm',
             name: 'insurance',
             type: 'text',
         },
         {
-            label: 'NetSalary',
+            label: 'Lương thực nhận',
             name: 'netSalary',
             type: 'text',
         },
         {
-            label: 'Status',
+            label: 'Trạng thái',
             name: 'status',
             type: 'select',
             options: Object.keys(statusPayroll).map(key => ({
@@ -253,13 +253,13 @@ function Payroll() {
             }))
         },
         {
-            label: 'Processed Date',
+            label: 'Ngày xử lý',
             name: 'processedDate',
             type: 'date',
             render: () => <DatePicker format="DD/MM/YYYY HH:mm:ss" showTime style={{ width: '100%' }} />,
         },
         {
-            label: 'Paid Date',
+            label: 'Ngày thanh toán',
             name: 'paidDate',
             type: 'date',
             render: () => <DatePicker format="DD/MM/YYYY HH:mm:ss" showTime style={{ width: '100%' }} />,
@@ -425,11 +425,11 @@ function Payroll() {
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Add New Payroll';
+                return 'Thêm bảng lương';
             case 'edit':
-                return 'Edit Payroll';
+                return 'Chỉnh sửa bảng lương';
             case 'delete':
-                return 'Delete Payroll';
+                return 'Xoá bảng lương';
             default:
                 return 'Payroll Details';
         }
