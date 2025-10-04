@@ -74,6 +74,7 @@ function Payroll() {
             dataIndex: 'basicSalary',
             key: 'basicSalary',
             width: 100,
+            render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()}` : 'N/A',
         },
         {
             title: 'Làm thêm giờ',
@@ -104,18 +105,21 @@ function Payroll() {
             dataIndex: 'tax',
             key: 'tax',
             width: 100,
+            render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()}` : 'N/A',
         },
         {
             title: 'Bảo hiểm',
             dataIndex: 'insurance',
             key: 'insurance',
             width: 100,
+            render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()}` : 'N/A',
         },
         {
             title: 'Lương ròng',
             dataIndex: 'netSalary',
             key: 'netSalary',
             width: 100,
+            render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()}` : 'N/A',
         },
         {
             title: 'Ngày xử lý',

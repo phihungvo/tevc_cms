@@ -10,17 +10,17 @@ function TabRecruitment() {
     const tabItems = [
         {
             key: '1',
-            label: 'Candidate',
+            label: 'Ứng viên',
             children: <Candidate />,
         },
         {
             key: '2',
-            label: 'Role List',
+            label: 'Tin tuyển dụng',
             children: <RoleList />,
         },
         {
             key: '3',
-            label: 'Permission List',
+            label: 'Lịch phỏng vấn',
             children: <PermissionList />,
         },
         {

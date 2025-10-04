@@ -15,6 +15,7 @@ import Team from "~/pages/AdminDashboard/Team";
 import UserManagement from "~/pages/AdminDashboard/User/UserManagement";
 import RecruitmentCMS from "src/pages/AdminDashboard/Recruitment";
 import TabRecruitment from "~/pages/AdminDashboard/Recruitment/TabRecruitment";
+import Attendance from "~/pages/AdminDashboard/Attendance";
 
 const publicRoutes = [
     { path: '/login', component: Login, title: 'Login' },
@@ -94,12 +95,12 @@ const privateRoutes = [
         title: 'Recruitment Management',
         role: 'admin',
     },
-    // {
-    //     path: '/admin/recruitment',
-    //     component: RecruitmentCMS,
-    //     title: 'Recruitment Management',
-    //     role: 'admin',
-    // },
+    {
+        path: '/admin/attendance',
+        component: Attendance,
+        title: 'Attendance Management',
+        role: 'admin',
+    },
 
     {
         path: '/',

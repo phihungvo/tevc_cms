@@ -24,12 +24,18 @@ public class Attendance {
     @ToString.Exclude
     Employee employee;
 
+    @Column(name = "attendance_date", nullable = false)
+    Date attendanceDate;
+
     Date checkIn;
 
     Date checkOut;
 
     @Enumerated(EnumType.STRING)
     AttendanceStatus status;
+
+    @Column(name = "work_hours")
+    Double workHours; // số giờ làm thực tế (có thể tính từ checkIn/checkOut)
 
     String notes;
 }

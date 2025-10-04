@@ -79,6 +79,8 @@ const API_ENDPOINTS = {
     },
     ATTENDANCE: {
         GET_ALL: `${BASE_URL}/attendances`,
+        GET_ALL_NO_PAGING: `${BASE_URL}/attendances/no-pagination`,
+        FILTER: `${BASE_URL}/attendances/filter`,
         CREATE: `${BASE_URL}/attendances`,
         UPDATE: (attendanceId) => `${BASE_URL}/attendances/${attendanceId}`,
     },
