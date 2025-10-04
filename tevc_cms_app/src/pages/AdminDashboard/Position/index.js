@@ -33,36 +33,36 @@ function Position({ employeeId }) { // Nhận prop employeeId
 
     const columns = [
         {
-            title: 'Title',
+            title: 'Chức vụ',
             dataIndex: 'title',
             key: 'title',
             width: 150,
             fixed: 'left',
         },
         {
-            title: 'Position Type',
+            title: 'Loại công việc',
             dataIndex: 'positionType',
             key: 'positionType',
-            width: 150,
+            width: 80,
             render: (positionType) => (
                 <Tag color="blue">{positionType || 'N/A'}</Tag>
             ),
         },
         {
-            title: 'Description',
+            title: 'Mô tả chi tiết',
             dataIndex: 'description',
             key: 'description',
-            width: 150,
+            width: 250,
         },
         {
-            title: 'Base Salary',
+            title: 'Lương cơ bản',
             dataIndex: 'baseSalary',
             key: 'baseSalary',
             width: 150,
             render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()} VND` : 'N/A',
         },
         {
-            title: 'Actions',
+            title: 'Thao tác',
             fixed: 'right',
             width: 80,
             render: (_, record) => (
@@ -87,24 +87,24 @@ function Position({ employeeId }) { // Nhận prop employeeId
 
     const userModalFields = [
         {
-            label: 'Position Title',
+            label: 'Chức vụ',
             name: 'title',
             type: 'text',
-            rules: [{ required: true, message: 'Position Title is required!' }],
+            rules: [{ required: true, message: 'Chức vụ bắt buộc!' }],
         },
         {
-            label: 'Description',
+            label: 'Mô tả chi tiết',
             name: 'description',
             type: 'text',
         },
         {
-            label: 'Base Salary',
+            label: 'Lương cơ bản',
             name: 'baseSalary',
-            type: 'number', // Đổi thành type number để phù hợp với baseSalary
-            rules: [{ type: 'number', min: 0, message: 'Base Salary must be a positive number!' }],
+            type: 'number',
+            rules: [{ type: 'number', min: 0, message: 'Lương cơ bản phải lớn hơn 0!' }],
         },
         {
-            label: 'Position Type',
+            label: 'Loại công việc',
             name: 'positionType',
             type: 'select',
             options: [
@@ -117,7 +117,7 @@ function Position({ employeeId }) { // Nhận prop employeeId
                 'DIRECTOR',
                 'EXECUTIVE',
             ],
-            rules: [{ required: true, message: 'Position Type is required!' }],
+            rules: [{ required: true, message: 'Loại công việc bắt buộc!' }],
         },
     ];
 
@@ -244,7 +244,7 @@ function Position({ employeeId }) { // Nhận prop employeeId
                 />
                 <div className={cx('features')}>
                     <SmartButton
-                        title="Thêm mới"
+                        title="Thêm"
                         icon={<PlusOutlined />}
                         type="primary"
                         onClick={handleAddPosition}

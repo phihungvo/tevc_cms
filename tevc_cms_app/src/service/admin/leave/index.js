@@ -52,7 +52,7 @@ export const updateLeave = async (formData) => {
 export const deleteLeave = async (leaveId) => {
     try {
         const response = await apiClient.delete(API_ENDPOINTS.LEAVE.DELETE(leaveId));
-        message.success('Leave deleted successfully');
+        // message.success('Leave deleted successfully');
         return response.data;
     } catch (error) {
         console.error('Error when deleting leave: ', error);

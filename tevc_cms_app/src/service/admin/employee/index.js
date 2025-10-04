@@ -77,7 +77,7 @@ export const getByDepartmentBasicInfo = async (departmentId) => {
 
 export const updateEmployee = async (employeeId, formData) => {
     try {
-        const response = await apiClient.patch(
+        const response = await apiClient.put(
             API_ENDPOINTS.EMPLOYEE.UPDATE(employeeId),   
             formData, 
         );

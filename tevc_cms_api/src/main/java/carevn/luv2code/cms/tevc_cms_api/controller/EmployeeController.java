@@ -26,7 +26,13 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.createEmployee(employeeDTO));
     }
 
-    @PatchMapping("/{id}")
+    //    @PatchMapping("/{id}")
+    //    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Integer id, @RequestBody EmployeeDTO
+    // employeeDTO) {
+    //        return ResponseEntity.ok(employeeService.updateEmployee(id, employeeDTO));
+    //    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Integer id, @RequestBody EmployeeDTO employeeDTO) {
         return ResponseEntity.ok(employeeService.updateEmployee(id, employeeDTO));
     }

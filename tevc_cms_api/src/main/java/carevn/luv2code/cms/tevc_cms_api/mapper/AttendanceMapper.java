@@ -11,7 +11,8 @@ public interface AttendanceMapper {
     @Mapping(
             target = "employeeName",
             expression =
-                    "java(attendance.getEmployee().getFirstName() + \" \" + attendance.getEmployee().getLastName())")
+                    "java(attendance.getEmployee().getLastName() + \" \" + attendance.getEmployee().getFirstName())")
+    @Mapping(target = "employeeCode", source = "employee.employeeCode")
     AttendanceDTO toDTO(Attendance attendance);
 
     @Mapping(target = "employee", ignore = true)

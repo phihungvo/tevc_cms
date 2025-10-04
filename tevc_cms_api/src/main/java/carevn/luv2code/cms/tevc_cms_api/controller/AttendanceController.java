@@ -21,7 +21,7 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.createAttendance(attendanceDTO));
     }
 
-    @GetMapping("no-pagination")
+    @GetMapping("/no-pagination")
     public ResponseEntity<List<AttendanceDTO>> getAll() {
         return ResponseEntity.ok(attendanceService.getAllAttendances());
     }
@@ -34,10 +34,28 @@ public class AttendanceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AttendanceDTO> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(attendanceService.getAttendance(id));
+        return ResponseEntity.ok(attendanceService.getAttendanceById(id));
     }
 
-    @PatchMapping("/{id}")
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<AttendanceDTO>> getAttendancesByEmployee(@PathVariable Integer employeeId) {
+        return ResponseEntity.ok(attendanceService.getAttendancesByEmployee(employeeId));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<AttendanceDTO>> filterAttendances(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String employeeName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        Page<AttendanceDTO> result =
+                attendanceService.filterAttendances(startDate, endDate, status, employeeName, page, size);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<AttendanceDTO> update(@PathVariable Integer id, @RequestBody AttendanceDTO attendanceDTO) {
         return ResponseEntity.ok(attendanceService.updateAttendance(id, attendanceDTO));
     }

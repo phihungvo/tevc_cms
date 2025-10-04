@@ -11,11 +11,16 @@ public interface AttendanceService {
 
     List<AttendanceDTO> getAllAttendances();
 
-    AttendanceDTO getAttendance(Integer id);
+    AttendanceDTO getAttendanceById(Integer id);
 
     void deleteAttendance(Integer id);
 
     AttendanceDTO updateAttendance(Integer id, AttendanceDTO attendanceDTO);
 
     Page<AttendanceDTO> getAllAttendancesWithPagination(int page, int size);
+
+    List<AttendanceDTO> getAttendancesByEmployee(Integer employeeId);
+
+    Page<AttendanceDTO> filterAttendances(
+            String startDate, String endDate, String status, String employeeName, int page, int size);
 }

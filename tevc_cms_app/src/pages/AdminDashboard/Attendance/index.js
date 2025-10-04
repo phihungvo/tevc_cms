@@ -1,33 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import classNames from 'classnames/bind';
-import moment from 'moment';
 import styles from './Attendance.module.scss';
-import SmartInput from '~/components/Layout/components/SmartInput';
-import SmartTable from '~/components/Layout/components/SmartTable';
-import SmartButton from '~/components/Layout/components/SmartButton';
-import PopupModal from '~/components/Layout/components/PopupModal';
+import {useState, useEffect} from 'react';
+import dayjs from 'dayjs';
 import {
     SearchOutlined,
     PlusOutlined,
-    FilterOutlined,
     CloudUploadOutlined,
-    EditOutlined,
-    DeleteOutlined,
+    ClockCircleOutlined,
     CheckCircleOutlined,
+    CloseCircleOutlined,
+    FieldTimeOutlined,
 } from '@ant-design/icons';
-import { Form, message, Tag, DatePicker } from 'antd';
+import SmartInput from '~/components/Layout/components/SmartInput';
+import SmartButton from '~/components/Layout/components/SmartButton';
+import PopupModal from '~/components/Layout/components/PopupModal';
 import {
-    createAttandance,
-    getAllAttendancesWithPagination,
-    deleteAttendance,
-    updateAttandance,
-} from '~/service/admin/attendance';
-import { getAllEmployeesNoPaging } from '~/service/admin/employee';
-import 'moment/locale/vi';
-
-moment.locale('vi');
+    Form,
+    message,
+    Tag,
+    Pagination,
+    Card,
+    Avatar,
+    Space,
+    Empty,
+    Spin,
+    DatePicker,
+    Select,
+    Row,
+    Col,
+    Statistic,
+    ConfigProvider
+} from 'antd';
+import {getAllAttendances, filterAttendances, createAttendance, updateAttendance} from '~/service/admin/attendance';
+import {getAllEmployeesNoPaging} from '~/service/admin/employee';
+import {exportExcelFile} from '~/service/admin/export_service';
+import AttendanceCard from "~/components/Layout/components/AttendanceCard";
+import useDebounce from '~/hooks/useDebounce';
 
 const cx = classNames.bind(styles);
+const {RangePicker} = DatePicker;
+const {Option} = Select;
 
 function Attendance() {
     const [attendanceSource, setAttendanceSource] = useState([]);
@@ -35,183 +48,182 @@ function Attendance() {
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
-        pageSize: 5, // Đặt mặc định là 5 dòng
+        pageSize: 9,
         total: 0,
     });
     const [modalMode, setModalMode] = useState('create');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedAttendance, setSelectedAttendance] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const debouncedSearchTerm = useDebounce(searchTerm, 0); // use 1000 to enable useDebounce
+    const [dateRange, setDateRange] = useState(null);
+    const [statusFilter, setStatusFilter] = useState('ALL');
+    const [statistics, setStatistics] = useState({
+        present: 0,
+        absent: 0,
+        late: 0,
+        earlyLeave: 0,
+    });
     const [form] = Form.useForm();
-
-    const statusAttendance = {
-        PRESENT: 'success',
-        ABSENT: 'error',
-        LATE: 'processing',
-    };
-
-    const columns = [
-        {
-            title: 'Nhân viên',
-            dataIndex: 'employeeName',
-            key: 'employeeName',
-        },
-        {
-            title: 'Check In',
-            dataIndex: 'checkIn',
-            key: 'checkIn',
-            render: (date) =>
-                date && moment(date, moment.ISO_8601, true).isValid()
-                    ? moment(date).format('DD/MM/YYYY HH:mm:ss')
-                    : 'N/A',
-        },
-        {
-            title: 'Check Out',
-            dataIndex: 'checkOut',
-            key: 'checkOut',
-            render: (date) =>
-                date && moment(date, moment.ISO_8601, true).isValid()
-                    ? moment(date).format('DD/MM/YYYY HH:mm:ss')
-                    : 'N/A',
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => (
-                <Tag color={statusAttendance[status] || 'default'}>
-                    {status}
-                </Tag>
-            ),
-        },
-        {
-            title: 'Ghi chú',
-            dataIndex: 'notes',
-            key: 'notes',
-        },
-        {
-            title: 'Hành động',
-            key: 'actions',
-            render: (_, record) => (
-                <>
-                    <SmartButton
-                        type="primary"
-                        icon={<EditOutlined />}
-                        buttonWidth={50}
-                        onClick={() => handleEditAttendance(record)}
-                    />
-                    <SmartButton
-                        type="danger"
-                        icon={<DeleteOutlined />}
-                        buttonWidth={50}
-                        onClick={() => handleDeleteAttendance(record.id)}
-                        style={{ marginLeft: '8px' }}
-                    />
-                </>
-            ),
-        },
-    ];
 
     const attendanceModalFields = [
         {
-            label: 'Tên nhân viên',
+            label: 'Nhân viên',
             name: 'employeeId',
             type: 'select',
             options: employeeSource,
-            rules: [{ required: true, message: 'Vui lòng chọn nhân viên!' }],
+            rules: [{required: true, message: 'Vui lòng chọn nhân viên!'}],
         },
         {
-            label: 'Trạng thái điểm danh',
+            label: 'Ngày',
+            name: 'attendanceDate',
+            type: 'date',
+            rules: [{required: true, message: 'Vui lòng chọn ngày!'}],
+        },
+        {
+            label: 'Giờ vào',
+            name: 'checkIn',
+            type: 'time',
+            rules: [{required: true, message: 'Vui lòng nhập giờ vào!'}],
+        },
+        {
+            label: 'Giờ ra',
+            name: 'checkOut',
+            type: 'time',
+        },
+        {
+            label: 'Trạng thái',
             name: 'status',
             type: 'select',
-            options: ['PRESENT', 'ABSENT', 'LATE'],
-        },
-        {
-            label: 'Check In',
-            name: 'checkIn',
-            type: 'date',
-            render: () => (
-                <DatePicker
-                    format="DD/MM/YYYY HH:mm:ss"
-                    showTime
-                    style={{ width: '100%' }}
-                />
-            ),
-            rules: [{ required: true, message: 'Vui lòng chọn thời gian Check In!' }],
-        },
-        {
-            label: 'Check Out',
-            name: 'checkOut',
-            type: 'date',
-            render: () => (
-                <DatePicker
-                    format="DD/MM/YYYY HH:mm:ss"
-                    showTime
-                    style={{ width: '100%' }}
-                />
-            ),
+            rules: [{required: true, message: 'Vui lòng chọn trạng thái!'}],
+            options: [
+                {value: 'PRESENT', label: 'Có mặt'},
+                {value: 'ABSENT', label: 'Vắng mặt'},
+                {value: 'LATE', label: 'Đi muộn'},
+            ],
         },
         {
             label: 'Ghi chú',
             name: 'notes',
-            type: 'text',
+            type: 'textarea',
         },
     ];
 
     useEffect(() => {
         handleGetAllEmployees();
-        fetchAttendances();
+        handleGetAllAttendances();
     }, []);
 
-    const fetchAttendances = async (page = 1, pageSize = 5) => {
+    useEffect(() => {
+        handleFilterAttendances();
+    }, [debouncedSearchTerm, dateRange, statusFilter, pagination.current, pagination.pageSize]);
+
+    const handleGetAllEmployees = async () => {
+        try {
+            const response = await getAllEmployeesNoPaging();
+            const mappedEmployees = response.map(emp => ({
+                value: emp.id,
+                label: `${emp.firstName} ${emp.lastName} - ${emp.employeeCode}`,
+            }));
+            setEmployeeSource(mappedEmployees);
+        } catch (error) {
+            console.error('Error fetching employees:', error);
+            setEmployeeSource([]);
+        }
+    };
+
+    const handleGetAllAttendances = async (page = 1, pageSize = 9) => {
         setLoading(true);
         try {
-            const response = await getAllAttendancesWithPagination({ page: page - 1, pageSize });
+            const response = await getAllAttendances({page: page - 1, pageSize});
             if (response && Array.isArray(response.content)) {
-                const mappedAttendances = response.content.map((attendance) => ({
-                    ...attendance,
-                    checkIn: attendance.checkIn ? attendance.checkIn : null,
-                    checkOut: attendance.checkOut ? attendance.checkOut : null,
-                }));
-                setAttendanceSource(mappedAttendances);
+                setAttendanceSource(response.content);
                 setPagination({
                     current: page,
                     pageSize: pageSize,
-                    total: response.totalElements || 0,
+                    total: response.totalElements,
                 });
+                calculateStatistics(response.content);
             } else {
-                console.error('Định dạng dữ liệu không hợp lệ:', response);
+                console.error('Invalid data format:', response);
                 setAttendanceSource([]);
-                setPagination({
-                    current: page,
-                    pageSize: pageSize,
-                    total: 0,
-                });
             }
         } catch (error) {
-            console.error('Lỗi khi lấy danh sách điểm danh:', error);
-            message.error('Không thể lấy danh sách điểm danh');
+            console.error('Error fetching attendances:', error);
             setAttendanceSource([]);
-            setPagination({
-                current: page,
-                pageSize: pageSize,
-                total: 0,
-            });
         } finally {
             setLoading(false);
         }
     };
 
-    const handleGetAllEmployees = async () => {
+    const calculateStatistics = (data) => {
+        const stats = {
+            present: 0,
+            absent: 0,
+            late: 0,
+            earlyLeave: 0,
+        };
+
+        data.forEach(item => {
+            switch (item.status) {
+                case 'PRESENT':
+                    stats.present++;
+                    break;
+                case 'ABSENT':
+                    stats.absent++;
+                    break;
+                case 'LATE':
+                    stats.late++;
+                    break;
+                case 'EARLY_LEAVE':
+                    stats.earlyLeave++;
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        setStatistics(stats);
+    };
+
+    const handleFilterAttendances = async () => {
+        setLoading(true);
         try {
-            const response = await getAllEmployeesNoPaging();
-            const employeesData = response.map((employee) => ({
-                label: `${employee.firstName} ${employee.lastName}`.trim(),
-                value: employee.id,
-            }));
-            setEmployeeSource(employeesData);
+            const params = {
+                page: pagination.current - 1,
+                pageSize: pagination.pageSize,
+            };
+
+            if (debouncedSearchTerm) {
+                params.employeeName = debouncedSearchTerm; // dùng debounced value
+            }
+
+            if (dateRange && dateRange.length === 2) {
+                params.startDate = dateRange[0].format('YYYY-MM-DD');
+                params.endDate = dateRange[1].format('YYYY-MM-DD');
+            }
+
+            if (statusFilter !== 'ALL') {
+                params.status = statusFilter;
+            }
+
+            const response = await filterAttendances(params);
+            if (response && Array.isArray(response.content)) {
+                setAttendanceSource(response.content);
+                setPagination({
+                    current: pagination.current,
+                    pageSize: pagination.pageSize,
+                    total: response.totalElements,
+                });
+                calculateStatistics(response.content);
+            } else {
+                setAttendanceSource([]);
+            }
         } catch (error) {
-            console.error('Lỗi khi lấy danh sách nhân viên:', error);
-            message.error('Không thể lấy danh sách nhân viên');
+            console.error('Error filtering attendances:', error);
+            setAttendanceSource([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -224,77 +236,95 @@ function Attendance() {
 
     const handleCallCreateAttendance = async (formData) => {
         try {
-            const formattedData = {
-                ...formData,
-                checkIn: formData.checkIn ? moment(formData.checkIn).format('YYYY-MM-DDTHH:mm:ss') : null,
-                checkOut: formData.checkOut ? moment(formData.checkOut).format('YYYY-MM-DDTHH:mm:ss') : null,
-            };
-            await createAttandance(formattedData);
-            message.success('Điểm danh được tạo thành công');
-            fetchAttendances();
+            await createAttendance(formData);
+            message.success('Thêm chấm công thành công!');
+            handleGetAllAttendances();
             setIsModalOpen(false);
         } catch (error) {
-            message.error('Không thể tạo điểm danh');
+            message.error(`Lỗi khi thêm chấm công: ${error.response?.data?.message || error.message}`);
         }
     };
 
-    const handleDeleteAttendance = async (id) => {
-        try {
-            await deleteAttendance(id);
-            message.success('Điểm danh đã được xóa thành công');
-            fetchAttendances(pagination.current, pagination.pageSize);
-        } catch (error) {
-            message.error('Không thể xóa điểm danh');
-        }
+    const handleViewAttendance = (record) => {
+        setSelectedAttendance(record);
+        setModalMode('view');
+        const formattedRecord = {
+            ...record,
+            attendanceDate: record.attendanceDate ? dayjs(record.attendanceDate) : null,
+            checkIn: record.checkIn ? dayjs(record.checkIn) : null,
+            checkOut: record.checkOut ? dayjs(record.checkOut) : null,
+        };
+        form.setFieldsValue(formattedRecord);
+        setIsModalOpen(true);
     };
 
     const handleEditAttendance = (record) => {
         setSelectedAttendance(record);
         setModalMode('edit');
-        form.setFieldsValue({
+        const formattedRecord = {
             ...record,
-            checkIn: record.checkIn && moment(record.checkIn, moment.ISO_8601, true).isValid()
-                ? moment(record.checkIn)
-                : null,
-            checkOut: record.checkOut && moment(record.checkOut, moment.ISO_8601, true).isValid()
-                ? moment(record.checkOut)
-                : null,
-        });
+            attendanceDate: record.attendanceDate ? dayjs(record.attendanceDate) : null,
+            checkIn: record.checkIn ? dayjs(record.checkIn) : null,
+            checkOut: record.checkOut ? dayjs(record.checkOut) : null,
+        };
+        form.setFieldsValue(formattedRecord);
         setIsModalOpen(true);
     };
 
     const handleCallUpdateAttendance = async (formData) => {
         try {
-            const formattedData = {
-                ...formData,
-                checkIn: formData.checkIn ? moment(formData.checkIn).format('YYYY-MM-DDTHH:mm:ss') : null,
-                checkOut: formData.checkOut ? moment(formData.checkOut).format('YYYY-MM-DDTHH:mm:ss') : null,
-            };
-            await updateAttandance(selectedAttendance.id, formattedData);
-            message.success('Điểm danh đã được cập nhật thành công');
-            fetchAttendances();
+            await updateAttendance(selectedAttendance.id, formData);
+            message.success('Cập nhật chấm công thành công!');
+            handleGetAllAttendances();
             setIsModalOpen(false);
         } catch (error) {
-            message.error('Không thể cập nhật điểm danh');
+            message.error(`Lỗi khi cập nhật: ${error.response?.data?.message || error.message}`);
         }
     };
 
-    const handleTableChange = (pagination) => {
-        const { current, pageSize } = pagination;
-        const newCurrent = pageSize !== pagination.pageSize ? 1 : current;
-        fetchAttendances(newCurrent, pageSize);
+    const handleDeleteAttendance = (record) => {
+        setSelectedAttendance(record);
+        setModalMode('delete');
+        form.setFieldsValue(record);
+        setIsModalOpen(true);
     };
 
-    const getModalTitle = () => {
-        switch (modalMode) {
-            case 'create':
-                return 'Thêm Điểm Danh Mới';
-            case 'edit':
-                return 'Chỉnh Sửa Điểm Danh';
-            case 'delete':
-                return 'Xóa Điểm Danh';
-            default:
-                return 'Chi Tiết Điểm Danh';
+    const handleCallDeleteAttendance = async () => {
+        try {
+            // await deleteAttendance(selectedAttendance.id);
+            message.success('Xóa chấm công thành công!');
+            handleGetAllAttendances();
+            setIsModalOpen(false);
+        } catch (error) {
+            message.error(`Lỗi khi xóa: ${error.response?.data?.message || error.message}`);
+        }
+    };
+
+    const handleExportFile = async () => {
+        try {
+            const response = await exportExcelFile('attendance');
+            if (
+                !response.headers['content-type'].includes(
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                )
+            ) {
+                throw new Error('Định dạng file không hợp lệ');
+            }
+            const url = window.URL.createObjectURL(response.data);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute(
+                'download',
+                `attendance_${new Date()
+                    .toISOString()
+                    .replace(/[-:]/g, '')}.xlsx`,
+            );
+            link.click();
+            window.URL.revokeObjectURL(url);
+            message.success('Tải file Excel thành công!');
+        } catch (error) {
+            console.error('Lỗi khi xuất file Excel:', error);
+            message.error('Không thể tải file Excel');
         }
     };
 
@@ -304,66 +334,172 @@ function Attendance() {
         } else if (modalMode === 'edit') {
             handleCallUpdateAttendance(formData);
         } else if (modalMode === 'delete') {
-            // handleCallDeleteAttendance();
+            handleCallDeleteAttendance();
+        }
+    };
+
+    const handlePaginationChange = (page, pageSize) => {
+        setPagination(prev => ({
+            ...prev,
+            current: page,
+            pageSize,
+        }));
+    };
+
+    const getModalTitle = () => {
+        switch (modalMode) {
+            case 'create':
+                return 'Thêm Chấm công Mới';
+            case 'edit':
+                return 'Chỉnh sửa Chấm công';
+            case 'delete':
+                return 'Xóa Chấm công';
+            case 'view':
+                return 'Chi tiết Chấm công';
+            default:
+                return 'Chấm công';
         }
     };
 
     return (
-        <div className={cx('attendance-wrapper')}>
-            <div className={cx('sub_header')}>
-                <SmartInput
-                    size="large"
-                    placeholder="Tìm kiếm"
-                    icon={<SearchOutlined />}
-                />
-                <div className={cx('features')}>
-                    <SmartButton
-                        title="Thêm mới"
-                        icon={<PlusOutlined />}
-                        type="primary"
-                        onClick={handleAddAttendance}
-                    />
-                    <SmartButton
-                        title="Xử lý"
-                        icon={<CheckCircleOutlined />}
-                        type="primary"
-                        style={{ marginLeft: '8px' }}
-                    />
-                    <SmartButton title="Bộ lọc" icon={<FilterOutlined />} />
-                    <SmartButton
-                        title="Excel"
-                        icon={<CloudUploadOutlined />}
-                    />
-                </div>
-            </div>
-            <div className={cx('attendance-container')}>
-                <SmartTable
-                    columns={columns}
-                    dataSources={attendanceSource}
-                    loading={loading}
-                    pagination={{
-                        current: pagination.current,
-                        pageSize: pagination.pageSize,
-                        total: pagination.total,
-                        showSizeChanger: true,
-                        pageSizeOptions: ['5', '10', '20', '50'],
-                        showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} bản ghi`,
-                    }}
-                    onTableChange={handleTableChange}
-                />
-            </div>
+        <ConfigProvider dateLib={dayjs}>
+            <div className={cx('wrapper')}>
+                {/* Statistics Cards */}
+                <Row gutter={16} className={cx('stats-row')}>
+                    <Col span={6}>
+                        <Card className={cx('stat-card')}>
+                            <Statistic
+                                title="Có mặt"
+                                value={statistics.present}
+                                valueStyle={{color: '#3f8600'}}
+                                prefix={<CheckCircleOutlined/>}
+                            />
+                        </Card>
+                    </Col>
+                    <Col span={6}>
+                        <Card className={cx('stat-card')}>
+                            <Statistic
+                                title="Vắng mặt"
+                                value={statistics.absent}
+                                valueStyle={{color: '#cf1322'}}
+                                prefix={<CloseCircleOutlined/>}
+                            />
+                        </Card>
+                    </Col>
+                    <Col span={6}>
+                        <Card className={cx('stat-card')}>
+                            <Statistic
+                                title="Đi muộn"
+                                value={statistics.late}
+                                valueStyle={{color: '#faad14'}}
+                                prefix={<ClockCircleOutlined/>}
+                            />
+                        </Card>
+                    </Col>
+                    <Col span={6}>
+                        <Card className={cx('stat-card')}>
+                            <Statistic
+                                title="Về sớm"
+                                value={statistics.earlyLeave}
+                                valueStyle={{color: '#fa8c16'}}
+                                prefix={<FieldTimeOutlined/>}
+                            />
+                        </Card>
+                    </Col>
+                </Row>
 
-            <PopupModal
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                title={getModalTitle()}
-                fields={modalMode === 'delete' ? [] : attendanceModalFields}
-                onSubmit={handleFormSubmit}
-                initialValues={selectedAttendance}
-                isDeleteMode={modalMode === 'delete'}
-                formInstance={form}
-            />
-        </div>
+                {/* Filter Section */}
+                <div className={cx('filter-section')}>
+                    <Space direction="vertical" size="middle" className={cx('filter-space')}>
+                        <div className={cx('filter-inputs')}>
+                            <SmartInput
+                                size="large"
+                                placeholder="Tìm kiếm theo tên nhân viên, mã NV..."
+                                icon={<SearchOutlined/>}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className={cx('search-input')}
+                            />
+                            <RangePicker
+                                size="large"
+                                placeholder={['Từ ngày', 'Đến ngày']}
+                                format="DD/MM/YYYY"
+                                onChange={(dates) => setDateRange(dates)}
+                                className={cx('date-picker')}
+                            />
+                            <Select
+                                size="large"
+                                placeholder="Lọc theo trạng thái"
+                                value={statusFilter}
+                                onChange={(value) => setStatusFilter(value)}
+                                className={cx('status-select')}
+                            >
+                                <Option value="ALL">Tất cả</Option>
+                                <Option value="PRESENT">Có mặt</Option>
+                                <Option value="ABSENT">Vắng mặt</Option>
+                                <Option value="LATE">Đi muộn</Option>
+                            </Select>
+
+                            <SmartButton
+                                title="Thêm mới"
+                                icon={<PlusOutlined/>}
+                                type="primary"
+                                onClick={handleAddAttendance}
+                            />
+                            <SmartButton
+                                title="Excel"
+                                icon={<CloudUploadOutlined/>}
+                                onClick={handleExportFile}
+                            />
+                        </div>
+                    </Space>
+                </div>
+
+                {/* Attendance Container with Pagination on Top */}
+                <div className={cx('container')}>
+                    <div className={cx('pagination-wrapper')}>
+                        <Pagination
+                            current={pagination.current}
+                            pageSize={pagination.pageSize}
+                            total={pagination.total}
+                            onChange={handlePaginationChange}
+                            showSizeChanger
+                            showTotal={(total) => `Tổng ${total} bản ghi chấm công`}
+                            pageSizeOptions={['9', '18', '27', '36']}
+                        />
+                    </div>
+                    <Spin spinning={loading}>
+                        {attendanceSource.length === 0 ? (
+                            <Empty description="Không có dữ liệu chấm công"/>
+                        ) : (
+                            <div className={cx('cards-grid')}>
+                                {attendanceSource.map((attendance) => (
+                                    <AttendanceCard
+                                        key={attendance.id}
+                                        attendance={attendance}
+                                        onView={handleViewAttendance}
+                                        onEdit={handleEditAttendance}
+                                        onDelete={handleDeleteAttendance}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </Spin>
+                </div>
+
+                <PopupModal
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    title={getModalTitle()}
+                    fields={modalMode === 'delete' || modalMode === 'view' ? [] : attendanceModalFields}
+                    onSubmit={handleFormSubmit}
+                    initialValues={selectedAttendance}
+                    isDeleteMode={modalMode === 'delete'}
+                    isViewMode={modalMode === 'view'}
+                    formInstance={form}
+                />
+            </div>
+        </ConfigProvider>
     );
 }
 

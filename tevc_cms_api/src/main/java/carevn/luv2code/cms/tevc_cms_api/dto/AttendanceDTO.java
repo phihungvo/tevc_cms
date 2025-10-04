@@ -2,7 +2,6 @@ package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
 
-import carevn.luv2code.cms.tevc_cms_api.enums.AttendanceStatus;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -16,11 +15,17 @@ public class AttendanceDTO {
 
     String employeeName;
 
+    String employeeCode;
+
+    Date attendanceDate;
+
     Date checkIn;
 
     Date checkOut;
 
-    AttendanceStatus status;
+    Double workHours;
+
+    String status;
 
     String notes;
 }

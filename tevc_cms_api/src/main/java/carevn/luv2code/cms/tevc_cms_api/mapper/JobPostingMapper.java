@@ -1,0 +1,31 @@
+package carevn.luv2code.cms.tevc_cms_api.mapper;
+
+import org.mapstruct.*;
+
+import carevn.luv2code.cms.tevc_cms_api.dto.JobPostingDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.JobPosting;
+
+@Mapper(componentModel = "spring")
+public interface JobPostingMapper {
+
+    @Mapping(source = "status", target = "jobPostingStatus")
+    @Mapping(source = "department.id", target = "department")
+    @Mapping(source = "position.id", target = "position")
+    @Mapping(source = "recruiter.id", target = "recruiter")
+    JobPostingDTO toDTO(JobPosting jobPosting);
+
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "department", ignore = true)
+    @Mapping(target = "position", ignore = true)
+    @Mapping(target = "recruiter", ignore = true)
+    @Mapping(target = "candidates", ignore = true)
+    JobPosting toEntity(JobPostingDTO dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "department", ignore = true)
+    @Mapping(target = "position", ignore = true)
+    @Mapping(target = "recruiter", ignore = true)
+    @Mapping(target = "candidates", ignore = true)
+    void updateEntityFromDto(JobPostingDTO dto, @MappingTarget JobPosting entity);
+}

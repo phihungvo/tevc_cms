@@ -1,17 +1,18 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.Exportable;
+import carevn.luv2code.cms.tevc_cms_api.enums.AttendanceStatus;
 import carevn.luv2code.cms.tevc_cms_api.exception.ExcelExportException;
-import carevn.luv2code.cms.tevc_cms_api.repository.DepartmentRepository;
-import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
-import carevn.luv2code.cms.tevc_cms_api.repository.PayrollRepository;
-import carevn.luv2code.cms.tevc_cms_api.repository.UserRepository;
+import carevn.luv2code.cms.tevc_cms_api.repository.*;
 import carevn.luv2code.cms.tevc_cms_api.service.ExcelExportService;
 import carevn.luv2code.cms.tevc_cms_api.util.ExcelColumn;
 import carevn.luv2code.cms.tevc_cms_api.util.ExcelGenerator;
@@ -23,16 +24,19 @@ public class ExcelExportServiceImpl implements ExcelExportService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final PayrollRepository payrollRepository;
+    private final AttendanceRepository attendanceRepository;
 
     public ExcelExportServiceImpl(
             UserRepository userRepository,
             EmployeeRepository employeeRepository,
             DepartmentRepository departmentRepository,
-            PayrollRepository payrollRepository) {
+            PayrollRepository payrollRepository,
+            AttendanceRepository attendanceRepository) {
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
         this.payrollRepository = payrollRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
     @Override
@@ -52,6 +56,8 @@ public class ExcelExportServiceImpl implements ExcelExportService {
                 return getDepartmentExportable();
             case "payroll":
                 return getPayrollExportable();
+            case "attendance":
+                return getAttendanceExportable();
             default:
                 throw new ExcelExportException("Unsupported entity type: " + entityType);
         }
@@ -180,6 +186,71 @@ public class ExcelExportServiceImpl implements ExcelExportService {
                             public Date paidDate = payroll.getPaidDate();
                         })
                         .toList();
+            }
+        };
+    }
+
+    private Exportable getAttendanceExportable() {
+        return new Exportable() {
+            @Override
+            public List<ExcelColumn> getExcelColumns() {
+                return List.of(
+                        new ExcelColumn("STT", "stt", Integer.class),
+                        new ExcelColumn("ID", "id", Integer.class),
+                        new ExcelColumn("Employee Code", "employeeCode", String.class),
+                        new ExcelColumn("Employee Name", "employeeName", String.class),
+                        new ExcelColumn(
+                                "Attendance Date Time", "attendanceDate", Date.class), // Sẽ hiển thị đầy đủ ngày giờ
+                        new ExcelColumn("Check In Time", "checkIn", Date.class), // Sẽ hiển thị đầy đủ giờ vào
+                        new ExcelColumn("Check Out Time", "checkOut", Date.class), // Sẽ hiển thị đầy đủ giờ ra
+                        new ExcelColumn("Work Hours", "workHours", Double.class),
+                        new ExcelColumn("Status", "status", AttendanceStatus.class),
+                        new ExcelColumn("Notes", "notes", String.class));
+            }
+
+            @Override
+            public List<?> getData() {
+                return attendanceRepository.findAll().stream()
+                        .map(attendance -> {
+                            LocalDateTime attDate = attendance.getAttendanceDate();
+                            Date attendanceDateTime = attDate != null
+                                    ? Date.from(attDate.atZone(ZoneId.systemDefault())
+                                            .toInstant())
+                                    : null;
+
+                            LocalDateTime checkInTime = attendance.getCheckIn();
+                            Date checkInDate = checkInTime != null
+                                    ? Date.from(checkInTime
+                                            .atZone(ZoneId.systemDefault())
+                                            .toInstant())
+                                    : null;
+
+                            LocalDateTime checkOutTime = attendance.getCheckOut();
+                            Date checkOutDate = checkOutTime != null
+                                    ? Date.from(checkOutTime
+                                            .atZone(ZoneId.systemDefault())
+                                            .toInstant())
+                                    : null;
+
+                            return new Object() {
+                                public Integer id = attendance.getId();
+                                public Integer stt = attendance.getId();
+                                public String employeeCode = attendance.getEmployee() != null
+                                        ? attendance.getEmployee().getEmployeeCode()
+                                        : "";
+                                public String employeeName = attendance.getEmployee() != null
+                                        ? attendance.getEmployee().getFirstName() + " "
+                                                + attendance.getEmployee().getLastName()
+                                        : "";
+                                public Date attendanceDate = attendanceDateTime;
+                                public Date checkIn = checkInDate;
+                                public Date checkOut = checkOutDate;
+                                public Double workHours = attendance.getWorkHours();
+                                public AttendanceStatus status = attendance.getStatus();
+                                public String notes = attendance.getNotes() != null ? attendance.getNotes() : "";
+                            };
+                        })
+                        .collect(Collectors.toList());
             }
         };
     }

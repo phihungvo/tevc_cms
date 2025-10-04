@@ -21,7 +21,7 @@ import { getAllEmployees } from '~/service/admin/employee';
 
 const cx = classNames.bind(styles);
 
-function Leave({ employeeId }) { // Nhận prop employeeId
+function Leave({ employeeId }) {
     const [leaveSource, setLeaveSource] = useState([]);
     const [employeeSource, setEmployeeSource] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -53,11 +53,11 @@ function Leave({ employeeId }) { // Nhận prop employeeId
 
     const columns = [
         {
-            title: 'Employee Name',
+            title: 'Tên nhân viên',
             dataIndex: 'employeeName',
             key: 'employeeName',
             width: 150,
-            hidden: !!employeeId, // Ẩn cột Employee Name nếu có employeeId
+            hidden: !!employeeId,
         },
         {
             title: 'Thời gian nghĩ phép',
@@ -71,7 +71,7 @@ function Leave({ employeeId }) { // Nhận prop employeeId
             }
         },
         {
-            title: 'Type',
+            title: 'Loại nghĩ phép',
             dataIndex: 'leaveType',
             key: 'leaveType',
             width: 100,
@@ -81,12 +81,12 @@ function Leave({ employeeId }) { // Nhận prop employeeId
             },
         },
         {
-            title: 'Reason',
+            title: 'Lý do nghĩ',
             dataIndex: 'reason',
             key: 'reason',
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'leaveStatus',
             key: 'leaveStatus',
             render: (status) => {
@@ -95,12 +95,12 @@ function Leave({ employeeId }) { // Nhận prop employeeId
             },
         },
         {
-            title: 'Approver Comments',
+            title: 'Ghi chú của người duyệt',
             dataIndex: 'approverComments',
             key: 'approverComments',
         },
         {
-            title: 'Actions',
+            title: 'Thao tác',
             fixed: 'right',
             width: 130,
             render: (_, record) => (
@@ -125,21 +125,21 @@ function Leave({ employeeId }) { // Nhận prop employeeId
 
     const userModalFields = [
         {
-            label: 'Employee Name',
+            label: 'Tên nhân viên',
             name: 'employeeId',
             type: 'select',
             options: employeeSource,
-            rules: [{ required: true, message: 'Employee is required!' }],
-            hidden: !!employeeId, // Ẩn trường Employee Name nếu có employeeId
+            rules: [{ required: true, message: 'Tên nhân viên bắt buộc!' }],
+            hidden: !!employeeId,
         },
         {
-            label: 'Leave Status',
+            label: 'Trạng thái',
             name: 'leaveStatus',
             type: 'select',
             options: ['PENDING', 'APPROVED', 'REJECTED'],
         },
         {
-            label: 'Leave Type',
+            label: 'Loại nghĩ phép',
             name: 'leaveType',
             type: 'select',
             options: [
@@ -153,31 +153,31 @@ function Leave({ employeeId }) { // Nhận prop employeeId
             ],
         },
         {
-            label: 'Start Date',
+            label: 'Thời gian bắt đầu',
             name: 'startDate',
             type: 'date',
         },
         {
-            label: 'End Date',
+            label: 'Thời gian kết thúc',
             name: 'endDate',
             type: 'date',
         },
         {
-            label: 'Reason',
+            label: 'Lý do nghĩ phép',
             name: 'reason',
             type: 'text',
         },
         {
-            label: 'Approver Comments',
+            label: 'Ghi chú của người duyệt',
             name: 'approverComments',
             type: 'text',
         },
-    ].filter((field) => !field.hidden); // Lọc bỏ các trường ẩn
+    ].filter((field) => !field.hidden);
 
     useEffect(() => {
         handleGetAllEmployees();
         handleGetLeaves();
-    }, [employeeId]); // Thêm employeeId vào dependency array
+    }, [employeeId]);
 
     const handleGetAllEmployees = async (page = 1, pageSize = 10) => {
         try {

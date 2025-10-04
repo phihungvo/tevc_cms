@@ -1,6 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.AttendanceStatus;
 import jakarta.persistence.*;
@@ -24,12 +24,18 @@ public class Attendance {
     @ToString.Exclude
     Employee employee;
 
-    Date checkIn;
+    @Column(name = "attendance_date", nullable = false)
+    LocalDateTime attendanceDate;
 
-    Date checkOut;
+    LocalDateTime checkIn;
+
+    LocalDateTime checkOut;
 
     @Enumerated(EnumType.STRING)
     AttendanceStatus status;
+
+    @Column(name = "work_hours")
+    Double workHours; // số giờ làm thực tế (có thể tính từ checkIn/checkOut)
 
     String notes;
 }
