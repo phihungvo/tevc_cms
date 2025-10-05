@@ -57,6 +57,7 @@ function Leave({ employeeId }) {
             dataIndex: 'employeeName',
             key: 'employeeName',
             width: 150,
+            align: 'center',
             hidden: !!employeeId,
         },
         {
@@ -64,6 +65,7 @@ function Leave({ employeeId }) {
             dataIndex: 'leaveDuration',
             key: 'leaveDuration',
             width: 180,
+            align: 'center',
             render: (_, record) => {
                 const start = record.startDate ? new Date(record.startDate).toLocaleDateString('vi-VN') : 'N/A';
                 const end = record.endDate ? new Date(record.endDate).toLocaleDateString('vi-VN') : 'N/A';
@@ -75,6 +77,7 @@ function Leave({ employeeId }) {
             dataIndex: 'leaveType',
             key: 'leaveType',
             width: 100,
+            align: 'center',
             render: (leaveType) => {
                 const style = leaveTypeStyles[leaveType] || { color: 'default', label: leaveType || 'N/A' };
                 return <Tag color={style.color}>{style.label}</Tag>;
@@ -89,6 +92,7 @@ function Leave({ employeeId }) {
             title: 'Trạng thái',
             dataIndex: 'leaveStatus',
             key: 'leaveStatus',
+            align: 'center',
             render: (status) => {
                 const style = statusStyles[status] || { color: 'default', label: status || 'N/A' };
                 return <Tag color={style.color}>{style.label}</Tag>;

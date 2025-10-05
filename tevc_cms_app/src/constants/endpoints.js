@@ -112,6 +112,8 @@ const API_ENDPOINTS = {
     CONTRACT: {
         GET_ALL: `${BASE_URL}/contracts`,
         ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/contracts/employee/${employeeId}/paged`,
+        UPLOAD_FILE_CONTRACT: (contractId) => `${BASE_URL}/files/upload/contract/${contractId}`,
+        CREATE: `${BASE_URL}/contracts`,
     },
     CANDIDATE: {
         GET_ALL: `${BASE_URL}/candidates/paginated`,

@@ -63,6 +63,32 @@ public class FileController {
                 .build();
     }
 
+    @PostMapping("/upload/contract/{contractId}")
+    public ApiResponse<List<FileDTO>> uploadFilesForContract(
+            @PathVariable Integer contractId, @RequestParam("files") MultipartFile[] files) {
+
+        if (files == null || files.length == 0) {
+            return ApiResponse.<List<FileDTO>>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("Không có file nào được chọn")
+                    .result(null)
+                    .build();
+        }
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User uploadedBy = userRepository
+                .findByUserName(auth.getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        List<FileDTO> savedFiles = minioService.uploadFilesForContract(files, uploadedBy, contractId);
+
+        return ApiResponse.<List<FileDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Upload file cho hợp đồng thành công")
+                .result(savedFiles)
+                .build();
+    }
+
     @GetMapping("/presigned-url/{fileId}")
     public ResponseEntity<ApiResponse<String>> getPresignedUrl(@PathVariable Integer fileId) {
         try {

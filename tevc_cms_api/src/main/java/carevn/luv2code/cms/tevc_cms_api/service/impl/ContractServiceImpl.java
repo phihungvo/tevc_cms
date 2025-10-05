@@ -1,5 +1,6 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import carevn.luv2code.cms.tevc_cms_api.dto.ContractDTO;
 import carevn.luv2code.cms.tevc_cms_api.entity.Contract;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
+import carevn.luv2code.cms.tevc_cms_api.entity.Position;
 import carevn.luv2code.cms.tevc_cms_api.enums.ContractStatus;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.ContractMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.ContractRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
+import carevn.luv2code.cms.tevc_cms_api.repository.PositionRepository;
 import carevn.luv2code.cms.tevc_cms_api.service.ContractService;
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +30,7 @@ public class ContractServiceImpl implements ContractService {
     private final ContractRepository contractRepository;
     private final EmployeeRepository employeeRepository;
     private final ContractMapper contractMapper;
+    private final PositionRepository positionRepository;
 
     @Override
     @Transactional
@@ -36,15 +40,22 @@ public class ContractServiceImpl implements ContractService {
                 .isPresent()) {
             throw new AppException(ErrorCode.CONTRACT_ALREADY_EXISTS);
         }
-
         Contract contract = contractMapper.toEntity(contractDTO);
+
         Employee employee = employeeRepository
                 .findById(contractDTO.getEmployeeId())
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
         contract.setEmployee(employee);
-        //        contract.setStatus(ContractStatus.ACTIVE);
-        //        contract.setSignedDate(java.time.LocalDate.now());
+
+        Position position = positionRepository
+                .findById(contractDTO.getPositionId()) // Giả sử bạn có PositionRepository
+                .orElseThrow(() -> new AppException(ErrorCode.POSITION_NOT_FOUND)); // Tạo ErrorCode nếu cần
+        contract.setPosition(position);
+
+        // Optional: Set default
+        contract.setStatus(ContractStatus.ACTIVE);
+        contract.setSignedDate(LocalDate.now());
 
         return contractMapper.toDTO(contractRepository.save(contract));
     }

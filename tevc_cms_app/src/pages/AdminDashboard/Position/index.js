@@ -18,7 +18,7 @@ import { getAllPositions, createPosition, updatePosition, deletePosition, getAll
 
 const cx = classNames.bind(styles);
 
-function Position({ employeeId }) { // Nhận prop employeeId
+function Position({ employeeId }) {
     const [positionSource, setPositionSource] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -38,12 +38,14 @@ function Position({ employeeId }) { // Nhận prop employeeId
             key: 'title',
             width: 150,
             fixed: 'left',
+            align: 'center',
         },
         {
             title: 'Loại công việc',
             dataIndex: 'positionType',
             key: 'positionType',
             width: 80,
+            align: 'center',
             render: (positionType) => (
                 <Tag color="blue">{positionType || 'N/A'}</Tag>
             ),
@@ -59,6 +61,7 @@ function Position({ employeeId }) { // Nhận prop employeeId
             dataIndex: 'baseSalary',
             key: 'baseSalary',
             width: 150,
+            align: 'center',
             render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()} VND` : 'N/A',
         },
         {

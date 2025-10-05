@@ -35,6 +35,10 @@ public class File {
     @Column(name = "size", nullable = false)
     Long size;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id")
+    Contract contract;
+
     @Column(name = "upload_date", updatable = false)
     @CreationTimestamp
     LocalDateTime uploadDate;
