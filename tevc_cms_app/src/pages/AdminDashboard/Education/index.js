@@ -38,44 +38,44 @@ function Education({employeeId}) {
 
     const baseColumns = [
         {
-            title: 'institutionName',
+            title: 'Trường học',
             dataIndex: 'institutionName',
             key: 'institutionName',
             width: 150,
             fixed: 'left',
         },
         {
-            title: 'major',
+            title: 'Chuyên ngành',
             dataIndex: 'major',
             key: 'major',
             width: 150,
         },
         {
-            title: 'degree',
+            title: 'Bằng cấp',
             dataIndex: 'degree',
             key: 'degree',
             width: 100,
         },
         {
-            title: 'startDate',
+            title: 'Ngày bắt đầu',
             dataIndex: 'startDate',
             key: 'startDate',
             width: 150,
         },
         {
-            title: 'graduationDate',
+            title: 'Ngày tốt nghiệp',
             dataIndex: 'graduationDate',
             key: 'graduationDate',
             width: 150,
         },
         {
-            title: 'gpa',
+            title: 'GPA',
             dataIndex: 'gpa',
             key: 'gpa',
             width: 150,
         },
         {
-            title: 'Actions',
+            title: 'Thao tác',
             fixed: 'right',
             width: 130,
             render: (_, record) => (

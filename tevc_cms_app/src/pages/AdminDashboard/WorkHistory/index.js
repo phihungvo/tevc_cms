@@ -39,14 +39,14 @@ function WorkHistory({employeeId}) {
 
     const baseColumns = [
         {
-            title: 'companyName',
+            title: 'Tên công ty',
             dataIndex: 'companyName',
             key: 'companyName',
             width: 200,
             fixed: 'left',
         },
         {
-            title: 'position',
+            title: 'Vị trí',
             dataIndex: 'position',
             key: 'position',
             width: 180,
@@ -63,25 +63,25 @@ function WorkHistory({employeeId}) {
             }
         },
         {
-            title: 'description',
+            title: 'Mô tả',
             dataIndex: 'description',
             key: 'description',
             width: 150,
         },
         {
-            title: 'companyAddress',
+            title: 'Địa chỉ công ty',
             dataIndex: 'companyAddress',
             key: 'companyAddress',
             width: 200,
         },
         {
-            title: 'reasonForLeaving',
+            title: 'Lý do nghĩ việc',
             dataIndex: 'reasonForLeaving',
             key: 'reasonForLeaving',
             width: 200,
         },
         {
-            title: 'salary',
+            title: 'Lương',
             dataIndex: 'salary',
             key: 'salary',
             width: 130,
@@ -91,19 +91,19 @@ function WorkHistory({employeeId}) {
                     : 'N/A',
         },
         {
-            title: 'contractType',
+            title: 'Loại hợp đồng',
             dataIndex: 'contractType',
             key: 'contractType',
             width: 150,
         },
         {
-            title: 'supervisorName',
+            title: 'Người giám sát',
             dataIndex: 'supervisorName',
             key: 'supervisorName',
             width: 150,
         }, ,
         {
-            title: 'Actions',
+            title: 'Thao tác',
             fixed: 'right',
             width: 130,
             render: (_, record) => (
