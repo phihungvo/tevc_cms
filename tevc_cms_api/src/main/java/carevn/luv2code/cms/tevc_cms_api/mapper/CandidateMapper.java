@@ -14,6 +14,10 @@ public interface CandidateMapper {
     //                    "java(candidate.getJobPostings().stream().map(job ->
     // job.getId().toString()).collect(Collectors.toList()))")
     @Mapping(target = "jobPostingId", ignore = true)
+    @Mapping(
+            target = "jobTitles",
+            expression =
+                    "java(candidate.getJobPostings() != null ? candidate.getJobPostings().stream().map(job -> job.getTitle()).collect(java.util.stream.Collectors.toList()) : null)")
     CandidateDTO toDTO(Candidate candidate);
 
     @Mapping(target = "jobPostings", ignore = true) // JobPostings will be handled manually

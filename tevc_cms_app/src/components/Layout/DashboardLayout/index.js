@@ -22,7 +22,9 @@ import {
     ProjectOutlined, 
     CalendarOutlined, 
     DollarOutlined, 
-    CoffeeOutlined, 
+    CoffeeOutlined,
+    IdcardOutlined,
+    UserAddOutlined
 } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
@@ -40,7 +42,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'User Management',
+        title: 'Người dùng',
         color: '#1890ff', 
         icon: <TeamOutlined />,
         url: '/admin/user-management',
@@ -50,7 +52,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Employee',
+        title: 'Nhân viên',
         color: '#ab47bc', 
         icon: <UsergroupAddOutlined />,
         url: '/admin/employee',
@@ -60,7 +62,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Department',
+        title: 'Phòng ban',
         color: '#ec407a',
         icon: <ApartmentOutlined />,
         url: '/admin/department',
@@ -70,7 +72,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Position',
+        title: 'Chức vụ',
         color: '#7e57c2', 
         icon: <SolutionOutlined />,
         url: '/admin/position',
@@ -80,7 +82,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Leave',
+        title: 'Nghĩ phép',
         color: '#ff7043', 
         icon: <CoffeeOutlined />, 
         url: '/admin/leave',
@@ -90,7 +92,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'PayRoll',
+        title: 'Bảng lương',
         color: '#d4a017', 
         icon: <DollarOutlined />, 
         url: '/admin/payroll',
@@ -100,7 +102,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Team',
+        title: 'Nhóm',
         color: '#0baedb',
         icon: <TeamOutlined />,
         url: '/admin/team',
@@ -110,7 +112,17 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Attendance',
+        title: 'Tuyển dụng',
+        color: '#26a69a',
+        icon: <UserAddOutlined />,
+        url: '/admin/recruitment',
+        role: 'ADMIN',
+        permissions: ['ADMIN:MANAGE'],
+        roleIcon: <SafetyOutlined />,
+        permissionIcon: <LockOutlined />,
+    },
+    {
+        title: 'Chấm công',
         color: '#26a69a',
         icon: <ClockCircleOutlined />, 
         url: '/admin/attendance',
@@ -120,7 +132,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Performance',
+        title: 'Hiệu suất',
         color: '#ffa726', 
         icon: <BarChartOutlined />, 
         url: '/admin/performance',
@@ -130,7 +142,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Training',
+        title: 'Đào tạo',
         color: '#66bb6a', 
         icon: <BookOutlined />,
         url: '/admin/training',
@@ -140,7 +152,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Project',
+        title: 'Dự án',
         color: '#ef5350',
         icon: <ProjectOutlined />, 
         url: '/admin/project',
@@ -150,7 +162,7 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'TimeSheet',
+        title: 'Bảng chấm công',
         color: '#29b6f6',
         icon: <CalendarOutlined />, 
         url: '/admin/timesheet',
@@ -160,21 +172,21 @@ const sideBar = [
         permissionIcon: <LockOutlined />,
     },
     {
-        title: 'Notifications',
-        color: '#ff4d4f', 
+        title: 'Thông báo',
+        color: '#ff4d4f',
         icon: <BellOutlined />,
         role: 'USER',
         permissions: ['USER:READ'],
     },
     {
-        title: 'Setting',
+        title: 'Cài đặt',
         color: '#3f51b5', 
         icon: <SettingFilled />,
         role: 'ADMIN',
         permissions: ['ADMIN:MANAGE'],
     },
     {
-        title: 'Store',
+        title: 'Cửa hàng',
         color: '#ffab00',
         icon: <ShopOutlined />,
         role: 'USER',

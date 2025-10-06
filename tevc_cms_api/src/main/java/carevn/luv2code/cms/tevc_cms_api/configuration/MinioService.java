@@ -12,12 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.FileDTO;
+import carevn.luv2code.cms.tevc_cms_api.entity.Contract;
 import carevn.luv2code.cms.tevc_cms_api.entity.Employee;
 import carevn.luv2code.cms.tevc_cms_api.entity.File;
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
 import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
 import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.FileMapper;
+import carevn.luv2code.cms.tevc_cms_api.repository.ContractRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.EmployeeRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.FileRepository;
 import io.minio.*;
@@ -46,6 +48,9 @@ public class MinioService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private ContractRepository contractRepository;
 
     @Autowired
     private FileMapper fileMapper;
@@ -94,6 +99,46 @@ public class MinioService {
         } catch (Exception e) {
             throw new AppException(ErrorCode.MINIO_UPLOAD_ERROR);
         }
+    }
+
+    /**
+     *
+     */
+    public List<FileDTO> uploadFilesForContract(MultipartFile[] files, User uploadedBy, Integer contractId) {
+        Contract contract = contractRepository
+                .findById(contractId)
+                .orElseThrow(() -> new AppException(ErrorCode.CONTRACT_NOT_FOUND));
+
+        List<FileDTO> result = new ArrayList<>();
+        for (MultipartFile file : files) {
+            try (InputStream inputStream = file.getInputStream()) {
+                LocalDate today = LocalDate.now();
+                String relativePath = minioBasePath + "/" + today.getYear() + "/"
+                        + String.format("%02d", today.getMonthValue()) + "/";
+                String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+                String fullObjectName = relativePath + fileName;
+
+                minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(fullObjectName).stream(
+                                inputStream, file.getSize(), -1)
+                        .contentType(file.getContentType())
+                        .build());
+
+                File fileEntity = new File(
+                        fullObjectName,
+                        file.getOriginalFilename(),
+                        file.getContentType(),
+                        relativePath,
+                        file.getSize(),
+                        uploadedBy);
+                fileEntity.setContract(contract); // gắn contract
+                File savedFile = fileRepository.save(fileEntity);
+
+                result.add(fileMapper.toDTO(savedFile));
+            } catch (Exception e) {
+                throw new AppException(ErrorCode.MINIO_UPLOAD_ERROR);
+            }
+        }
+        return result;
     }
 
     /**

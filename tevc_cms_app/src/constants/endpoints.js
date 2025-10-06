@@ -79,6 +79,8 @@ const API_ENDPOINTS = {
     },
     ATTENDANCE: {
         GET_ALL: `${BASE_URL}/attendances`,
+        GET_ALL_NO_PAGING: `${BASE_URL}/attendances/no-pagination`,
+        FILTER: `${BASE_URL}/attendances/filter`,
         CREATE: `${BASE_URL}/attendances`,
         UPDATE: (attendanceId) => `${BASE_URL}/attendances/${attendanceId}`,
     },
@@ -110,6 +112,15 @@ const API_ENDPOINTS = {
     CONTRACT: {
         GET_ALL: `${BASE_URL}/contracts`,
         ALL_BY_EMPLOYEE_PAGED: (employeeId) => `${BASE_URL}/contracts/employee/${employeeId}/paged`,
+        UPLOAD_FILE_CONTRACT: (contractId) => `${BASE_URL}/files/upload/contract/${contractId}`,
+        CREATE: `${BASE_URL}/contracts`,
+    },
+    CANDIDATE: {
+        GET_ALL: `${BASE_URL}/candidates/paginated`,
+    },
+    JOB_POSTING: {
+        GET_ALL: `${BASE_URL}/job-postings/paginated`,
+        GET_BY_CANDIDATE: (candidateId) => `${BASE_URL}/job-postings/${candidateId}/by-candidate`,
     }
 };
 

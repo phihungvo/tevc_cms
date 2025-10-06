@@ -23,7 +23,7 @@ import {exportExcelFile} from "~/service/admin/export_service";
 
 const cx = classNames.bind(styles);
 
-function Department() {
+function Recruitment() {
     const [employeeSource, setDepartmentSource] = useState([]);
     const [managerPositionSource, setManagerPositionSource] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -39,34 +39,29 @@ function Department() {
 
     const columns = [
         {
-            title: 'Tên phòng ban',
+            title: 'Department Name',
             dataIndex: 'name',
             key: 'name',
             width: 200,
-            align: 'center',
             fixed: 'left',
         },
         {
-            title: 'Tên quản lý',
+            title: 'Manager',
             dataIndex: 'managerName',
             key: 'managerName',
-            align: 'center',
         },
         {
-            title: 'Số lượng nhân viên',
+            title: 'Number Empl',
             dataIndex: 'employeeCount',
             key: 'employeeCount',
-            width: 100,
-            align: 'center',
         },
         {
-            title: 'Mô tả chi tiết',
+            title: 'Description',
             dataIndex: 'description',
             key: 'description',
-            align: 'center',
         },
         {
-            title: 'Thao tác',
+            title: 'Actions',
             fixed: 'right',
             width: 130,
             render: (_, record) => (
@@ -91,28 +86,28 @@ function Department() {
 
     const userModalFields = [
         {
-            label: 'Tên phòng ban',
+            label: 'Department Name',
             name: 'name',
             type: 'text',
-            rules: [{required: true, message: 'Tên phòng ban bắt buộc!'}],
+            rules: [{required: true, message: 'Department name is required!'}],
         },
         {
-            label: 'Mô tả chi tiết',
+            label: 'Description',
             name: 'description',
             type: 'text',
         },
 
         {
-            label: 'Nhân sự quản lý',
+            label: 'Manager',
             name: 'managerId',
             type: 'select',
             options: managerPositionSource,
         },
-        // {
-        //     label: 'Số lượng nhân viên',
-        //     name: 'employeeCount',
-        //     type: 'number',
-        // },
+        {
+            label: 'Number of Employee',
+            name: 'employeeCount',
+            type: 'number',
+        },
     ];
 
     useEffect(() => {
@@ -243,11 +238,11 @@ function Department() {
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Thêm phòng ban';
+                return 'Add New Department';
             case 'edit':
-                return 'Chỉnh sửa phòng ban';
+                return 'Edit Department';
             case 'delete':
-                return 'Xoá phòng ban';
+                return 'Delete Department';
             default:
                 return 'Department Details';
         }
@@ -263,7 +258,7 @@ function Department() {
                 />
                 <div className={cx('features')}>
                     <SmartButton
-                        title="Thêm"
+                        title="Add new"
                         icon={<PlusOutlined/>}
                         type="primary"
                         onClick={handleAddRole}
@@ -300,4 +295,4 @@ function Department() {
     );
 }
 
-export default Department;
+export default Recruitment;

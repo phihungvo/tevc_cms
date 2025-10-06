@@ -1,0 +1,332 @@
+.contract-wrapper {
+  //padding: 24px;
+  //background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  //min-height: 100vh;
+}
+
+// Header Section
+.sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  .search-input {
+    flex: 1;
+    min-width: 300px;
+  }
+}
+
+.features {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+// Contract Container
+.contract-container {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  //box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  :global {
+    .ant-table {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .ant-table-thead > tr > th {
+      //background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+      //text-transform: uppercase;
+      //font-size: 13px;
+      letter-spacing: 0.5px;
+      border: none;
+      padding: 16px;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    .ant-table-tbody > tr {
+      cursor: pointer;
+
+      > td {
+        padding: 16px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+    }
+  }
+}
+
+// Salary Value
+.salary-value {
+  color: #667eea;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+// Action Buttons
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+// View Modal Styles
+.view-modal {
+  :global {
+    .ant-modal-content {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .ant-modal-header {
+      display: none;
+    }
+
+    .ant-modal-body {
+      padding: 0;
+    }
+
+    .ant-modal-close {
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #ff4d4f;
+        transform: rotate(90deg);
+
+        .ant-modal-close-x {
+          color: white;
+        }
+      }
+
+      .ant-modal-close-x {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+.modal-header {
+  padding: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  .title-icon {
+    font-size: 32px;
+    color: white;
+  }
+
+  h2 {
+    margin: 0;
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+  }
+}
+
+// Contract Info Section
+.contract-info-section {
+  padding: 30px;
+  background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%);
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #e8e8e8;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+.info-label {
+  font-size: 12px;
+  color: #999;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #1a1a1a;
+  font-weight: 700;
+
+  &.salary {
+    color: #667eea;
+    font-size: 18px;
+  }
+}
+
+// Files Section
+.files-section {
+  padding: 30px;
+  background: white;
+}
+
+.file-tabs {
+  :global {
+    .ant-tabs-nav {
+      margin-bottom: 24px;
+      padding: 0 10px;
+
+      &::before {
+        border-bottom: 2px solid #f0f0f0;
+      }
+    }
+
+    .ant-tabs-tab {
+      padding: 14px 24px;
+      border-radius: 12px 12px 0 0;
+      transition: all 0.3s ease;
+      margin: 0 4px;
+
+      &:hover {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+      }
+
+      &.ant-tabs-tab-active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        .ant-tabs-tab-btn {
+          color: white;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+  }
+}
+
+.tab-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+
+  :global {
+    .anticon {
+      font-size: 16px;
+    }
+  }
+}
+
+.file-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.file-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+  border-radius: 12px;
+  border: 2px solid #e8e8e8;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .file-size {
+    font-size: 13px;
+    color: #999;
+    font-weight: 600;
+  }
+}
+
+.pdf-container {
+  width: 100%;
+  height: calc(90vh - 400px);
+  min-height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #e8e8e8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    z-index: 1;
+  }
+}
+
+.pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+// Status Tags Custom Styling
+:global {
+  .ant-tag {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
