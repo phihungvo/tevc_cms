@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import carevn.luv2code.cms.tevc_cms_api.enums.ContractStatus;
 import carevn.luv2code.cms.tevc_cms_api.enums.ContractType;
@@ -52,9 +53,8 @@ public class Contract {
 
     LocalDate terminationDate; // Ngày chấm dứt hợp đồng
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id", nullable = true)
-    File file;
+    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<File> files;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")

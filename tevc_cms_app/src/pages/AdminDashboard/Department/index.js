@@ -43,23 +43,27 @@ function Department() {
             dataIndex: 'name',
             key: 'name',
             width: 200,
+            align: 'center',
             fixed: 'left',
         },
         {
             title: 'Tên quản lý',
             dataIndex: 'managerName',
             key: 'managerName',
+            align: 'center',
         },
         {
             title: 'Số lượng nhân viên',
             dataIndex: 'employeeCount',
             key: 'employeeCount',
             width: 100,
+            align: 'center',
         },
         {
             title: 'Mô tả chi tiết',
             dataIndex: 'description',
             key: 'description',
+            align: 'center',
         },
         {
             title: 'Thao tác',

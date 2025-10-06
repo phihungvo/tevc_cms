@@ -62,34 +62,37 @@ function Employee() {
 
     const columns = [
         {
-            title: 'Employee Code',
+            title: 'Mã nhân viên',
             dataIndex: 'employeeCode',
             key: 'employeeCode',
-            width: 150,
+            width: 120,
             fixed: 'left',
+            // align: 'center',
         },
         {
-            title: 'Last Name',
+            title: 'Họ',
             dataIndex: 'lastName',
             key: 'lastName',
             width: 150,
         },
         {
-            title: 'First Name',
+            title: 'Tên',
             dataIndex: 'firstName',
             key: 'firstName',
-            width: 150,
+            // align: 'center',
+            width: 80,
         },
         {
-            title: 'Date of Birth',
+            title: 'Ngày sinh',
             dataIndex: 'dateOfBirth',
             key: 'dateOfBirth',
-            width: 150,
+            width: 160,
+            // align: 'center',
             render: (date) =>
                 date ? new Date(date).toLocaleString('vi-VN') : 'N/A',
         },
         {
-            title: 'Gender',
+            title: 'Giới tính',
             dataIndex: 'gender',
             key: 'gender',
             width: 100,
@@ -106,17 +109,17 @@ function Employee() {
             key: 'email',
         },
         {
-            title: 'Address',
+            title: 'Địa chỉ',
             dataIndex: 'address',
             key: 'address',
         },
         {
-            title: 'Phone',
+            title: 'Số điện thoại',
             dataIndex: 'phone',
             key: 'phone',
         },
         {
-            title: 'Hire Date',
+            title: 'Ngày tuyển',
             dataIndex: 'hireDate',
             key: 'hireDate',
             render: (date) =>
@@ -125,13 +128,14 @@ function Employee() {
                     : 'N/A',
         },
         {
-            title: 'Is Active',
+            title: 'Trạng thái',
             dataIndex: 'isActive',
             key: 'isActive',
+            // align: 'center',
             render: (isActive) => (isActive ? 'Có' : 'Không'),
         },
         {
-            title: 'Created At',
+            title: 'Ngày tạo',
             dataIndex: 'createdAt',
             key: 'createdAt',
             render: (date) =>
@@ -140,7 +144,7 @@ function Employee() {
                     : 'N/A',
         },
         {
-            title: 'Updated At',
+            title: 'Ngày sửa đổi',
             dataIndex: 'updatedAt',
             key: 'updatedAt',
             render: (date) =>
@@ -149,7 +153,7 @@ function Employee() {
                     : 'N/A',
         },
         {
-            title: 'Actions',
+            title: 'Thao tác',
             fixed: 'right',
             width: 170,
             render: (_, record) => (

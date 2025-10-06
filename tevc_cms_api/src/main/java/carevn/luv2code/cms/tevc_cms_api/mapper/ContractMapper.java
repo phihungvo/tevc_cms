@@ -16,7 +16,7 @@ public interface ContractMapper {
     @Mapping(target = "employee", ignore = true)
     @Mapping(target = "position", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "file", ignore = true)
+    @Mapping(target = "files", ignore = true)
     Contract toEntity(ContractDTO contractDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -24,6 +24,6 @@ public interface ContractMapper {
     @Mapping(target = "employee", ignore = true)
     @Mapping(target = "position", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "file", ignore = true)
+    @Mapping(target = "files", ignore = true)
     void updateContractFromDto(ContractDTO dto, @MappingTarget Contract entity);
 }

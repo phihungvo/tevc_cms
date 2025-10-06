@@ -53,18 +53,21 @@ function Payroll() {
             key: 'userName',
             width: 150,
             fixed: 'left',
+            align: 'center',
         },
         {
             title: 'Kỳ Lương',
             dataIndex: 'period',
             key: 'period',
             width: 100,
+            align: 'center',
         },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
             width: 100,
+            align: 'center',
             render: (status) => (
                 <Tag color={statusPayroll[status] || 'default'}>{status}</Tag>
             ),
@@ -74,36 +77,42 @@ function Payroll() {
             dataIndex: 'basicSalary',
             key: 'basicSalary',
             width: 100,
+            align: 'center',
             render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()}` : 'N/A',
         },
         {
             title: 'Làm thêm giờ',
             dataIndex: 'overtime',
             key: 'overtime',
+            align: 'center',
             width: 100,
         },
         {
             title: 'Thưởng',
             dataIndex: 'bonus',
             key: 'bonus',
+            align: 'center',
             width: 100,
         },
         {
             title: 'Phụ cấp',
             dataIndex: 'allowances',
             key: 'allowances',
+            align: 'center',
             width: 100,
         },
         {
             title: 'Khấu trừ',
             dataIndex: 'deductions',
             key: 'deductions',
+            align: 'center',
             width: 100,
         },
         {
             title: 'Thuế',
             dataIndex: 'tax',
             key: 'tax',
+            align: 'center',
             width: 100,
             render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()}` : 'N/A',
         },
@@ -111,6 +120,7 @@ function Payroll() {
             title: 'Bảo hiểm',
             dataIndex: 'insurance',
             key: 'insurance',
+            align: 'center',
             width: 100,
             render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()}` : 'N/A',
         },
@@ -118,6 +128,7 @@ function Payroll() {
             title: 'Lương ròng',
             dataIndex: 'netSalary',
             key: 'netSalary',
+            align: 'center',
             width: 100,
             render: (baseSalary) => baseSalary ? `${baseSalary.toLocaleString()}` : 'N/A',
         },
@@ -126,6 +137,7 @@ function Payroll() {
             dataIndex: 'processedDate',
             key: 'processedDate',
             width: 150,
+            align: 'center',
             render: (date) =>
                 date && moment(date, moment.ISO_8601, true).isValid()
                     ? moment(date).format('DD/MM/YYYY HH:mm:ss')
@@ -136,6 +148,7 @@ function Payroll() {
             dataIndex: 'paidDate',
             key: 'paidDate',
             width: 150,
+            align: 'center',
             render: (date) =>
                 date && moment(date, moment.ISO_8601, true).isValid()
                     ? moment(date).format('DD/MM/YYYY HH:mm:ss')

@@ -38,32 +38,32 @@ function Skill({employeeId}) {
 
     const baseColumns = [
         {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
             width: 150,
             fixed: 'left',
         },
         {
-            title: 'description',
+            title: 'Mô tả',
             dataIndex: 'description',
             key: 'description',
             width: 150,
         },
         {
-            title: 'level',
+            title: 'Cấp độ',
             dataIndex: 'level',
             key: 'level',
             width: 100,
         },
         {
-            title: 'lastUpdated',
+            title: 'Cập nhật lần cuối',
             dataIndex: 'lastUpdated',
             key: 'lastUpdated',
             width: 150,
         },
         {
-            title: 'Actions',
+            title: 'Thao tác',
             fixed: 'right',
             width: 80,
             render: (_, record) => (
@@ -79,7 +79,7 @@ function Skill({employeeId}) {
                         icon={<DeleteOutlined/>}
                         buttonWidth={50}
                         onClick={() => handleDeleteUser(record)}
-                        style={{marginLeft: '8px'}}
+                        style={{ marginLeft: '8px' }}
                     />
                 </>
             ),
