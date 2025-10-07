@@ -33,4 +33,6 @@ public class JobPostingDTO {
     Integer position;
 
     Integer recruiter; // employee id
+
+    Integer applicantCount;
 }

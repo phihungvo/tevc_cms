@@ -5,6 +5,7 @@ import RoleList from "~/pages/AdminDashboard/Role";
 import PermissionList from "~/pages/AdminDashboard/Permission";
 import { Watermark } from 'antd';
 import Candidate from "~/pages/AdminDashboard/Candidate";
+import JobPosting from "~/pages/AdminDashboard/JobPosting";
 
 function TabRecruitment() {
     const tabItems = [
@@ -16,7 +17,7 @@ function TabRecruitment() {
         {
             key: '2',
             label: 'Tin tuyển dụng',
-            children: <RoleList />,
+            children: <JobPosting />,
         },
         {
             key: '3',

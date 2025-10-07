@@ -18,4 +18,16 @@ public interface JobPostingService {
     public Page<JobPostingDTO> getJobPostingPaginated(int page, int size);
 
     List<JobPostingDTO> getJobPostingsByCandidate(Integer candidateId);
+
+    Page<JobPostingDTO> filterJobPostings(
+            String title,
+            String location,
+            String status,
+            String departmentName,
+            String positionName,
+            String recruiterName,
+            String startDate,
+            String endDate,
+            int page,
+            int size);
 }

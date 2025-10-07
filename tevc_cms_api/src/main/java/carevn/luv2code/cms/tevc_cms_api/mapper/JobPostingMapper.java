@@ -12,6 +12,9 @@ public interface JobPostingMapper {
     @Mapping(source = "department.id", target = "department")
     @Mapping(source = "position.id", target = "position")
     @Mapping(source = "recruiter.id", target = "recruiter")
+    @Mapping(
+            target = "applicantCount",
+            expression = "java(jobPosting.getCandidates() != null ? jobPosting.getCandidates().size() : 0)")
     JobPostingDTO toDTO(JobPosting jobPosting);
 
     @Mapping(target = "status", ignore = true)

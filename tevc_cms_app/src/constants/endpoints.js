@@ -121,6 +121,7 @@ const API_ENDPOINTS = {
     JOB_POSTING: {
         GET_ALL: `${BASE_URL}/job-postings/paginated`,
         GET_BY_CANDIDATE: (candidateId) => `${BASE_URL}/job-postings/${candidateId}/by-candidate`,
+        FILTER: `${BASE_URL}/job-postings/filter`
     }
 };
 
