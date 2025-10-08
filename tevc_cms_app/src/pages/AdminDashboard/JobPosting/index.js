@@ -39,7 +39,7 @@ const cx = classNames.bind(styles);
 const {RangePicker} = DatePicker;
 const {Option} = Select;
 
-function JobPosting() {
+function JobPosting({ onApplicantClick }) {
     const [jobPostings, setJobPostings] = useState([]);
     const [loading, setLoading] = useState(false);
     const [departmentOptions, setDepartmentOptions] = useState([]);
@@ -522,6 +522,7 @@ function JobPosting() {
                                         onView={handleViewJobPosting}
                                         onEdit={handleEditJobPosting}
                                         onDelete={handleDeleteJobPosting}
+                                        onApplicantClick={onApplicantClick}
                                     />
                                 ))}
                             </div>

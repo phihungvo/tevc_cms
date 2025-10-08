@@ -122,6 +122,13 @@ const API_ENDPOINTS = {
         GET_ALL: `${BASE_URL}/job-postings/paginated`,
         GET_BY_CANDIDATE: (candidateId) => `${BASE_URL}/job-postings/${candidateId}/by-candidate`,
         FILTER: `${BASE_URL}/job-postings/filter`
+    },
+    INTERVIEW: {
+        GET_ALL: `${BASE_URL}/interviews/paginated`,
+        GET_BY_CANDIDATE: (candidateId) => `${BASE_URL}/interviews/candidate/${candidateId}`,
+        GET_BY_LIST_CANDIDATE: `${BASE_URL}/interviews/by-candidates`,
+        GET_BY_JOB_POSTING:  (jobPostingId) => `${BASE_URL}/interviews/by-job-posting/${jobPostingId}`,
+        // http://localhost:8080/api/interviews/by-candidates?candidateIds=1
     }
 };
 

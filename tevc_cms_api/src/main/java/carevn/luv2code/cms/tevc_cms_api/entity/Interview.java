@@ -24,6 +24,12 @@ public class Interview {
     @Column(name = "interview_date")
     Date interviewDate;
 
+    @Column(name = "duration_minutes")
+    Integer durationMinutes;
+
+    @Column(name = "location")
+    String location;
+
     @Enumerated(EnumType.STRING)
     InterviewType interviewType;
 

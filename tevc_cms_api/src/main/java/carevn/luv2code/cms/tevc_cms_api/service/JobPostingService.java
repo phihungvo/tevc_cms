@@ -15,7 +15,7 @@ public interface JobPostingService {
 
     JobPostingDTO getById(Integer id);
 
-    public Page<JobPostingDTO> getJobPostingPaginated(int page, int size);
+    Page<JobPostingDTO> getJobPostingPaginated(int page, int size);
 
     List<JobPostingDTO> getJobPostingsByCandidate(Integer candidateId);
 

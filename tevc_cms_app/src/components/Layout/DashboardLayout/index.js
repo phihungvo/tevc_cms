@@ -5,14 +5,12 @@ import Sidebar from '../components/Sidebar';
 import Header from '../Header';
 import {
     HomeOutlined,
-    ProfileOutlined,
     BellOutlined,
     ShopOutlined,
     SettingFilled,
     SafetyOutlined,
     LockOutlined,
     TeamOutlined,
-    KeyOutlined,
     UsergroupAddOutlined,
     ApartmentOutlined, 
     SolutionOutlined,
@@ -28,7 +26,6 @@ import {
 } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
-
 
 const sideBar = [
     {

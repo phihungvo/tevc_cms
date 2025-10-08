@@ -13,7 +13,6 @@ import RootRedirect from '~/components/RootRedirect';
 import EmployeeDetail from '~/pages/AdminDashboard/Employee/detail';
 import Team from "~/pages/AdminDashboard/Team";
 import UserManagement from "~/pages/AdminDashboard/User/UserManagement";
-import RecruitmentCMS from "src/pages/AdminDashboard/Recruitment";
 import TabRecruitment from "~/pages/AdminDashboard/Recruitment/TabRecruitment";
 import Attendance from "~/pages/AdminDashboard/Attendance";
 

@@ -1,12 +1,12 @@
 import React from 'react';
-import {Card, Tag} from 'antd';
+import {Card, Tag, message} from 'antd';
 import {
     EnvironmentOutlined,
     DollarOutlined,
     CalendarOutlined,
     TeamOutlined,
     EyeOutlined,
-    EditOutlined,
+    EditOutlined, UserOutlined,
 } from '@ant-design/icons';
 import classNames from 'classnames/bind';
 import styles from './JobPostingCard.module.scss';
@@ -15,7 +15,7 @@ import SmartButton from '~/components/Layout/components/SmartButton';
 
 const cx = classNames.bind(styles);
 
-const JobPostingCard = ({job, onView, onEdit}) => {
+const JobPostingCard = ({job, onView, onEdit, onApplicantClick }) => {
     const getStatusTag = (status) => {
         const config = {
             OPEN: {color: 'green', text: 'Đang mở'},
@@ -32,6 +32,13 @@ const JobPostingCard = ({job, onView, onEdit}) => {
 
     const handleView = () => onView && onView(job);
     const handleEdit = () => onEdit && onEdit(job);
+    const handleApplicantClick = () => {
+        if (job.applicantCount > 0) {
+            onApplicantClick && onApplicantClick(job.id);
+        } else {
+            message.info('Vị trí này chưa có ứng viên nào ứng tuyển.');
+        }
+    };
 
     return (
         <Card className={cx('card')} hoverable>
@@ -56,9 +63,11 @@ const JobPostingCard = ({job, onView, onEdit}) => {
                         {moment(job.closingDate).format('YYYY-MM-DD')}
                     </span>
                 </div>
-                <div className={cx('info-row')}>
-                    <TeamOutlined className={cx('icon')}/>
-                    <span>{job.applicantCount} ứng viên</span>
+                <div className={cx('info-row')} style={{ cursor: 'pointer' }} onClick={handleApplicantClick}>
+                    <UserOutlined className={cx('icon')} style={{ color: '#1890ff' }} />
+                    <span style={{ color: '#1890ff', fontWeight: 'bold' }}>
+                        {job.applicantCount} ứng viên
+                    </span>
                 </div>
             </div>
 
