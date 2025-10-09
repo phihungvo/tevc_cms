@@ -4,12 +4,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
@@ -59,12 +57,6 @@ public class JwtService {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
-        claims.put("roles", user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toList()));
-        claims.put(
-                "authorities",
-                user.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList()));
         return createToken(claims, user.getUsername());
     }
 
