@@ -1,6 +1,9 @@
 const BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
 const API_ENDPOINTS = {
+    DASHBOARD: {
+        EMPLOYEE_BY_DEPARTMENT:`${BASE_URL}/dashboard/employees-by-department`,
+    },
     AUTH: {
         LOGIN: `${BASE_URL}/auth/login`,
         REGISTER: `${BASE_URL}/auth/register`,

@@ -1,5 +1,8 @@
 package carevn.luv2code.cms.tevc_cms_api.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +23,13 @@ public interface DepartmentRepository extends JpaRepository<Department, Integer>
 
     @Query("SELECT COUNT(e) FROM Employee e WHERE e.department.id = :deptId")
     int countEmployeesByDepartment(@Param("deptId") Integer deptId);
+
+    @Query("SELECT d.name, COUNT(e) FROM Department d " + "LEFT JOIN d.employees e "
+            + "WHERE (:status IS NULL OR e.isActive = :status) "
+            + "AND (:dateFrom IS NULL OR e.hireDate >= :dateFrom) "
+            + "AND (:dateTo IS NULL OR e.hireDate <= :dateTo) "
+            + "GROUP BY d.id, d.name "
+            + "ORDER BY d.name ASC")
+    List<Object[]> findEmployeesCountByDepartment(
+            @Param("status") Boolean status, @Param("dateFrom") Date dateFrom, @Param("dateTo") Date dateTo);
 }

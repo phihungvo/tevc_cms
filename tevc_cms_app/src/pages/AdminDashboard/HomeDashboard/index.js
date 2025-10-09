@@ -1,5 +1,5 @@
 import styles from './HomeDashboard.module.scss';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ArrowDownOutlined,
     ArrowUpOutlined,
@@ -9,8 +9,10 @@ import {
     Row,
     Statistic,
     Card,
+    Spin,
 } from 'antd';
 import ReactApexChart from 'react-apexcharts';
+import {getEmployeeByDepartment} from "~/service/admin/dashboard";
 
 const { Countdown } = Statistic;
 
@@ -23,7 +25,47 @@ function HomeDashboard() {
         console.log('Sự kiện đã kết thúc!');
     };
 
-    // Dữ liệu cho biểu đồ cột (Số lượng nhân viên theo phòng ban)
+    // State cho dữ liệu chart employee by department
+    const [barChartData, setBarChartData] = useState({
+        categories: [],
+        series: [{ name: 'Nhân viên', data: [] }]
+    });
+    const [loadingBarChart, setLoadingBarChart] = useState(true);
+    const [errorBarChart, setErrorBarChart] = useState(null);
+
+    // Fetch data cho chart employee by department
+    useEffect(() => {
+        const fetchEmployeeByDepartment = async () => {
+            try {
+                setLoadingBarChart(true);
+                setErrorBarChart(null);
+                const data = await getEmployeeByDepartment();
+                if (data && data.result) {
+                    setBarChartData(data.result);
+                } else {
+                    // Fallback hardcode nếu API lỗi hoặc không có data
+                    setBarChartData({
+                        categories: ['Kỹ thuật', 'Nhân sự', 'Kinh doanh', 'Marketing', 'Tài chính'],
+                        series: [{ name: 'Nhân viên', data: [120, 50, 80, 60, 30] }]
+                    });
+                }
+            } catch (error) {
+                console.error('Lỗi fetch employee by department:', error);
+                setErrorBarChart('Không thể tải dữ liệu chart');
+                // Fallback hardcode
+                setBarChartData({
+                    categories: ['Kỹ thuật', 'Nhân sự', 'Kinh doanh', 'Marketing', 'Tài chính'],
+                    series: [{ name: 'Nhân viên', data: [120, 50, 80, 60, 30] }]
+                });
+            } finally {
+                setLoadingBarChart(false);
+            }
+        };
+
+        fetchEmployeeByDepartment();
+    }, []);
+
+    // Dữ liệu cho biểu đồ cột (Số lượng nhân viên theo phòng ban) - Động
     const barChartOptions = {
         chart: {
             type: 'bar',
@@ -40,7 +82,7 @@ function HomeDashboard() {
             enabled: false,
         },
         xaxis: {
-            categories: ['Kỹ thuật', 'Nhân sự', 'Kinh doanh', 'Marketing', 'Tài chính'],
+            categories: barChartData.categories,  // Động từ API
         },
         yaxis: {
             title: {
@@ -54,12 +96,7 @@ function HomeDashboard() {
         },
     };
 
-    const barChartSeries = [
-        {
-            name: 'Nhân viên',
-            data: [120, 50, 80, 60, 30],
-        },
-    ];
+    const barChartSeries = barChartData.series;  // Động từ API
 
     // Dữ liệu cho biểu đồ tròn (Tỷ lệ nghỉ việc)
     const pieChartOptions = {
@@ -229,12 +266,22 @@ function HomeDashboard() {
                 <Row gutter={[16, 16]}>
                     <Col span={12}>
                         <Card bordered={false} title="Số lượng nhân viên theo phòng ban">
-                            <ReactApexChart
-                                options={barChartOptions}
-                                series={barChartSeries}
-                                type="bar"
-                                height={350}
-                            />
+                            {loadingBarChart ? (
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 350 }}>
+                                    <Spin size="large" tip="Đang tải dữ liệu..." />
+                                </div>
+                            ) : errorBarChart ? (
+                                <div style={{ color: 'red', textAlign: 'center', height: 350, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    {errorBarChart} (Sử dụng dữ liệu mẫu)
+                                </div>
+                            ) : (
+                                <ReactApexChart
+                                    options={barChartOptions}
+                                    series={barChartSeries}
+                                    type="bar"
+                                    height={350}
+                                />
+                            )}
                         </Card>
                     </Col>
                     <Col span={12}>
