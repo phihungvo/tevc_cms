@@ -69,9 +69,7 @@ export const getAllUser = async ({ page = 0, pageSize = 5 }) => {
 };
 
 export const createUser = async (formData) => {
-    console.log('form data: ', formData);
     try {
-        console.log('form data user: ', formData);
         const processedData = {
             ...formData,
             // roles: [formData.roles],
@@ -108,7 +106,7 @@ export const updateUser = async (userId, formData) => {
             API_ENDPOINTS.USER.UPDATE(userId), updateData);
 
         if (response.data) {
-            message.success('User updated successfully!');
+            message.success('Cập nhật người dùng thành công!');
         }
     } catch (error) {
         const errorMessage =

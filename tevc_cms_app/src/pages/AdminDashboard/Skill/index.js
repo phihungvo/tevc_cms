@@ -43,6 +43,7 @@ function Skill({employeeId}) {
             key: 'name',
             width: 150,
             fixed: 'left',
+            align: 'center',
         },
         {
             title: 'Mô tả',
@@ -55,6 +56,7 @@ function Skill({employeeId}) {
             dataIndex: 'level',
             key: 'level',
             width: 100,
+            align: 'center',
         },
         {
             title: 'Cập nhật lần cuối',
@@ -88,18 +90,18 @@ function Skill({employeeId}) {
 
     const userModalFields = [
         {
-            label: 'name',
+            label: 'Tên kỹ năng',
             name: 'name',
             type: 'text',
-            rules: [{required: true, message: 'Skill name is required!'}],
+            rules: [{required: true, message: 'Tên kỹ năng bắt buộc!'}],
         },
         {
-            label: 'description',
+            label: 'Mô tả',
             name: 'description',
             type: 'text',
         },
         {
-            label: 'level',
+            label: 'Trình độ',
             name: 'level',
             type: 'text',
         }
@@ -240,13 +242,13 @@ function Skill({employeeId}) {
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Thêm Người Dùng Mới';
+                return 'Thêm kỹ năng';
             case 'edit':
-                return 'Chỉnh Sửa Người Dùng';
+                return 'Chỉnh sửa kỹ năng';
             case 'delete':
-                return 'Xóa Người Dùng';
+                return 'Xóa kỹ năng';
             default:
-                return 'Chi Tiết Người Dùng';
+                return 'Chi Tiết kỹ năng';
         }
     };
 

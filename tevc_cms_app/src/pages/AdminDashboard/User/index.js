@@ -45,20 +45,23 @@ function UserList() {
             key: 'userName',
             width: 150,
             fixed: 'left',
+            align: 'center',
             onFilter: (value, record) => record.userName.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
-            width: 150,
+            width: 200,
+            align: 'center',
             onFilter: (value, record) => record.email.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
             title: 'Role',
             dataIndex: 'roleNames',
             key: 'roleNames',
-            width: 100,
+            width: 250,
+            align: 'center',
             render: (roleNames) =>
                 Array.isArray(roleNames) && roleNames.length > 0
                     ? roleNames.map((role, idx) => (
@@ -83,14 +86,16 @@ function UserList() {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
-            width: 150,
+            width: 250,
+            align: 'center',
             render: (add) => (add ? add : 'Viet Nam'),
         },
         {
             title: 'Phone Number',
             dataIndex: 'phoneNumber',
             key: 'phoneNumber',
-            width: 200,
+            width: 150,
+            align: 'center',
             render: (phone) => (phone ? phone : 'N/A'),
         },
         {
@@ -299,7 +304,7 @@ function UserList() {
     const handleCallUpdateUser = async (formData) => {
         try {
             await updateUser(selectedUser.id, formData);
-            message.success('Cập nhật người dùng thành công!');
+            // message.success('Cập nhật người dùng thành công!');
             handleGetAllUsers();
             setIsModalOpen(false);
         } catch (error) {

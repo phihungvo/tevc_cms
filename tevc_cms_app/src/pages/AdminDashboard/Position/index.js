@@ -128,7 +128,7 @@ function Position({ employeeId }) {
         handleGetPositions();
     }, [employeeId]); // Thêm employeeId vào dependency array
 
-    const handleGetPositions = async (page = 1, pageSize = 5) => {
+    const handleGetPositions = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
             const response = employeeId

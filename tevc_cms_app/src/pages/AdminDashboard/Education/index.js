@@ -100,21 +100,51 @@ function Education({employeeId}) {
 
     const userModalFields = [
         {
-            label: 'name',
-            name: 'name',
+            label: 'Trường học',
+            name: 'institutionName',
             type: 'text',
-            rules: [{required: true, message: 'Skill name is required!'}],
+            rules: [{ required: true, message: 'Vui lòng nhập tên trường học!' }],
         },
         {
-            label: 'description',
+            label: 'Chuyên ngành',
+            name: 'major',
+            type: 'text',
+            rules: [{ required: true, message: 'Vui lòng nhập chuyên ngành!' }],
+        },
+        {
+            label: 'Bằng cấp',
+            name: 'degree',
+            type: 'text',
+            rules: [{ required: true, message: 'Vui lòng nhập bằng cấp!' }],
+        },
+        {
+            label: 'Ngày bắt đầu',
+            name: 'startDate',
+            type: 'date',
+            render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
+            rules: [{ required: true, message: 'Vui lòng chọn ngày bắt đầu!' }],
+        },
+        {
+            label: 'Ngày tốt nghiệp',
+            name: 'graduationDate',
+            type: 'date',
+            render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
+        },
+        {
+            label: 'GPA',
+            name: 'gpa',
+            type: 'text',
+        },
+        {
+            label: 'Mô tả',
             name: 'description',
             type: 'text',
         },
         {
-            label: 'level',
+            label: 'Trình độ',
             name: 'level',
             type: 'text',
-        }
+        },
     ];
 
     const handleGetAllEducation = async (page = 1, pageSize = 10) => {
@@ -252,13 +282,13 @@ function Education({employeeId}) {
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Thêm Người Dùng Mới';
+                return 'Thêm học vấn mới';
             case 'edit':
-                return 'Chỉnh Sửa Người Dùng';
+                return 'Chỉnh sửa học vấn';
             case 'delete':
-                return 'Xóa Người Dùng';
+                return 'Xóa học vấn';
             default:
-                return 'Chi Tiết Người Dùng';
+                return 'Chi Tiết học vấn';
         }
     };
 

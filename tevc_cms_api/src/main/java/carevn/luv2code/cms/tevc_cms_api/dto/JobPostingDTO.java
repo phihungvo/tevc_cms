@@ -1,6 +1,7 @@
 package carevn.luv2code.cms.tevc_cms_api.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -33,4 +34,8 @@ public class JobPostingDTO {
     Integer position;
 
     Integer recruiter; // employee id
+
+    Integer applicantCount;
+
+    List<Integer> candidateIds;
 }

@@ -9,7 +9,7 @@ export const getAllJobPostings = async ({ page = 0, size = 10 }) => {
             params: { page, size },
         });
 
-        return response.data.content;
+        return response.data;
     } catch (error) {
         message.error('Error get all employees: ');
         return null;
@@ -23,6 +23,45 @@ export const getByCandidateId = async ({ candidateId }) => {
         return response.data.content;
     } catch (error) {
         message.error('Error get all employees: ');
+        return null;
+    }
+};
+
+export const filterJobPostings = async ({ page = 0, size = 10, title, location, startDate, endDate, status }) => {
+    try {
+        const params = {
+            page,
+            size,
+        };
+
+        if (title) {
+            params.title = title;
+        }
+
+        if (location) {
+            params.location = location;
+        }
+
+        if (startDate) {
+            params.startDate = startDate;
+        }
+
+        if (endDate) {
+            params.endDate = endDate;
+        }
+
+        if (status && status !== 'ALL') {
+            params.status = status;
+        }
+
+        const response = await apiClient.get(API_ENDPOINTS.JOB_POSTING.FILTER, {
+            params,
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Error when filtering job postings: ', error);
+        message.error('Error filter job postings');
         return null;
     }
 };

@@ -3,6 +3,10 @@ package carevn.luv2code.cms.tevc_cms_api.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.InterviewDTO;
@@ -93,10 +97,43 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public List<InterviewDTO> getInterviewsByCandidate(Integer candidateId) {
-        return interviewRepository.findByCandidateId(candidateId).stream()
-                .map(interviewMapper::toDTO)
-                .toList();
+    public Page<InterviewDTO> getInterviewsPaginated(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return interviewRepository.findAll(pageRequest).map(interviewMapper::toDTO);
+    }
+
+    //    @Override
+    //    public List<InterviewDTO> getInterviewsByCandidate(Integer candidateId) {
+    //        return interviewRepository.findByCandidateId(candidateId).stream()
+    //                .map(interviewMapper::toDTO)
+    //                .toList();
+    //    }
+
+    @Override
+    public Page<InterviewDTO> getInterviewsByCandidate(Integer candidateId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("interviewDate").descending());
+        return interviewRepository.findByCandidateId(candidateId, pageable).map(interviewMapper::toDTO);
+    }
+
+    @Override
+    public Page<InterviewDTO> getInterviewsByJobPosting(Integer jobPostingId, int page, int size) {
+        List<Integer> candidateIds = candidateRepository.findIdsByJobPostingId(jobPostingId);
+
+        if (candidateIds.isEmpty()) {
+            return Page.empty();
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Interview> interviewPage = interviewRepository.findByCandidateIdIn(candidateIds, pageable);
+
+        return interviewPage.map(interviewMapper::toDTO);
+    }
+
+    @Override
+    public Page<InterviewDTO> getInterviewsByCandidates(List<Integer> candidateIds, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Interview> interviews = interviewRepository.findByCandidateIdIn(candidateIds, pageable);
+        return interviews.map(interviewMapper::toDTO);
     }
 
     @Override

@@ -3,6 +3,8 @@ package carevn.luv2code.cms.tevc_cms_api.repository;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,8 @@ public interface InterviewRepository extends JpaRepository<Interview, Integer> {
     List<Interview> findByCandidateId(Integer candidateId);
 
     List<Interview> findByInterviewDateBetween(Timestamp startDate, Timestamp endDate);
+
+    Page<Interview> findByCandidateId(Integer candidateId, Pageable pageable);
+
+    Page<Interview> findByCandidateIdIn(List<Integer> candidateIds, Pageable pageable);
 }

@@ -85,7 +85,8 @@ public enum ErrorCode {
     MINIO_PRESIGNED_URL_ERROR(1072, "Error generating presigned URL from MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
     EDUCATION_NOT_FOUND(1072, "Education not found", HttpStatus.NOT_FOUND),
     SKILL_NOT_FOUND(1073, "Skill not found", HttpStatus.NOT_FOUND),
-    WORK_HISTORY_NOT_FOUND(1074, "Work history not found", HttpStatus.NOT_FOUND);
+    WORK_HISTORY_NOT_FOUND(1074, "Work history not found", HttpStatus.NOT_FOUND),
+    USERNAME_EXISTED(1075, "Username existed!", HttpStatus.BAD_REQUEST);
 
     int code;
     String message;
