@@ -69,7 +69,6 @@ export const getAllUser = async ({ page = 0, pageSize = 5 }) => {
 };
 
 export const createUser = async (formData) => {
-    console.log('form data: ', formData);
     try {
         console.log('form data user: ', formData);
         const processedData = {

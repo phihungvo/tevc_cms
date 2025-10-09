@@ -22,8 +22,8 @@ public interface PermissionService {
     //
     //    Permission getPermissionById(Integer id);
     //
-    //    void deletePermission(Integer id);
-    //
+    void deletePermission(Integer id);
+
     //    Permission createPermission(String name, String description, String apiEndpoint, HttpMethod httpMethod);
     //
     Page<PermissionDTO> getAllPermissions(int page, int size);

@@ -9,17 +9,17 @@ function UserManagement() {
     const tabItems = [
         {
             key: '1',
-            label: 'User List',
+            label: 'User',
             children: <UserList />,
         },
         {
             key: '2',
-            label: 'Role List',
+            label: 'Role',
             children: <RoleList />,
         },
         {
             key: '3',
-            label: 'Permission List',
+            label: 'Permission',
             children: <PermissionList />,
         },
         {
