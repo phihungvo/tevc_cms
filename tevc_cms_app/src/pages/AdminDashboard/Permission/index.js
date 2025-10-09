@@ -53,16 +53,23 @@ function PermissionList() {
         {
             title: 'Tên Quyền',
             dataIndex: 'name',
-            width: 300,
+            width: 250,
             fixed: 'left',
+            align: 'center',
             onFilter: (value, record) => record.name.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
             title: 'Phương Thức HTTP',
             dataIndex: 'httpMethod',
+            align: 'center',
             render: (method) => (
                 <Tag color={httpMethod[method] || 'default'}>{method}</Tag>
             ),
+        },
+        {
+            title: 'Mô Tả',
+            dataIndex: 'description',
+            width: 500,
         },
         {
             title: 'API Endpoint',
@@ -73,11 +80,6 @@ function PermissionList() {
             title: 'Resource Pattern',
             dataIndex: 'resourcePattern',
             width: 350,
-        },
-        {
-            title: 'Mô Tả',
-            dataIndex: 'description',
-            width: 500,
         },
         {
             title: 'Hành Động',
@@ -166,7 +168,6 @@ function PermissionList() {
     const handleCallCreatePermission = async (formData) => {
         try {
             await createPermission(formData);
-            message.success('Tạo quyền thành công!');
             handleGetAllPermissions();
         } catch (error) {
             message.error(`Lỗi khi tạo quyền: ${error.response?.data?.message || error.message}`);
@@ -183,7 +184,6 @@ function PermissionList() {
     const handleCallUpdatePermission = async (formData) => {
         try {
             await updatePermission(selectedPermission.id, formData);
-            message.success('Cập nhật quyền thành công!');
             handleGetAllPermissions();
             setIsModalOpen(false);
         } catch (error) {
@@ -201,7 +201,6 @@ function PermissionList() {
     const handleCallDeletePermission = async () => {
         try {
             await deletePermission(selectedRowKeys[0]);
-            message.success('Xóa quyền thành công!');
             handleGetAllPermissions();
             setIsModalOpen(false);
             setSelectedRowKeys([]);

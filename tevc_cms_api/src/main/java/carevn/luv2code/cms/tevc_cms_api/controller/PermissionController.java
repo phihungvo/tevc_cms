@@ -62,13 +62,12 @@ public class PermissionController {
                 .build());
     }
 
-    //    @DeleteMapping("/{id}")
-    //    @PreAuthorize("hasAuthority('PERMISSION:DELETE')")
-    //    public ResponseEntity<ApiResponse<Void>> deletePermission(@PathVariable UUID id) {
-    //        permissionService.deletePermission(id);
-    //        return ResponseEntity.ok(ApiResponse.<Void>builder()
-    //                .code(200)
-    //                .message("Permission deleted successfully")
-    //                .build());
-    //    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deletePermission(@PathVariable Integer id) {
+        permissionService.deletePermission(id);
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .code(200)
+                .message("Permission deleted successfully")
+                .build());
+    }
 }
