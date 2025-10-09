@@ -19,6 +19,8 @@ import carevn.luv2code.cms.tevc_cms_api.dto.requests.CreateUserRequest;
 import carevn.luv2code.cms.tevc_cms_api.dto.requests.UserUpdateRequest;
 import carevn.luv2code.cms.tevc_cms_api.entity.Role;
 import carevn.luv2code.cms.tevc_cms_api.entity.User;
+import carevn.luv2code.cms.tevc_cms_api.exception.AppException;
+import carevn.luv2code.cms.tevc_cms_api.exception.ErrorCode;
 import carevn.luv2code.cms.tevc_cms_api.mapper.UserMapper;
 import carevn.luv2code.cms.tevc_cms_api.repository.PermissionRepository;
 import carevn.luv2code.cms.tevc_cms_api.repository.RoleRepository;
@@ -78,7 +80,11 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "userPermissions", key = "#request.userName")
     public UserDTO createUser(CreateUserRequest request) {
         if (userRepository.existsByUserName(request.getUserName())) {
-            throw new RuntimeException("Username already exists");
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
         User user = userMapper.toEntity(request);
@@ -97,7 +103,21 @@ public class UserServiceImpl implements UserService {
         }
 
         User savedUser = userRepository.save(user);
-        return userMapper.toDTO(savedUser);
+
+        UserDTO dto = userMapper.toDTO(savedUser);
+
+        if (savedUser.getRoles() != null) {
+            Set<Integer> roleIds =
+                    savedUser.getRoles().stream().map(Role::getId).collect(Collectors.toSet());
+
+            Set<String> roleNames =
+                    savedUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+
+            dto.setRoleIds(roleIds);
+            dto.setRoleNames(roleNames);
+        }
+
+        return dto;
     }
 
     @CacheEvict(value = "userPermissions", key = "#request.userId")
