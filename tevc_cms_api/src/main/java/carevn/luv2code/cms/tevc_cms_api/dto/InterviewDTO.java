@@ -15,9 +15,15 @@ public class InterviewDTO {
 
     Date interviewDate;
 
+    Integer durationMinutes;
+
+    String location;
+
     InterviewType interviewType;
 
     Integer interviewerId;
+
+    String interviewerName;
 
     String feedback;
 

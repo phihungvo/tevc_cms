@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CustomTabs from '~/components/Layout/components/Tab';
-import UserList from "~/pages/AdminDashboard/User/index";
-import RoleList from "~/pages/AdminDashboard/Role";
-import PermissionList from "~/pages/AdminDashboard/Permission";
-import { Watermark } from 'antd';
 import Candidate from "~/pages/AdminDashboard/Candidate";
+import JobPosting from "~/pages/AdminDashboard/JobPosting";
+import Interview from "~/pages/AdminDashboard/Interview";
 
 function TabRecruitment() {
+    const [activeKey, setActiveKey] = useState('1');
+    const [selectedJobId, setSelectedJobId] = useState(null);
+
+    const handleApplicantClick = (jobId) => {
+        console.log('Debug: Click applicant, jobId =', jobId); // Log để check
+        setSelectedJobId(jobId);
+        setActiveKey('3'); // Switch tab sau khi set jobId
+    };
+
     const tabItems = [
         {
             key: '1',
@@ -16,22 +23,19 @@ function TabRecruitment() {
         {
             key: '2',
             label: 'Tin tuyển dụng',
-            children: <RoleList />,
+            children: <JobPosting onApplicantClick={handleApplicantClick} />,
         },
         {
             key: '3',
             label: 'Lịch phỏng vấn',
-            children: <PermissionList />,
-        },
-        {
-            key: '4',
-            label: 'Báo cáo',
             children: (
-                <>
-                    <Watermark content="Ant Design">
-                        <div style={{ height: 500 }} />
-                    </Watermark>
-                </>
+                <Interview
+                    jobId={selectedJobId}
+                    onResetFilter={() => {
+                        console.log('Debug: Reset filter, set selectedJobId to null');
+                        setSelectedJobId(null);
+                    }}
+                />
             ),
         },
     ];
@@ -40,9 +44,9 @@ function TabRecruitment() {
         <div>
             <CustomTabs
                 items={tabItems}
-                defaultActiveKey="1"
+                activeKey={activeKey}
+                onChange={(key) => setActiveKey(key)}
                 tabPosition="top"
-                onChange={(key) => console.log('Tab changed:', key)}
             />
         </div>
     );

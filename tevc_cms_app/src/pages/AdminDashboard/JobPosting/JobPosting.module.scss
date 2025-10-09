@@ -1,0 +1,224 @@
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$error-color: #ff4d4f;
+$warning-color: #faad14;
+$text-primary: #262626;
+$text-secondary: #8c8c8c;
+$bg-light: #fafafa;
+$border-color: #e8e8e8;
+$border-radius: 8px;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+$transition: all 0.3s ease;
+//
+//// Wrapper
+.trailer-wrapper {
+  padding: 24px;
+  background: #f5f7fa;
+  min-height: 100vh;
+
+  // Statistics Row
+  .stats-row {
+    margin-bottom: 24px;
+
+    .stat-card {
+      border-radius: $border-radius;
+      box-shadow: $box-shadow;
+      transition: $transition;
+      background: white;
+      border: 1px solid $border-color;
+
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      :global {
+        .ant-card-body {
+          padding: 20px;
+        }
+
+        .ant-statistic {
+          .ant-statistic-title {
+            font-size: 14px;
+            color: $text-secondary;
+            margin-bottom: 8px;
+            font-weight: 500;
+          }
+
+          .ant-statistic-content {
+            font-size: 28px;
+            font-weight: 600;
+
+            .ant-statistic-content-prefix {
+              margin-right: 8px;
+              font-size: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  //
+  //  // Filter Section
+  .filter-section {
+    background: white;
+    padding: 20px;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    margin-bottom: 20px;
+    border: 1px solid $border-color;
+
+    .filter-space {
+      width: 100%;
+    }
+
+    .filter-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+
+      .search-input {
+        flex: 1 1 300px;
+        min-width: 250px;
+
+        :global {
+          .ant-input-affix-wrapper {
+            border-radius: 6px;
+            border: 1px solid $border-color;
+            transition: $transition;
+
+            &:hover, &:focus {
+              border-color: $primary-color;
+            }
+          }
+        }
+      }
+
+      .date-picker {
+        flex: 0 1 300px;
+        min-width: 250px;
+
+        :global {
+          .ant-picker {
+            border-radius: 6px;
+            border: 1px solid $border-color;
+            transition: $transition;
+
+            &:hover, &:focus-within {
+              border-color: $primary-color;
+            }
+          }
+        }
+      }
+
+      .status-select {
+        flex: 0 1 200px;
+        min-width: 180px;
+
+        :global {
+          .ant-select-selector {
+            border-radius: 6px !important;
+            border: 1px solid $border-color !important;
+            transition: $transition;
+
+            &:hover {
+              border-color: $primary-color !important;
+            }
+          }
+        }
+      }
+
+      :global {
+        .ant-btn {
+          border-radius: 6px;
+          height: 40px;
+          padding: 0 16px;
+          transition: $transition;
+
+          &:hover {
+            transform: translateY(-1px);
+          }
+
+          &.ant-btn-primary {
+            background: $primary-color;
+            border-color: $primary-color;
+
+            &:hover {
+              background: darken($primary-color, 5%);
+              border-color: darken($primary-color, 5%);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Trailer Container
+  .trailer-container {
+    background: white;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: 1px solid $border-color;
+    padding: 20px;
+
+    .pagination-wrapper {
+      display: flex;
+      justify-content: center;
+      padding: 16px 0;
+      margin-bottom: 16px;
+      border-bottom: 1px solid $bg-light;
+
+      :global {
+        .ant-pagination {
+          .ant-pagination-item {
+            border-radius: 6px;
+            border: 1px solid $border-color;
+            transition: $transition;
+
+            &:hover {
+              border-color: $primary-color;
+            }
+
+            &.ant-pagination-item-active {
+              background: $primary-color;
+              border-color: $primary-color;
+
+              a {
+                color: white;
+              }
+            }
+          }
+
+          .ant-pagination-prev,
+          .ant-pagination-next {
+            .ant-pagination-item-link {
+              border-radius: 6px;
+              border: 1px solid $border-color;
+
+              &:hover {
+                border-color: $primary-color;
+                color: $primary-color;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    :global {
+      .ant-spin-container {
+        min-height: 300px;
+      }
+
+      .ant-empty {
+        margin: 60px 0;
+
+        .ant-empty-description {
+          color: $text-secondary;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}

@@ -1,10 +1,14 @@
 package carevn.luv2code.cms.tevc_cms_api.service.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import carevn.luv2code.cms.tevc_cms_api.dto.JobPostingDTO;
@@ -113,5 +117,67 @@ public class JobPostingServiceImpl implements JobPostingService {
                 .findById(candidateId)
                 .orElseThrow(() -> new AppException(ErrorCode.CANDIDATE_NOT_FOUND));
         return candidate.getJobPostings().stream().map(jobPostingMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<JobPostingDTO> filterJobPostings(
+            String title,
+            String location,
+            String status,
+            String departmentName,
+            String positionName,
+            String recruiterName,
+            String startDate,
+            String endDate,
+            int page,
+            int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Specification<JobPosting> spec = Specification.where(null);
+
+        // Lọc theo title
+        if (title != null && !title.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
+        }
+
+        // Lọc theo location
+        if (location != null && !location.isEmpty()) {
+            spec = spec.and(
+                    (root, query, cb) -> cb.like(cb.lower(root.get("location")), "%" + location.toLowerCase() + "%"));
+        }
+
+        // Lọc theo status
+        if (status != null && !status.isEmpty()) {
+            JobPostingStatus postingStatus = JobPostingStatus.valueOf(status.toUpperCase());
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), postingStatus));
+        }
+
+        // Lọc theo department
+        if (departmentName != null && !departmentName.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.join("department").get("name")), "%" + departmentName.toLowerCase() + "%"));
+        }
+
+        // Lọc theo position
+        if (positionName != null && !positionName.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.join("position").get("name")), "%" + positionName.toLowerCase() + "%"));
+        }
+
+        // Lọc theo recruiter (người tuyển dụng)
+        if (recruiterName != null && !recruiterName.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.like(
+                    cb.lower(root.join("recruiter").get("firstName")), "%" + recruiterName.toLowerCase() + "%"));
+        }
+
+        // Lọc theo ngày đăng (postingDate)
+        if (startDate != null && endDate != null) {
+            LocalDateTime start = LocalDate.parse(startDate).atStartOfDay();
+            LocalDateTime endDt = LocalDate.parse(endDate).atTime(23, 59, 59);
+            spec = spec.and((root, query, cb) -> cb.between(root.get("postingDate"), start, endDt));
+        }
+
+        Page<JobPosting> pageResult = jobPostingRepository.findAll(spec, pageable);
+        return pageResult.map(jobPostingMapper::toDTO);
     }
 }

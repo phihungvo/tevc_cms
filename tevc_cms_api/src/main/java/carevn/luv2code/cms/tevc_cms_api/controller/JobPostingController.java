@@ -38,7 +38,8 @@ public class JobPostingController {
     }
 
     @GetMapping("/paginated")
-    public ResponseEntity<Page<JobPostingDTO>> getJobPostingPaginated(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<Page<JobPostingDTO>> getJobPostingPaginated(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<JobPostingDTO> jobPostingDTOS = jobPostingService.getJobPostingPaginated(page, size);
         return ResponseEntity.ok(jobPostingDTOS);
     }
@@ -47,5 +48,24 @@ public class JobPostingController {
     public ResponseEntity<List<JobPostingDTO>> getJobPostingsByCandidate(@PathVariable Integer candidateId) {
         List<JobPostingDTO> jobPostings = jobPostingService.getJobPostingsByCandidate(candidateId);
         return ResponseEntity.ok(jobPostings);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<JobPostingDTO>> filterJobPostings(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String departmentName,
+            @RequestParam(required = false) String positionName,
+            @RequestParam(required = false) String recruiterName,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<JobPostingDTO> result = jobPostingService.filterJobPostings(
+                title, location, status, departmentName, positionName, recruiterName, startDate, endDate, page, size);
+
+        return ResponseEntity.ok(result);
     }
 }
