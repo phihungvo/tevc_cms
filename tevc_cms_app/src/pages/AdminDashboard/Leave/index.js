@@ -64,7 +64,7 @@ function Leave({ employeeId }) {
             title: 'Thời gian nghĩ phép',
             dataIndex: 'leaveDuration',
             key: 'leaveDuration',
-            width: 180,
+            width: 200,
             align: 'center',
             render: (_, record) => {
                 const start = record.startDate ? new Date(record.startDate).toLocaleDateString('vi-VN') : 'N/A';

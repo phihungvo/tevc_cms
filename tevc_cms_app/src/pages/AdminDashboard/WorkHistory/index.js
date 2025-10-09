@@ -127,61 +127,61 @@ function WorkHistory({employeeId}) {
     ];
 
     const userModalFields = [
+        // {
+        //     label: 'Mã nhân viên',
+        //     name: 'employeeId',
+        //     type: 'text',
+        //     rules: [{ required: true, message: 'Vui lòng nhập mã nhân viên!' }],
+        // },
         {
-            label: 'employeeId',
-            name: 'employeeId',
-            type: 'text',
-            rules: [{ required: true, message: 'Employee is required!' }],
-        },
-        {
-            label: 'companyName',
+            label: 'Tên công ty',
             name: 'companyName',
             type: 'text',
         },
         {
-            label: 'position',
+            label: 'Chức vụ',
             name: 'position',
             type: 'text',
         },
         {
-            label: 'startDate',
+            label: 'Ngày bắt đầu',
             name: 'startDate',
             type: 'date',
             render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
         },
         {
-            label: 'endDate',
+            label: 'Ngày kết thúc',
             name: 'endDate',
             type: 'date',
             render: () => <DatePicker format="YYYY-MM" picker="month" style={{ width: '100%' }} />,
         },
         {
-            label: 'description',
+            label: 'Mô tả công việc',
             name: 'description',
             type: 'text',
         },
         {
-            label: 'companyAddress',
+            label: 'Địa chỉ công ty',
             name: 'companyAddress',
             type: 'text',
         },
         {
-            label: 'reasonForLeaving',
+            label: 'Lý do nghỉ việc',
             name: 'reasonForLeaving',
             type: 'text',
         },
         {
-            label: 'salary',
+            label: 'Mức lương',
             name: 'salary',
             type: 'text',
         },
         {
-            label: 'contractType',
+            label: 'Loại hợp đồng',
             name: 'contractType',
             type: 'text',
         },
         {
-            label: 'supervisorName',
+            label: 'Tên người quản lý trực tiếp',
             name: 'supervisorName',
             type: 'text',
         },
@@ -289,8 +289,8 @@ function WorkHistory({employeeId}) {
             message.success('Xóa người dùng thành công!');
             handleGetAllUsers();
             setIsModalOpen(false);
-            setSelectedRowKeys([]); // Xóa các dòng đã chọn
-            setSelectedRows([]); // Xóa các dòng đã chọn
+            setSelectedRowKeys([]);
+            setSelectedRows([]);
         } catch (error) {
             message.error(`Lỗi khi xóa người dùng: ${error.response?.data?.message || error.message}`);
         }
@@ -298,7 +298,7 @@ function WorkHistory({employeeId}) {
 
     const handleSelectChange = (newSelectedRowKeys, newSelectedRows) => {
         setSelectedRowKeys(newSelectedRowKeys);
-        setSelectedRows(newSelectedRows); // Lưu các dòng được chọn
+        setSelectedRows(newSelectedRows);
     };
 
     useEffect(() => {
@@ -322,13 +322,13 @@ function WorkHistory({employeeId}) {
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
-                return 'Thêm Người Dùng Mới';
+                return 'Thêm lịch sử công việc';
             case 'edit':
-                return 'Chỉnh Sửa Người Dùng';
+                return 'Chỉnh sửa lịch sử công việc';
             case 'delete':
-                return 'Xóa Người Dùng';
+                return 'Xóa lịch sử công việc';
             default:
-                return 'Chi Tiết Người Dùng';
+                return 'Chi Tiết lịch sử công việc';
         }
     };
 

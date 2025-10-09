@@ -108,7 +108,7 @@ export const updateUser = async (userId, formData) => {
             API_ENDPOINTS.USER.UPDATE(userId), updateData);
 
         if (response.data) {
-            message.success('User updated successfully!');
+            message.success('Cập nhật người dùng thành công!');
         }
     } catch (error) {
         const errorMessage =
