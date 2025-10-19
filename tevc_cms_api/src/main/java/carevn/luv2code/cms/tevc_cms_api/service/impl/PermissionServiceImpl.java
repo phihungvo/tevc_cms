@@ -74,25 +74,18 @@ public class PermissionServiceImpl implements PermissionService {
         return permissionMapper.toDTO(updatedPermission);
     }
 
-    //    @Override
-    //    @Transactional
-    //    public void deletePermission(UUID id) {
-    //        Permission permission =
-    //                permissionRepository.findById(id).orElseThrow(() -> new
-    // AppException(ErrorCode.PERMISSION_NOT_FOUND));
-    //
-    //        // Remove permission from all roles first
-    //        permission.getRoles().forEach(role -> {
-    //            role.getPermissions().remove(permission);
-    //        });
-    //
-    //        // Remove permission from all users that have it directly
-    //        //        permission.getUsers().forEach(user -> {
-    //        //            user.getPermissions().remove(permission);
-    //        //        });
-    //
-    //        permissionRepository.delete(permission);
-    //    }
+    @Override
+    @Transactional
+    public void deletePermission(Integer id) {
+        Permission permission =
+                permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
+
+        permission.getRoles().forEach(role -> {
+            role.getPermissions().remove(permission);
+        });
+
+        permissionRepository.delete(permission);
+    }
 
     //    @Override
     //    public PermissionDTO getPermission(UUID id) {

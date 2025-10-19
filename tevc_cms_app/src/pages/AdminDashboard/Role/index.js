@@ -25,22 +25,21 @@ const cx = classNames.bind(styles);
  * Quản lý danh sách vai trò (Role) với các tính năng: hiển thị, thêm, sửa, xóa, chọn nhiều dòng.
  */
 function RoleList() {
-    const [roleSource, setRoleSource] = useState([]); // Dữ liệu nguồn của bảng vai trò
-    const [permissionOptions, setPermissionOptions] = useState([]); // Danh sách quyền để chọn trong modal
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Danh sách ID của các vai trò được chọn
-    const [selectedRows, setSelectedRows] = useState([]); // Danh sách bản ghi vai trò được chọn
-    const [loading, setLoading] = useState(false); // Trạng thái loading của bảng
+    const [roleSource, setRoleSource] = useState([]);
+    const [permissionOptions, setPermissionOptions] = useState([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
         pageSize: 5,
         total: 0,
-    }); // Cấu hình phân trang
-    const [modalMode, setModalMode] = useState('create'); // Chế độ modal: create, edit, delete
-    const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái mở/đóng modal
-    const [selectedRole, setSelectedRole] = useState(null); // Vai trò đang được chỉnh sửa/xóa
-    const [form] = Form.useForm(); // Form instance từ Ant Design
+    });
+    const [modalMode, setModalMode] = useState('create');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedRole, setSelectedRole] = useState(null);
+    const [form] = Form.useForm();
 
-    // Cấu hình các cột của bảng
     const columns = [
         {
             title: 'Tên Vai Trò',
@@ -48,6 +47,7 @@ function RoleList() {
             key: 'name',
             width: 150,
             fixed: 'left',
+            align: 'center',
             onFilter: (value, record) => record.name.toLowerCase().startsWith(value.toLowerCase()),
         },
         {
@@ -91,7 +91,6 @@ function RoleList() {
         },
     ];
 
-    // Cấu hình các trường trong modal
     const roleModalFields = [
         {
             label: 'Tên Vai Trò',
@@ -114,8 +113,7 @@ function RoleList() {
         },
     ];
 
-    // Lấy danh sách vai trò từ API
-    const handleGetAllRoles = async (page = 1, pageSize = 5) => {
+    const handleGetAllRoles = async (page = 1, pageSize = 10) => {
         setLoading(true);
         try {
             const response = await getAllRoles({ page: page - 1, pageSize });
@@ -138,7 +136,6 @@ function RoleList() {
         }
     };
 
-    // Lấy danh sách quyền từ API để hiển thị trong select của modal
     const fetchPermissionOptions = async () => {
         try {
             const perResponse = await getAllPermissionsNoPaging();
@@ -158,7 +155,6 @@ function RoleList() {
         }
     };
 
-    // Mở modal để thêm vai trò mới
     const handleAddRole = () => {
         setModalMode('create');
         setSelectedRole(null);
@@ -166,7 +162,6 @@ function RoleList() {
         setIsModalOpen(true);
     };
 
-    // Gọi API để tạo vai trò mới
     const handleCallCreateRole = async (formData) => {
         try {
             await createRole(formData);
@@ -176,7 +171,6 @@ function RoleList() {
         }
     };
 
-    // Mở modal để chỉnh sửa vai trò
     const handleEditRole = (record) => {
         setSelectedRole(record);
         setModalMode('edit');
@@ -187,7 +181,6 @@ function RoleList() {
         setIsModalOpen(true);
     };
 
-    // Gọi API để cập nhật vai trò
     const handleCallUpdateRole = async (formData) => {
         try {
             await updateRole(selectedRole.id, formData);
@@ -199,7 +192,6 @@ function RoleList() {
         }
     };
 
-    // Mở modal xác nhận xóa vai trò
     const handleDeleteRole = (record) => {
         setModalMode('delete');
         setSelectedRowKeys([record.id]);
@@ -207,10 +199,9 @@ function RoleList() {
         setIsModalOpen(true);
     };
 
-    // Gọi API để xóa vai trò
     const handleCallDeleteRole = async () => {
         try {
-            await deleteRole(selectedRowKeys[0]); // Xóa một vai trò duy nhất
+            await deleteRole(selectedRowKeys[0]);
             message.success('Xóa vai trò thành công!');
             handleGetAllRoles();
             setIsModalOpen(false);
@@ -221,7 +212,6 @@ function RoleList() {
         }
     };
 
-    // Xử lý submit form trong modal
     const handleFormSubmit = (formData) => {
         if (modalMode === 'create') {
             handleCallCreateRole(formData);
@@ -232,18 +222,15 @@ function RoleList() {
         }
     };
 
-    // Xử lý thay đổi trạng thái chọn dòng
     const handleSelectChange = (newSelectedRowKeys, newSelectedRows) => {
         setSelectedRowKeys(newSelectedRowKeys);
         setSelectedRows(newSelectedRows);
     };
 
-    // Xử lý thay đổi bảng (phân trang)
     const handleTableChange = (pagination) => {
         handleGetAllRoles(pagination.current, pagination.pageSize);
     };
 
-    // Lấy tiêu đề modal dựa trên chế độ
     const getModalTitle = () => {
         switch (modalMode) {
             case 'create':
@@ -257,7 +244,6 @@ function RoleList() {
         }
     };
 
-    // Khởi tạo dữ liệu khi component mount
     useEffect(() => {
         fetchPermissionOptions();
         handleGetAllRoles();

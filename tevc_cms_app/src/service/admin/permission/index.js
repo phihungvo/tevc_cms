@@ -33,7 +33,7 @@ export const createPermission = async (formData) => {
             API_ENDPOINTS.PERMISSION.CREATE,   
             formData, 
         );
-        message.success('Permission created successfully');
+        message.success('Tạo quyền thành công!');
         return response.data;
     } catch (error) {
         console.error('Error when creating permission: ', error); 
@@ -47,7 +47,7 @@ export const updatePermission = async (permissionId, formData) => {
             API_ENDPOINTS.PERMISSION.UPDATE(permissionId),
             formData,
         );
-        message.success('Permission updated successfully');
+        message.success('Cập nhật quyền thành công!');
         return response.data;
     } catch (error) {
         console.error('Error when creating permission: ', error);
@@ -56,14 +56,13 @@ export const updatePermission = async (permissionId, formData) => {
 
 export const deletePermission = async (permissionId, formData) => {
     try {
-        // const response = await apiClient.put(
-        //     API_ENDPOINTS.PERMISSION.DELETE(permissionId),
-        //     formData,
-        // );
-        // message.success('Permission updated successfully');
-        // return response.data;
+        const response = await apiClient.delete(
+            API_ENDPOINTS.PERMISSION.DELETE(permissionId),
+            formData,
+        );
+        message.success('Xoá quyền thành công!');
+        return response.data;
 
-        return null;
     } catch (error) {
         console.error('Error when creating permission: ', error);
     }
